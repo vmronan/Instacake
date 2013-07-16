@@ -74,14 +74,14 @@ public class AuthWebViewClient extends WebViewClient {
     	}
     }
     
-    //ZOMGZSSEZZZY
+    //ZOMGZSSEZZZY	
     private String readStream(InputStream inputStream) {
         return new Scanner(inputStream).useDelimiter("\\A").next();
     }
     
     public void saveAccessToken(String accessToken) {
     	Editor editor = mContext.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE).edit();
-    	editor.putString("accessToken", accessToken);
+    	editor.putString(Constants.ACCESS_TOKEN_KEY, accessToken);
     	editor.commit();
     	Log.v("saveAccessToken", "saved access token " + accessToken);
     }
