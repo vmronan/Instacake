@@ -5,5 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="authorize">omgshutthefuckupeclipse</string>
+    <string name="get_feed">getdatfeedyo</string>
+    <string name="title_activity_feed">FeedActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

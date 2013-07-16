@@ -19,4 +19,8 @@ public class MainActivity extends Activity {
     	startActivity(i);
     }
     
+    public void getFeed(View v){
+    	Intent i = new Intent(this, FeedActivity.class);
+    	startActivity(i);
+    }
 }

@@ -31,7 +31,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jsvr.instacake.MainActivity" />
-            
+        </activity>
+        <activity
+            android:name="com.jsvr.instacake.FeedActivity"
+            android:label="@string/title_activity_feed"
+            android:parentActivityName="com.jsvr.instacake.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jsvr.instacake.MainActivity" />
         </activity>
     </application>
 
