@@ -6,14 +6,12 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+    tools:context=".LoginActivity" >
 
-
-    <Button 
-        android:id="@+id/authorize"
+    <WebView
+        android:id="@+id/login_webview"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="signIn" 
-        android:text="@string/authorize" />
+        android:layout_height="fill_parent"
+        android:visibility="gone" />
 
 </RelativeLayout>
