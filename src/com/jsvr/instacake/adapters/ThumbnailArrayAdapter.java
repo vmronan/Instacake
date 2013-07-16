@@ -1,18 +1,14 @@
 package com.jsvr.instacake.adapters;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,74 +22,70 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 	Context context;
 	int layoutResourceId;
 	String data[] = null;
-	ViewHolder holder;
+	ArrayList<ViewHolder> holders;
 	
 	public ThumbnailArrayAdapter(Context context, int layoutResourceId, String[] data) {
 		super(context, layoutResourceId, data);
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
 		this.data = data;
+		holders = new ArrayList<ViewHolder>();
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
-		holder = null;
+//		holder = null;
+		
 		
 		if(v == null) {
+			System.out.println("view is null");
 			LayoutInflater inflater = ((Activity)context).getLayoutInflater();
 			v = inflater.inflate(layoutResourceId, parent, false);
 			
-			holder = new ViewHolder();
+			ViewHolder holder = (new ViewHolder());
+			holders.add(holder);
 			holder.thumbnailView = (ImageView)v.findViewById(R.id.thumbnail);
 			v.setTag(holder);
 		}
 		else {
-			holder = (ViewHolder)v.getTag();
+			System.out.println("view is not null");
+			holders.set(position, (ViewHolder)v.getTag());  
 		}
 		
 		
-//		try {
-//			holder.thumbnailView.setImageBitmap(BitmapFactory.decodeStream((InputStream)new URL(data[position]).getContent()));
-//		} catch (MalformedURLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		new ImageLoader().execute(v, data[position]);		// data[position] is a URI string
+		new ImageLoader().execute(v, position);		// data[position] is a URI string
 		
 		return v;
 	}
 	
-	static class ViewHolder {
+	class ViewHolder {
 		ImageView thumbnailView;
 	}
 	
-	public class ImageLoader extends AsyncTask<Object, String, Void> {
+	public class ImageLoader extends AsyncTask<Object, String, Integer> {
 
 		private View view;
 		Bitmap bitmap;
 		
 		@Override
-		protected Void doInBackground(Object... parameters) {
+		protected Integer doInBackground(Object... parameters) {
 			view = (View) parameters[0];
-			String uri = (String) parameters[1];
+			System.out.println(view.getTag().toString());
+			String uri = data[(Integer) parameters[1]];
 			
 			try {
-				bitmap = BitmapFactory.decodeStream(new URL(uri).openConnection() .getInputStream());
+				bitmap = BitmapFactory.decodeStream(new URL(uri).openConnection().getInputStream());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
-			return null;
+			return (Integer) parameters[1];
 		}
 		
 		@Override
-		protected void onPostExecute(Void result) {
+		protected void onPostExecute(Integer result) {
 			if(bitmap != null && view != null) {
-				holder.thumbnailView.setImageBitmap(bitmap);
+				holders.get(result).thumbnailView.setImageBitmap(bitmap);
 			}
 		}
 	}

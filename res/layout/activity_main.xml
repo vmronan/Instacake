@@ -23,5 +23,22 @@
         android:layout_below="@id/authorize"
         android:onClick="getFeed" 
         android:text="@string/get_feed" />
+    
+    <EditText 
+        android:id="@+id/new_project_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/get_feed"
+        android:hint="@string/new_project_hint"/>
+    
+    
+    <Button 
+        android:id="@+id/new_project"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/new_project_title"
+        android:onClick="newProject" 
+        android:text="@string/new_project" />
+    
 
 </RelativeLayout>

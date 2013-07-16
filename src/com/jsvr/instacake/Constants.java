@@ -25,6 +25,8 @@ public class Constants {
 	public static final String ACCESS_TOKEN_URL = "https://api.instagram.com/oauth/access_token";
 
 	public static final String ACCESS_TOKEN_KEY = "yodawgi'mtheaccesstokenkey";
+
+	public static final String INSTA_ID_KEY = "yodawgi'mliketheinstagramidyouget";
 	
 	public static String getFeedUrl(String accessToken){
 		return "https://api.instagram.com/v1/users/self/feed?access_token=" + accessToken;

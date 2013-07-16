@@ -13,11 +13,9 @@ import org.json.JSONTokener;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -38,7 +36,6 @@ public class FeedActivity extends Activity {
 		
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, 
 		        android.R.layout.simple_list_item_1, mThumbnails);
-		
 		mFeed = (ListView) findViewById(R.id.feed);
 		mFeed.setAdapter(adapter);
 		
@@ -60,26 +57,36 @@ public class FeedActivity extends Activity {
     	@Override
     	protected Void doInBackground(String... strings) {
     		String accessToken = strings[0];
+    		System.out.println("doInBackground");
 			try {
+				System.out.println("try");
+				// Open the connection
 				URL url = new URL(Constants.getFeedUrl(accessToken));
 				HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
 				urlConnection.setRequestMethod("GET");
 				urlConnection.setDoInput(true);
 
+				// Read and parse the response
 				String response = readStream(urlConnection.getInputStream());
 				JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
 				JSONArray dataArray = jsonObject.getJSONArray("data");
+				
+				// This is probably really bad, but we're
 				int length = dataArray.length();
 				int videoCount = 0;
+				System.out.println("length is " + length);
 				for (int i=0; i < length; ++i){
 					JSONObject element = dataArray.getJSONObject(i);
 					if (element.getString("type").equals("video")){
 						videoCount++;
 					}
 				}
+				
+				// 
 				mThumbnails = new String[videoCount];
 				for (int i=0; i < length; ++i){
 					JSONObject element = dataArray.getJSONObject(i);
+					System.out.println("element is " + element.toString());
 					if (element.getString("type").equals("video")){
 						mThumbnails[i] = element.getJSONObject("images").getJSONObject("standard_resolution").getString("url");
 						Log.v("*", "just added " + mThumbnails[i]);
@@ -87,14 +94,16 @@ public class FeedActivity extends Activity {
 				}
 				
 			} catch (Exception e) {
+				System.out.println("error");
 				e.printStackTrace();
 			}
-    		  		
+    		 System.out.println("done");
     		return null;
     	}
     	
     	@Override
     	protected void onPostExecute(Void result) {
+    		Log.v("onPostExecute" , "now setting the adapter with mThumbnails");
     		ThumbnailArrayAdapter adapter = new ThumbnailArrayAdapter(mContext, 
     		        R.layout.thumbnail_row, mThumbnails);
     		
