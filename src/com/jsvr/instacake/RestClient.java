@@ -1,9 +1,5 @@
 package com.jsvr.instacake;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
-import android.net.Uri;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;

@@ -35,5 +35,7 @@ public class MainActivity extends Activity {
     	RailsClient.createProject(title, mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
     }
     
-    
+    public void createUser(View v){
+    	RailsClient.createUser(mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
+    }
 }

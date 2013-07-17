@@ -58,7 +58,9 @@ public class AuthWebViewClient extends WebViewClient {
 				
 				// Read the response and save the access token
 				String response = readStream(urlConnection.getInputStream());
+				System.out.println(response);
 				JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+				saveInstaId(jsonObject.getJSONObject("user").getString("id"));
 			    saveAccessToken(jsonObject.getString("access_token")); 
 				
 			} catch (Exception e) {
@@ -79,7 +81,15 @@ public class AuthWebViewClient extends WebViewClient {
         return new Scanner(inputStream).useDelimiter("\\A").next();
     }
     
-    public void saveAccessToken(String accessToken) {
+    public void saveInstaId(String instaId) {
+		Editor editor = mContext.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE).edit();
+    	editor.putString(Constants.INSTA_ID_KEY, instaId);
+    	editor.commit();
+    	Log.v("saveInstaId", "saved instaId " + instaId);
+		
+	}
+
+	public void saveAccessToken(String accessToken) {
     	Editor editor = mContext.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE).edit();
     	editor.putString(Constants.ACCESS_TOKEN_KEY, accessToken);
     	editor.commit();
