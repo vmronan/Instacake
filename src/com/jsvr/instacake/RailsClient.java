@@ -44,7 +44,6 @@ public class RailsClient {
 		params.put("insta_id", instaId);
 		params.put("project_id", projectId);
 		RestClient.post(getAbsoluteUrl("/projects/add_user"), params, addUserHandler);
-		
 	}
 	
 	public static AsyncHttpResponseHandler newProjectHandler = new AsyncHttpResponseHandler(){

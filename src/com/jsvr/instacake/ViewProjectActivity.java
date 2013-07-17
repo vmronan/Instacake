@@ -38,6 +38,7 @@ public class ViewProjectActivity extends Activity {
 	public void addUser(View v) {
     	String newUser = ((EditText)findViewById(R.id.project_new_user)).getText().toString();
     	RailsClient.addUserToProject(newUser, projectId);
+    	LocalClient.addUserToProject(newUser, projectId);
 	}
 	
 	// Shows the thumbnails for all videos in this project
@@ -63,7 +64,7 @@ public class ViewProjectActivity extends Activity {
 	}
 	
 	private String[] getThumbnailUris() {
-    	File projectFile = new File(Constants.getProjectFilePath(projectId));
+    	File projectFile = new File(Constants.getProjectPath(projectId));
     	ArrayList<String> uriList = new ArrayList<String>();
     	
     	Scanner scanner;

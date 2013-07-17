@@ -38,7 +38,8 @@ public class ViewProjectsActivity extends Activity {
 	private void showProjects() {
 		getProjectFiles();
 		
-		// Get title of each project
+		// Get title of each project, which is first line of proj_123.txt
+		// TODO change how it gets title using json
 		int numProjects = projectFiles.size();
 		String titles[] = new String[numProjects];
 		for(int i = 0; i < numProjects; i++) {
@@ -67,11 +68,13 @@ public class ViewProjectsActivity extends Activity {
 	
     public void newProject(View v) {
     	String title = ((EditText)findViewById(R.id.new_project_title)).getText().toString();
-    	RailsClient.createProject(title, mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
+    	String instaId = mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY");
+    	RailsClient.createProject(title, instaId);
+    	LocalClient.createProject(title, instaId);
     }
     
     private void getProjectFiles() {
-    	File projectsFile = new File(Constants.PROJECTS_FILE_PATH);
+    	File projectsFile = new File(Constants.PATH_PROJECTS);
     	
     	Scanner scanner;
 		try {

@@ -29,6 +29,11 @@ public class MainActivity extends Activity {
     	startActivity(i);
     }
     
+    public void viewVideos(View v) {
+    	Intent i = new Intent(this, ViewVideosActivity.class);
+    	startActivity(i);
+    }
+    
     public void getProjects(View v) {
     	Intent i = new Intent(this, ViewProjectsActivity.class);
     	startActivity(i);
@@ -36,10 +41,16 @@ public class MainActivity extends Activity {
     
     public void newProject(View v) {
     	String title = ((EditText)findViewById(R.id.new_project_title)).getText().toString();
-    	RailsClient.createProject(title, mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
+    	String instaId = mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY");
+    	RailsClient.createProject(title, instaId);
+    	LocalClient.createProject(title, instaId);
     }
     
     public void createUser(View v){
     	RailsClient.createUser(mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
+    }
+    
+    public void updateThumbs(View v) {
+    	//  Add Instagram video thumbnails to DIR_MY_THUMBS if they're missing
     }
 }

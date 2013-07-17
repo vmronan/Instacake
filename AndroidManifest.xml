@@ -57,6 +57,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jsvr.instacake.MainActivity" />
         </activity>
+        <activity
+            android:name="com.jsvr.instacake.ViewVideosActivity"
+            android:label="@string/title_activity_view_videos"
+            android:parentActivityName="com.jsvr.instacake.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jsvr.instacake.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

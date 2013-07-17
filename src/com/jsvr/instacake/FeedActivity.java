@@ -44,7 +44,6 @@ public class FeedActivity extends Activity {
     	}
 	}
 
-    
     public class GetFeedAsyncTask extends AsyncTask<String, Void, Void> {
     	@Override
     	protected Void doInBackground(String... strings) {

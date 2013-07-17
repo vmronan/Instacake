@@ -23,11 +23,19 @@
         android:onClick="getFeed" 
         android:text="@string/get_feed" />
     
+    <Button
+        android:id="@+id/view_videos"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/get_feed"
+        android:onClick="viewVideos"
+        android:text="@string/view_videos" />
+    
     <Button 
         android:id="@+id/get_projects"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/get_feed"
+        android:layout_below="@id/view_videos"
         android:onClick="getProjects" 
         android:text="@string/get_projects" />
     
@@ -47,11 +55,11 @@
         android:text="@string/new_project" />
     
     <Button 
-        android:id="@+id/create_user"
+        android:id="@+id/update_thumbs"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/new_project"
-        android:onClick="createUser" 
-        android:text="create user" />
+        android:onClick="updateThumbs" 
+        android:text="@string/update_thumbs" />
 
 </RelativeLayout>

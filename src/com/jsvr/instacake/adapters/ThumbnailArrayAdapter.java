@@ -1,5 +1,6 @@
 package com.jsvr.instacake.adapters;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -58,8 +59,8 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 			new ImageLoader().execute(v, position);
 		}
 		else {
-			// URL is local
-			Uri uri = Uri.parse(Constants.getThumbnailFilePath(data[position]));
+			// URL is local and in Pictures/Instagram directory
+			Uri uri = Uri.parse(Constants.DIR_MY_THUMBS.getPath() + File.separator + data[position]);
 			holder.thumbnailView.setImageURI(uri);
 		}
 		
