@@ -1,5 +1,10 @@
 package com.jsvr.instacake;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,4 +37,22 @@ public class ViewProjectActivity extends Activity {
 	private void showThumbnails() {
 		
 	}
+	
+	private ArrayList<String> getThumbnails() {
+    	File projectFile = new File(Constants.getProjectFilePath(projectId));
+    	ArrayList<String> idList = new ArrayList<String>();
+    	
+    	Scanner scanner;
+		try {
+			scanner = new Scanner(projectFile);
+			while(scanner.hasNext())
+			{
+				idList.add(scanner.nextLine());
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return idList;
+    }
 }

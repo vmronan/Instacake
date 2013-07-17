@@ -3,6 +3,7 @@ package com.jsvr.instacake;
 import java.io.File;
 
 import android.os.Environment;
+import android.util.Log;
 
 public class Constants {
 	
@@ -32,13 +33,26 @@ public class Constants {
 		// Create the storage directory if it does not exist
 		if (!projectsStorageDir.exists()){
 			if (!projectsStorageDir.mkdirs()){
+				Log.v("getProjectsFilePath", "Instacake/Projects does not exist");
 				return null;
 			}
 		}
-		
 		return projectsStorageDir.getPath() + File.separator + "projects.txt";
-	}	
-			
+	}
+
+	public static String getProjectFilePath(String projectId) {
+		File projectsStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_MOVIES), "Instacake/Projects");
+		
+		// Create the storage directory if it does not exist (this should never happen here)
+		if (!projectsStorageDir.exists()){
+			if (!projectsStorageDir.mkdirs()){
+				Log.v("getProjectFilePath", "Instacake/Projects does not exist");
+				return null;
+			}
+		}
+		return projectsStorageDir.getPath() + File.separator + "proj_" + projectId + ".txt";
+	}
 
 	public static String getAccessTokenRequestBody(String requestToken) {
 		return "client_id=" + Constants.CLIENT_ID +
