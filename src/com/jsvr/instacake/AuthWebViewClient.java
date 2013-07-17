@@ -59,7 +59,9 @@ public class AuthWebViewClient extends WebViewClient {
 				// Read the response and save the access token
 				String response = readStream(urlConnection.getInputStream());
 				JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
-			    saveAccessToken(jsonObject.getString("access_token")); 
+				String accessToken = jsonObject.getString("access_token");
+				String instaId = jsonObject.getJSONObject("user").getString("id");
+			    saveUserInfo(accessToken, instaId);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -79,9 +81,11 @@ public class AuthWebViewClient extends WebViewClient {
         return new Scanner(inputStream).useDelimiter("\\A").next();
     }
     
-    public void saveAccessToken(String accessToken) {
+    // Saves access token and user id to shared preferences
+    public void saveUserInfo(String accessToken, String instaId) {
     	Editor editor = mContext.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE).edit();
     	editor.putString(Constants.ACCESS_TOKEN_KEY, accessToken);
+    	editor.putString(Constants.INSTA_ID_KEY, instaId);
     	editor.commit();
     	Log.v("saveAccessToken", "saved access token " + accessToken);
     }

@@ -20,6 +20,7 @@ public class RailsClient {
 
 		private String getProjectFromResponse(String response) {
 			return "hey d00d I still need to parse the response";
+			// need to save project_id here
 		}
 
 		@Override
@@ -49,10 +50,9 @@ public class RailsClient {
 
 	private static void addFirstUserToProject(String project_id) {
 		addUserToProject(mInstaId, project_id);
-		
 	}
 
-	private static void addUserToProject(String mInstaId2, String project_id) {
+	public static void addUserToProject(String mInstaId2, String project_id) {
 		// TODO Auto-generated method stub
 		
 	}

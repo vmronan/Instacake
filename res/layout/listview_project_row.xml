@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <!-- Project thumbnail -->
+    <ImageView
+        android:id="@+id/secondThumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dip"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip" />
+    
+    <!-- Project title -->
+    <TextView
+        android:id="@+id/cakeTitle"
+        style="@style/Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/cakeThumbnail"
+        android:layout_toRightOf="@id/cakeThumbnail" />
+    
+    <!-- Project date -->
+    <TextView
+        android:id="@+id/cakeDate"
+        style="@style/Date"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cakeTitle"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@id/cakeThumbnail" />
+    
+    <!-- Rightend Arrow -->
+    <ImageView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"/>
+</RelativeLayout>

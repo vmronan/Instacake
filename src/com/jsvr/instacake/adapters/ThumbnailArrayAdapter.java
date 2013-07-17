@@ -21,7 +21,7 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 	
 	Context context;
 	int layoutResourceId;
-	String data[] = null;
+	String data[] = null;			// data[] is array of URI strings
 	ArrayList<ViewHolder> holders;
 	
 	public ThumbnailArrayAdapter(Context context, int layoutResourceId, String[] data) {
