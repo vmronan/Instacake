@@ -17,7 +17,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-        
     }
 
     public void signIn(View v) {
@@ -25,12 +24,17 @@ public class MainActivity extends Activity {
     	startActivity(i);
     }
     
-    public void getFeed(View v){
+    public void getFeed(View v) {
     	Intent i = new Intent(this, FeedActivity.class);
     	startActivity(i);
     }
     
-    public void newProject(View v){
+    public void getProjects(View v) {
+    	Intent i = new Intent(this, ViewProjectsActivity.class);
+    	startActivity(i);
+    }
+    
+    public void newProject(View v) {
     	String title = ((EditText)findViewById(R.id.new_project_title)).getText().toString();
     	RailsClient.createProject(title, mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
     }

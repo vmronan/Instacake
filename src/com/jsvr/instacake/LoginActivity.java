@@ -20,6 +20,4 @@ public class LoginActivity extends Activity {
 		loginWebView.setWebViewClient(new AuthWebViewClient(this));
 		loginWebView.loadUrl(Constants.AUTH_URL_WITH_PARAMS);
 	}
-	
-
 }
