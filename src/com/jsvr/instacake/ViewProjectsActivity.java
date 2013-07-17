@@ -56,7 +56,7 @@ public class ViewProjectsActivity extends Activity {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				// get filename of the clicked-on project, get the ID from the filename, and open this project
+				// Get filename of the clicked-on project, get the ID from the filename, and open this project
 				String projectId = (projectFiles.get(position).split("_")[1]).split(".")[0];
 				Intent i = new Intent(mContext, ViewProjectActivity.class);
 				i.putExtra(Constants.PROJECT_ID_KEY, projectId);

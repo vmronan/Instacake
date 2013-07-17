@@ -47,11 +47,41 @@ public class Constants {
 		// Create the storage directory if it does not exist (this should never happen here)
 		if (!projectsStorageDir.exists()){
 			if (!projectsStorageDir.mkdirs()){
-				Log.v("getProjectFilePath", "Instacake/Projects does not exist");
+				Log.v("getProjectFilePath", "Instacake/Projects does not exist, and couldn't be created");
 				return null;
 			}
 		}
 		return projectsStorageDir.getPath() + File.separator + "proj_" + projectId + ".txt";
+	}
+	
+	public static String getThumbnailFilePath(String thumbnailId) {
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_MOVIES), "Instacake/Videos");
+		
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()){
+			if (! mediaStorageDir.mkdirs()){
+				Log.d("getVideoFilePath", "Failed to create Instacake/Videos directory");
+				return null;
+			}
+		}
+		// TODO is this a jpg?
+		return mediaStorageDir.getPath() + File.separator + "img_" + thumbnailId + ".jpg";
+	}
+	
+	public static String getVideoFilePath(String videoId) {
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_MOVIES), "Instacake/Videos");
+		
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()){
+			if (! mediaStorageDir.mkdirs()){
+				Log.d("getVideoFilePath", "Failed to create Instacake/Videos directory");
+				return null;
+			}
+		}
+		
+		return mediaStorageDir.getPath() + File.separator + "vid_" + videoId + ".mp4";
 	}
 
 	public static String getAccessTokenRequestBody(String requestToken) {
