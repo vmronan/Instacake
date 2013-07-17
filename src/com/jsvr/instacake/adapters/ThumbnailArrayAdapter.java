@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.jsvr.instacake.Constants;
 import com.jsvr.instacake.R;
 
 public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
@@ -34,15 +36,14 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
-//		holder = null;
-		
+		ViewHolder holder = null;
 		
 		if(v == null) {
 			System.out.println("view is null");
 			LayoutInflater inflater = ((Activity)context).getLayoutInflater();
 			v = inflater.inflate(layoutResourceId, parent, false);
 			
-			ViewHolder holder = (new ViewHolder());
+			holder = new ViewHolder();
 			holders.add(holder);
 			holder.thumbnailView = (ImageView)v.findViewById(R.id.thumbnail);
 			v.setTag(holder);
@@ -52,8 +53,15 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 			holders.set(position, (ViewHolder)v.getTag());  
 		}
 		
-		
-		new ImageLoader().execute(v, position);		// data[position] is a URI string
+		if(data[position].contains("http")) {
+			// URL is online
+			new ImageLoader().execute(v, position);
+		}
+		else {
+			// URL is local
+			Uri uri = Uri.parse(Constants.getThumbnailFilePath(data[position]));
+			holder.thumbnailView.setImageURI(uri);
+		}
 		
 		return v;
 	}
@@ -70,8 +78,9 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 		@Override
 		protected Integer doInBackground(Object... parameters) {
 			view = (View) parameters[0];
+			int position = (Integer) parameters[1];
 			System.out.println(view.getTag().toString());
-			String uri = data[(Integer) parameters[1]];
+			String uri = data[position];
 			
 			try {
 				bitmap = BitmapFactory.decodeStream(new URL(uri).openConnection().getInputStream());
@@ -79,13 +88,13 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 				e.printStackTrace();
 			}
 			
-			return (Integer) parameters[1];
+			return position;
 		}
 		
 		@Override
-		protected void onPostExecute(Integer result) {
+		protected void onPostExecute(Integer position) {
 			if(bitmap != null && view != null) {
-				holders.get(result).thumbnailView.setImageBitmap(bitmap);
+				holders.get(position).thumbnailView.setImageBitmap(bitmap);
 			}
 		}
 	}

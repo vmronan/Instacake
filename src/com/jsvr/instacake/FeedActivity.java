@@ -16,7 +16,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
@@ -24,21 +23,14 @@ import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
 public class FeedActivity extends Activity {
 	
 	private String[] mThumbnails = new String[]{};
-	private ListView mFeed;
 	private Context mContext;//CowboyUnderTheMoon;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_feed);
-		
 		mContext = this;
-		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, 
-		        android.R.layout.simple_list_item_1, mThumbnails);
-		mFeed = (ListView) findViewById(R.id.feed);
-		mFeed.setAdapter(adapter);
-		
+
 		populateFeed();
 	}
 
@@ -106,7 +98,7 @@ public class FeedActivity extends Activity {
     		Log.v("onPostExecute" , "now setting the adapter with mThumbnails");
     		ThumbnailArrayAdapter adapter = new ThumbnailArrayAdapter(mContext, 
     		        R.layout.thumbnail_row, mThumbnails);
-    		
+    		ListView mFeed = (ListView) findViewById(R.id.feed);
     		mFeed.setAdapter(adapter);
     	}
     }

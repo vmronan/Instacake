@@ -29,5 +29,11 @@
         android:layout_below="@id/project_add_user"
         android:text="@string/project_add_videos"
         android:onClick="addVideos" />
+    
+    <ListView
+        android:id="@+id/listview_thumbnails"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/project_add_videos" />
 
 </RelativeLayout>
