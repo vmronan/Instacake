@@ -40,6 +40,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jsvr.instacake.MainActivity" />
         </activity>
+        <activity
+            android:name="com.jsvr.instacake.ViewProjectActivity"
+            android:label="@string/title_activity_view_project"
+            android:parentActivityName="com.jsvr.instacake.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jsvr.instacake.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.jsvr.instacake.ViewProjectsActivity"
+            android:label="@string/title_activity_view_projects"
+            android:parentActivityName="com.jsvr.instacake.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jsvr.instacake.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -34,7 +34,7 @@ public class RailsClient {
 		addUserToProject(mInstaId, project_id);
 	}
 
-	private static void addUserToProject(String instaId, String projectId) {
+	public static void addUserToProject(String instaId, String projectId) {
 		if (projectId.equals("0")){
 			Log.v("addUserToProject", "project id is not valid");
 			return;
@@ -63,7 +63,6 @@ public class RailsClient {
 				return projectId;
 				
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return "0";
