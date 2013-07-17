@@ -61,8 +61,7 @@ public class AuthWebViewClient extends WebViewClient {
 				System.out.println(response);
 				JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
 				saveInstaId(jsonObject.getJSONObject("user").getString("id"));
-			    saveAccessToken(jsonObject.getString("access_token")); 
-				
+			    saveAccessToken(jsonObject.getString("access_token")); 	
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

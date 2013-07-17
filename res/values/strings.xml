@@ -6,8 +6,15 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="authorize">Authorize</string>
     <string name="get_feed">Feed</string>
+    <string name="get_projects">Projects</string>
     <string name="title_activity_feed">FeedActivity</string>
     <string name="new_project">Create new project</string>
     <string name="new_project_hint">Title</string>
+    <string name="project_new_user_hint">Username</string>
+    <string name="title_activity_view_project">Project</string>
+    <string name="project_add_user">Add user</string>
+    <string name="project_add_videos">Add videos</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_view_projects">My Projects</string>
 
 </resources>
