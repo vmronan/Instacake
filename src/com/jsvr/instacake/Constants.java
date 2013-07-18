@@ -30,19 +30,15 @@ public class Constants {
 	
 	// My vides - Movies/Instagram directory
 	public static File DIR_MY_VIDEOS = getMyVideosDir();
-//	public static String PATH_MY_VIDEOS = getMyVideosPath();
 	
 	// My friends' videos - Movies/Instacake directory
 	public static File DIR_FRIENDS_VIDEOS = getFriendsVideosDir();
-//	public static String PATH_FRIENDS_VIDEOS = getFriendsVideosPath();
 	
 	// My thumbnails - Pictures/Instacake/Me directory
 	public static File DIR_MY_THUMBS = getMyThumbsDir();
-//	public static String PATH_MY_THUMBS = getMyThumbsPath();
 	
 	// My friends' thumbnails - Pictures/Instacake/Friends directory
 	public static File DIR_FRIENDS_THUMBS = getFriendsThumbsDir();
-//	public static String PATH_FRIENDS_THUMBS = getFriendsThumbsPath();
 	
 	// My projects - Movies/Instacake/Projects directory
 	private static File getProjectsDir() {
