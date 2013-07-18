@@ -16,5 +16,6 @@
     <string name="project_add_videos">Add videos</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_view_projects">My Projects</string>
+    <string name="title_activity_test_rails">TestRailsActivity</string>
 
 </resources>

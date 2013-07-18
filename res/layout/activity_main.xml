@@ -47,11 +47,11 @@
         android:text="@string/new_project" />
     
     <Button 
-        android:id="@+id/create_user"
+        android:id="@+id/testRails"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/new_project"
-        android:onClick="createUser" 
-        android:text="create user" />
+        android:onClick="testRails" 
+        android:text="test rails" />
 
 </RelativeLayout>
