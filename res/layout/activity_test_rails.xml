@@ -9,9 +9,17 @@
     tools:context=".TestRailsActivity" >
 
     <Button 
+        android:id="@+id/authorize"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="signIn" 
+        android:text="sign in" />
+        
+    <Button 
         android:id="@+id/createUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/authorize"
         android:onClick="createUser"
         android:text="create user" />
     

@@ -2,6 +2,7 @@ package com.jsvr.instacake;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,12 @@ public class TestRailsActivity extends Activity {
 		 mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
 	}
 
+    public void signIn(View v) {
+    	Intent i = new Intent(this, LoginActivity.class);
+    	startActivity(i);
+    }
+    
+    
 	public void createUser(View v){
 		RailsClient.createUser(mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
 	}
