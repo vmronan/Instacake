@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.gram.TestGramClientActivity;
+import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.rails.RailsClient;
 import com.jsvr.instacake.rails.TestRailsActivity;
 

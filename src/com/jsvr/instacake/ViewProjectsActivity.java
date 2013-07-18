@@ -20,7 +20,8 @@ import android.widget.ListView;
 import com.jsvr.instacake.adapters.ProjectListAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
-import com.jsvr.instacake.json.JSONManager;
+import com.jsvr.instacake.local.JSONManager;
+import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.rails.RailsClient;
 
 public class ViewProjectsActivity extends Activity {
