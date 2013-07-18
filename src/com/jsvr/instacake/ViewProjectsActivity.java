@@ -22,7 +22,7 @@ import com.jsvr.instacake.json.JSONManager;
 
 public class ViewProjectsActivity extends Activity {
 
-	ArrayList<String> projectFiles;		// a project file is something like "proj_1234.json"
+	ArrayList<String> projectIds;
 	SharedPreferences mPrefs;
 	Context mContext;
 
@@ -31,7 +31,7 @@ public class ViewProjectsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_projects);
 		
-		projectFiles = new ArrayList<String>();
+		projectIds = new ArrayList<String>();
 		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
 		mContext = this;
 		
@@ -39,13 +39,13 @@ public class ViewProjectsActivity extends Activity {
 	}
 
 	private void showProjects() {
-		getProjectFiles();
+		getProjectIds();
 		
 		// Get each project
-		int numProjects = projectFiles.size();
+		int numProjects = projectIds.size();
 		Project[] projects = new Project[numProjects];
 		for(int i = 0; i < numProjects; i++) {
-			projects[i] = JSONManager.getProjectFromFilename(this, projectFiles.get(i));
+			projects[i] = JSONManager.getProject(this, projectIds.get(i));
 		}
 		
 		// Display titles and users with ProjectListAdapter
@@ -56,10 +56,8 @@ public class ViewProjectsActivity extends Activity {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				// Get filename of the clicked-on project, get the ID from the filename, and open this project
-				String projectId = Constants.getIdFromFilename(projectFiles.get(position));
 				Intent i = new Intent(mContext, ViewProjectActivity.class);
-				i.putExtra(Constants.PROJECT_ID_KEY, projectId);
+				i.putExtra(Constants.PROJECT_ID_KEY, projectIds.get(position));
 				startActivity(i);
 			}
 		});
@@ -77,8 +75,8 @@ public class ViewProjectsActivity extends Activity {
 		startActivity(i);
     }
     
-    // Gets list of project file names
-    private void getProjectFiles() {
+    // Gets list of project IDs
+    private void getProjectIds() {
     	File projectsFile = new File(Constants.PATH_PROJECTS);
     	
     	Scanner scanner;
@@ -86,7 +84,7 @@ public class ViewProjectsActivity extends Activity {
 			scanner = new Scanner(projectsFile);
 			while(scanner.hasNext())
 			{
-				projectFiles.add(scanner.nextLine());
+				projectIds.add(scanner.nextLine());
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

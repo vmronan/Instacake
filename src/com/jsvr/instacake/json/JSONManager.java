@@ -23,16 +23,9 @@ public class JSONManager {
 		// Make proj_projectId.json
 		saveProject(project);
 	}
-	
+
 	// Get project object from JSON file with GSON
-		public static Project getProjectFromFilename(Context context, String projectPath) {
-			String json = readFromFile(context, new File(Constants.DIR_PROJECTS + File.separator + projectPath));
-			Type type = new TypeToken<Project>(){}.getType();
-			return new Gson().fromJson(json, type);
-		}
-	
-	// Get project object from JSON file with GSON
-	public static Project getProjectFromId(Context context, String projectId) {
+	public static Project getProject(Context context, String projectId) {
 		Log.v("getProject", "reading from file " + Constants.getProjectPath(projectId));
 		String json = readFromFile(context, new File(Constants.getProjectPath(projectId)));
 		Type type = new TypeToken<Project>(){}.getType();
@@ -41,26 +34,26 @@ public class JSONManager {
 	
 	// Saves project object to JSON file
 	private static void saveProject(Project project) {
-		File projFile = new File(Constants.DIR_PROJECTS.getPath() + File.separator + "proj_" + project.getProjectId() + ".json");
+		File projFile = new File(Constants.getProjectPath(project.getProjectId()));
 		String json = new Gson().toJson(project);
 		writeToFile(projFile, json);
 	}
 	
 	// Add user	to specific project
 	public static void addUserToProject(Context context, String instaId, String projectId) {
-		Project project = getProjectFromId(context, projectId);
+		Project project = getProject(context, projectId);
 		project.addUser(instaId);
 		saveProject(project);
 	}
 	
 	// Get project's users
 	public static ArrayList<String> getUsers(Context context, String projectId) {
-		return getProjectFromId(context, projectId).getUsers();
+		return getProject(context, projectId).getUsers();
 	}
 	
 	// Add video id or timestamp
 	public void addVideoToProject(Context context, String videoId, String projectId) {
-		Project project = getProjectFromId(context, projectId);
+		Project project = getProject(context, projectId);
 		project.addVideo(videoId);	// TODO is it video id or timestamp? deal with each case
 		saveProject(project);
 	}
@@ -95,16 +88,16 @@ public class JSONManager {
 		return null;
 	}
 	
-	// Get project title from project filename (like "proj_123.json")
-	public static String getProjectTitle(Context context, String projectFilename) {
-		Project project = getProjectFromId(context, Constants.getIdFromFilename(projectFilename));
+	// Get project title from project ID
+	public static String getProjectTitle(Context context, String projectId) {
+		Project project = getProject(context, projectId);
 		String title = project.getTitle();
 		return title;
 	}
 	
-	// Get list of video IDs from project id
+	// Get list of video IDs from project ID
 	public static ArrayList<String> getVideoIds(Context context, String projectId) {
-		Project project = getProjectFromId(context, projectId);
+		Project project = getProject(context, projectId);
 		ArrayList<String> videoIds = project.getVideoIds();
 		return videoIds;
 	}

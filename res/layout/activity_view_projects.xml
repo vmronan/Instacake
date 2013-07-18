@@ -8,24 +8,40 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ViewProjectsActivity" >
 
-    <EditText 
-        android:id="@+id/new_project_title"
+    <LinearLayout
+        android:id="@+id/new_project_row"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal" >
+        
+		<EditText 
+	        android:id="@+id/new_project_title"
+	        android:layout_width="0dip"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:hint="@string/new_project_hint"/>
+	    
+	    <Button
+	        android:id="@+id/new_project"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:background="@drawable/ic_plus"
+	        android:onClick="newProject" />
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/projects_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/new_project_hint"/>
-
-    <Button 
-        android:id="@+id/new_project"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/new_project_title"
-        android:onClick="newProject" 
-        android:text="@string/new_project" />
+        android:layout_below="@id/new_project_row"
+        android:background="#c3f97d"
+        android:text="@string/my_projects"
+        android:gravity="center" />
     
     <ListView
         android:id="@+id/listview_projects"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/new_project" />
+        android:layout_below="@id/projects_title" />
 
 </RelativeLayout>

@@ -27,7 +27,7 @@ public class ViewProjectActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		projectId = getIntent().getStringExtra(Constants.PROJECT_ID_KEY);
-		this.setTitle(JSONManager.getProjectTitle(this, Constants.getProjectFilename(projectId)));
+		this.setTitle(JSONManager.getProjectTitle(this, projectId));
 		setContentView(R.layout.activity_view_project);
 		
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
@@ -90,5 +90,6 @@ public class ViewProjectActivity extends Activity {
 			}
 		}
 	    ((TextView)findViewById(R.id.users)).setText("Users: " + usersStr);
+	    ((EditText)findViewById(R.id.project_new_user)).setText("");
 	}
 }

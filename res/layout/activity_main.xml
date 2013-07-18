@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/view_videos"
         android:onClick="getProjects" 
-        android:text="@string/get_projects" />
+        android:text="@string/my_projects" />
     
     <EditText 
         android:id="@+id/new_project_title"
