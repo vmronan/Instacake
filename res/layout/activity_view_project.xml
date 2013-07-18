@@ -8,32 +8,52 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ViewProjectActivity" >
 
-    <EditText 
-        android:id="@+id/project_new_user"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/new_user_row"
         android:layout_height="wrap_content"
-        android:hint="@string/project_new_user_hint"/>
-    
-    <Button
-        android:id="@+id/project_add_user"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/project_new_user"
-        android:text="@string/project_add_user"
-        android:onClick="addUser" />
-    
+        android:orientation="horizontal" >
+        
+		<EditText 
+	        android:id="@+id/project_new_user"
+	        android:layout_width="0dip"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:hint="@string/project_new_user_hint"/>
+	    
+	    <Button
+	        android:id="@+id/project_add_user"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:background="@drawable/ic_plus"
+	        android:onClick="addUser" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/project_add_videos"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/project_add_user"
+        android:layout_below="@id/new_user_row"
         android:text="@string/project_add_videos"
         android:onClick="addVideos" />
+    
+    <TextView
+        android:id="@+id/users"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/project_add_videos" />
+    
+    <TextView
+        android:id="@+id/listview_thumbnails_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/users"
+        android:text="@string/listview_thumbnails_title" />
     
     <ListView
         android:id="@+id/listview_thumbnails"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/project_add_videos" />
+        android:layout_below="@id/listview_thumbnails" />
 
 </RelativeLayout>
