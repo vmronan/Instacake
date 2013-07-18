@@ -112,7 +112,7 @@ public class Constants {
 	
 	// Project path - Movies/Instacake/Projects/proj_id.json
 	public static String getProjectPath(String projectId) {
-		return DIR_PROJECTS.getPath() + File.separator + projectId + ".json";
+		return DIR_PROJECTS.getPath() + File.separator + "proj_" + projectId + ".json";
 	}
 	
 //	// Gets filepath of one thumbnail in Instagram pictures folder
@@ -132,7 +132,7 @@ public class Constants {
 			}
 		}
 
-		return mediaStorageDir.getPath() + File.separator + "img_" + thumbnailId + ".bmp";
+		return mediaStorageDir.getPath() + File.separator + "IMG_" + thumbnailId + ".bmp";
 	}
 //	
 	public static String getVideoFilePath(String videoId) {
@@ -160,5 +160,15 @@ public class Constants {
 	
 	public static String getFeedUrl(String accessToken){
 		return "https://api.instagram.com/v1/users/self/feed?access_token=" + accessToken;
+	}
+	
+	public static String getProjectFilename(String projectId) {
+		return "proj_" + projectId + ".json";
+	}
+	
+	// Gets what's between the _ and . in any filename
+	public static String getIdFromFilename(String filename) {
+		Log.v("getIdFromFilename", "filename is " + filename);
+		return (filename.split("_")[1]).split("\\.")[0];
 	}
 }

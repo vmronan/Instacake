@@ -1,10 +1,13 @@
 package com.jsvr.instacake;
 
+import java.util.Random;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -40,10 +43,15 @@ public class MainActivity extends Activity {
     }
     
     public void newProject(View v) {
+    	String projectId = String.valueOf(Math.abs((new Random()).nextInt()));
     	String title = ((EditText)findViewById(R.id.new_project_title)).getText().toString();
     	String instaId = mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY");
     	RailsClient.createProject(title, instaId);
-    	LocalClient.createProject(title, instaId);
+    	LocalClient.createProject(projectId, title, instaId);
+    	
+		Intent i = new Intent(this, ViewProjectActivity.class);
+		i.putExtra(Constants.PROJECT_ID_KEY, projectId);
+		startActivity(i);
     }
     
     public void createUser(View v){

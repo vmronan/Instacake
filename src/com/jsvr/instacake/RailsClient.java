@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;

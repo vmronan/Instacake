@@ -1,9 +1,6 @@
 package com.jsvr.instacake;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
+import com.jsvr.instacake.json.JSONManager;
 
 public class ViewProjectActivity extends Activity {
 
@@ -64,20 +62,12 @@ public class ViewProjectActivity extends Activity {
 	}
 	
 	private String[] getThumbnailUris() {
-    	File projectFile = new File(Constants.getProjectPath(projectId));
-    	ArrayList<String> uriList = new ArrayList<String>();
+    	ArrayList<String> idList = JSONManager.getVideoIds(this, projectId);
+		ArrayList<String> uriList = new ArrayList<String>();
     	
-    	Scanner scanner;
-		try {
-			scanner = new Scanner(projectFile);
-			while(scanner.hasNext())
-			{
-				uriList.add(Constants.getThumbnailFilePath(scanner.nextLine()));
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		
+    	for(String id : idList) {
+    		uriList.add("IMG_" + id + ".bmp");		// TODO this will only show thumbnails in my thumbnail directory, not friends, because of the adapter
+    	}
 		// Convert arraylist to array of strings to we can use the image adapter later
 		String[] uriArray = new String[uriList.size()];
 		uriArray = uriList.toArray(uriArray);

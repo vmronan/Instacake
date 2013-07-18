@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
@@ -21,7 +22,7 @@ public class ViewVideosActivity extends Activity {
 	private void showVideos() {
 		// Look in Pictures/Instacake/Me for thumbnails
 		File directory = Constants.DIR_MY_THUMBS;
-		String[] thumbnails = directory.list();
+		String[] thumbnails = directory.list();		// TODO write function to make thumbnails in MainActivity...
 		ThumbnailArrayAdapter adapter = new ThumbnailArrayAdapter(this, R.layout.thumbnail_row, thumbnails);
 		ListView mFeed = (ListView) findViewById(R.id.listview_videos);
 		mFeed.setAdapter(adapter);

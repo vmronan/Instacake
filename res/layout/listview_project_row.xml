@@ -5,32 +5,12 @@
     android:orientation="horizontal"
     android:padding="5dip" >
 
-    <!-- Project thumbnail -->
-    <ImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="3dip"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dip" />
-    
     <!-- Project title -->
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/thumbnail"
-        android:layout_toRightOf="@id/thumbnail" />
-    
-    <!-- Project date -->
-    <TextView
-        android:id="@+id/cakeDate"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/title"
-        android:layout_marginTop="1dip"
-        android:layout_toRightOf="@id/thumbnail" />
-    
+        android:layout_height="wrap_content" />
+
     <!-- Rightend Arrow -->
     <ImageView
         android:layout_width="wrap_content"
