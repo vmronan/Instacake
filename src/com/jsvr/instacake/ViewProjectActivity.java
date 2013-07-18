@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -32,12 +33,16 @@ public class ViewProjectActivity extends Activity {
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         
         showThumbnails();
+        ArrayList<String> users = JSONManager.getUsers(this, projectId);
+        for(String user : users) {
+        	Log.v("onCreate", "user: " + user);
+        }
 	}
 	
 	public void addUser(View v) {
     	String newUser = ((EditText)findViewById(R.id.project_new_user)).getText().toString();
     	RailsClient.addUserToProject(newUser, projectId);
-    	LocalClient.addUserToProject(newUser, projectId);
+    	LocalClient.addUserToProject(this, newUser, projectId);
 	}
 	
 	// Shows the thumbnails for all videos in this project
