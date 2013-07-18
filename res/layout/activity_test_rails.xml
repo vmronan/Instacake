@@ -1,0 +1,86 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".TestRailsActivity" >
+
+    <Button 
+        android:id="@+id/authorize"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="signIn" 
+        android:text="sign in" />
+        
+    <Button 
+        android:id="@+id/createUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/authorize"
+        android:onClick="createUser"
+        android:text="create user" />
+    
+    <Button 
+        android:id="@+id/createOtherUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/createUser"
+        android:onClick="createOtherUser"
+        android:text="create other user" />
+    
+    <Button 
+        android:id="@+id/createProject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/createOtherUser"
+        android:onClick="createProject"
+        android:text="create project" />
+    
+    <Button 
+        android:id="@+id/addVideoToProject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/createProject"
+        android:onClick="addVideoToProject"
+        android:text="add video to project" />
+    
+    <Button 
+        android:id="@+id/addUserToProject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addVideoToProject"
+        android:onClick="addUserToProject"
+        android:text="add user to project" />
+    
+    <Button 
+        android:id="@+id/addVideoToProjectAsOtherUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addUserToProject"
+        android:onClick="addVideoToProjectAsOtherUser"
+        android:text="add video to project as other user" />
+    
+    <Button 
+        android:id="@+id/getProjectList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addVideoToProjectAsOtherUser"
+        android:onClick="getProjectList"
+        android:text="get project list" />
+    
+    <Button 
+        android:id="@+id/getVideosForProject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/getProjectList"
+        android:onClick="getVideosForProject"
+        android:text="get videos for project" />
+    
+    
+    
+    
+
+</RelativeLayout>

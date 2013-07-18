@@ -19,6 +19,7 @@ public class RestClient {
 			@Override
 			public void onSuccess(String response) {
 				Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
+				super.onSuccess(response);
 			}
 			
 			@Override
