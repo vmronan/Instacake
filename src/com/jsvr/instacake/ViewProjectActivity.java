@@ -8,12 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
 import com.jsvr.instacake.json.JSONManager;
@@ -31,18 +31,16 @@ public class ViewProjectActivity extends Activity {
 		setContentView(R.layout.activity_view_project);
 		
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+        updateUsers();
         
         showThumbnails();
-        ArrayList<String> users = JSONManager.getUsers(this, projectId);
-        for(String user : users) {
-        	Log.v("onCreate", "user: " + user);
-        }
 	}
 	
 	public void addUser(View v) {
     	String newUser = ((EditText)findViewById(R.id.project_new_user)).getText().toString();
     	RailsClient.addUserToProject(newUser, projectId);
     	LocalClient.addUserToProject(this, newUser, projectId);
+    	updateUsers();
 	}
 	
 	// Shows the thumbnails for all videos in this project
@@ -80,4 +78,17 @@ public class ViewProjectActivity extends Activity {
 		
 		return uriArray;
     }
+	
+	private void updateUsers() {
+	    ArrayList<String> users = JSONManager.getUsers(this, projectId);
+	    String usersStr = "";
+		if(users.size() > 0) {
+			usersStr = users.get(0);
+			users.remove(0);
+			for(String user : users) {
+				usersStr += ", " + user;
+			}
+		}
+	    ((TextView)findViewById(R.id.users)).setText("Users: " + usersStr);
+	}
 }
