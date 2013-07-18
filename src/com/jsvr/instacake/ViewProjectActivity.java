@@ -25,9 +25,10 @@ public class ViewProjectActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		projectId = getIntent().getStringExtra(Constants.PROJECT_ID_KEY);
+		this.setTitle(JSONManager.getProjectTitle(this, Constants.getProjectFilename(projectId)));
 		setContentView(R.layout.activity_view_project);
 		
-		projectId = getIntent().getStringExtra(Constants.PROJECT_ID_KEY);
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         
         showThumbnails();
