@@ -168,7 +168,6 @@ public class Constants {
 	
 	// Gets what's between the _ and . in any filename
 	public static String getIdFromFilename(String filename) {
-		Log.v("getIdFromFilename", "filename is " + filename);
 		return (filename.split("_")[1]).split("\\.")[0];
 	}
 }

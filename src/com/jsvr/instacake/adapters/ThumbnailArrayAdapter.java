@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,6 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 	public ThumbnailArrayAdapter(Context context, int layoutResourceId, String[] data) {
 		super(context, layoutResourceId, data);
 		this.layoutResourceId = layoutResourceId;
-		Log.v("adapter contructor", "layoutResourceId is " + layoutResourceId);
 		this.context = context;
 		this.data = data;
 		holders = new ArrayList<ViewHolder>();
