@@ -110,11 +110,6 @@ public class MainActivity extends Activity {
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES, "Instacake/Videos/myuniqueawesomedownload.mp4");
         enqueue = dm.enqueue(request);
     }
-    
-
-    public void updateThumbs(View v) {
-    	//  Add Instagram video thumbnails to DIR_MY_THUMBS if they're missing
-    }
 
     public void viewDownloads(View view) {
         Intent i = new Intent();
