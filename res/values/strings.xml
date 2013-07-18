@@ -8,6 +8,7 @@
     <string name="title_activity_view_project">Project</string>
     <string name="title_activity_view_projects">My Projects</string>
     <string name="title_activity_view_videos">My Videos</string>
+    <string name="title_activity_test_rails">TestRailsActivity</string>
     
     <string name="authorize">Authorize</string>
     <string name="get_feed">Feed</string>
@@ -20,5 +21,6 @@
     <string name="project_add_user">Add user</string>
     <string name="project_add_videos">Add videos</string>
 
+    <string name="hello_world">Hello world!</string>
 
 </resources>

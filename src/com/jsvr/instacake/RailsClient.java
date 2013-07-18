@@ -4,7 +4,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.content.Intent;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -12,8 +11,18 @@ import com.loopj.android.http.RequestParams;
 
 public class RailsClient {
 	
-	private static final String BASE_URL = "http://54.218.123.27:3000";
 	private static String mInstaId;
+	
+	private static final String BASE_URL = "http://54.218.123.27:3000";
+    private static String getAbsoluteUrl(String relativeUrl) {
+        return BASE_URL + relativeUrl;
+    }
+	
+	public static void createUser(String instaId) {
+		RequestParams params = new RequestParams();
+		params.put("user[insta_id]", instaId);
+		RestClient.post(getAbsoluteUrl("/users/create"), params, RestClient.getResponseHandler("createUser"));
+	}
 
 	public static void createProject(String title, String insta_id) {
 		if (insta_id.equals("NOKEY")){
@@ -26,10 +35,6 @@ public class RailsClient {
 		params.put("project[title]", title);		
 		RestClient.post(getAbsoluteUrl("/projects/create"), params, newProjectHandler);
 	}
-    
-    private static String getAbsoluteUrl(String relativeUrl) {
-        return BASE_URL + relativeUrl;
-    }
 
 	private static void addFirstUserToProject(String project_id) {
 		addUserToProject(mInstaId, project_id);
@@ -42,9 +47,20 @@ public class RailsClient {
 		}
 		
 		RequestParams params = new RequestParams();
-		params.put("insta_id", instaId);
+		params.put("user_insta_id", instaId);
 		params.put("project_id", projectId);
 		RestClient.post(getAbsoluteUrl("/projects/add_user"), params, addUserHandler);
+	}
+	
+	
+	public static void addVideoToProject(String project_id, String insta_user_id, String created_at, String insta_video_id){
+		RequestParams params = new RequestParams();
+		params.put("insta_user_id", insta_user_id);
+		params.put("project_id", project_id);
+		params.put("video[created_at]", created_at);
+		params.put("video[insta_id]", insta_video_id);
+		
+		RestClient.post(getAbsoluteUrl("/projects/create_video_and_add_to_project"), params, RestClient.getResponseHandler("addVideoToProject"));
 	}
 	
 	public static AsyncHttpResponseHandler newProjectHandler = new AsyncHttpResponseHandler(){
@@ -59,7 +75,7 @@ public class RailsClient {
 			try {
 				JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
 				String projectId = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("id");
-				System.out.println(projectId);
+				Log.v(tag + " response handler", "getProjectIdFromResponse has found the projectId: " + projectId);
 				return projectId;
 				
 			} catch (JSONException e) {
@@ -90,10 +106,19 @@ public class RailsClient {
 			super.onFailure(e, response);
 		}
 	};
-
-	public static void createUser(String instaId) {
+	
+	public static void getProjectsList(String insta_id) {
 		RequestParams params = new RequestParams();
-		params.put("user[insta_id]", instaId);
-		RestClient.post(getAbsoluteUrl("/users/create"), params, RestClient.getResponseHandler("createUser"));
+		params.put("insta_id", insta_id);
+		
+		RestClient.post(getAbsoluteUrl("/projects/get_projects_list"), params, RestClient.getResponseHandler("getProjectsList"));
 	}
+	
+	public static void getVideosForProject(String project_id) { 
+		RequestParams params = new RequestParams();
+		params.put("project_id", project_id);
+		
+		RestClient.post(getAbsoluteUrl("/projects/get_videos_for_project"), params, RestClient.getResponseHandler("getVideosForProject"));
+	}
+	
 }
