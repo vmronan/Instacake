@@ -23,7 +23,7 @@ public class LocalClient {
 					projectstxt.createNewFile();
 			}
 			BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
-			buf.append(Constants.getProjectFilename(projectId));
+			buf.append(projectId);
 			buf.newLine();
 			buf.close();
 		} catch (IOException e) {
