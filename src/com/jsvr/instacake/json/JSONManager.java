@@ -13,8 +13,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.jsvr.instacake.Constants;
-import com.jsvr.instacake.Project;
+import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.data.Project;
 
 public class JSONManager {
 	// The following functions all deal with a file like "proj_12345.json"

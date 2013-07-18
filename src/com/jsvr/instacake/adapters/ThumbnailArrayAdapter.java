@@ -17,8 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import com.jsvr.instacake.Constants;
 import com.jsvr.instacake.R;
+import com.jsvr.instacake.data.Constants;
 
 public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 	

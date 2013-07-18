@@ -16,7 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
+import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.json.JSONManager;
+import com.jsvr.instacake.rails.RailsClient;
 
 public class ViewProjectActivity extends Activity {
 

@@ -71,26 +71,13 @@
         android:text="test rails" />
     
     <Button 
-        android:id="@+id/download"
+        android:id="@+id/testGram"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/testRails"
-        android:onClick="download" 
-        android:text="download" />
+        android:onClick="testGram" 
+        android:text="test gram" />
     
-    <TextView 
-        android:id="@+id/textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/download"
-        android:text="not_finished"/>
 
-    <Button
-        android:id="@+id/viewDownloads"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textview"
-        android:onClick="viewDownloads" 
-        android:text="viewDownloads" />
 
 </RelativeLayout>

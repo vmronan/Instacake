@@ -65,9 +65,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jsvr.instacake.MainActivity" />
         </activity>
-		<activity
-            android:name="com.jsvr.instacake.TestRailsActivity"
+        <activity
+            android:name="com.jsvr.instacake.rails.TestRailsActivity"
             android:label="@string/title_activity_test_rails" >
+        </activity>
+        <activity
+            android:name="com.jsvr.instacake.gram.TestGramClientActivity"
+            android:label="@string/title_activity_test_gram_client" >
         </activity>
     </application>
 

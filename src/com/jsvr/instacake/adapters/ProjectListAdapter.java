@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.jsvr.instacake.Project;
 import com.jsvr.instacake.R;
+import com.jsvr.instacake.data.Project;
 
 public class ProjectListAdapter extends ArrayAdapter<Project> {
 	

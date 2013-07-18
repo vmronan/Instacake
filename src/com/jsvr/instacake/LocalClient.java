@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import android.content.Context;
 
+import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.data.Project;
 import com.jsvr.instacake.json.JSONManager;
 
 public class LocalClient {

@@ -19,6 +19,7 @@ import android.util.Log;
 import android.widget.ListView;
 
 import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
+import com.jsvr.instacake.data.Constants;
 
 public class FeedActivity extends Activity {
 	
