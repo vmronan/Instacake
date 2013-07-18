@@ -14,10 +14,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.jsvr.instacake.adapters.ProjectListAdapter;
 import com.jsvr.instacake.json.JSONManager;
 
 public class ViewProjectsActivity extends Activity {
@@ -41,15 +41,15 @@ public class ViewProjectsActivity extends Activity {
 	private void showProjects() {
 		getProjectFiles();
 		
-		// Get title of each project
+		// Get each project
 		int numProjects = projectFiles.size();
-		String[] titles = new String[numProjects];
+		Project[] projects = new Project[numProjects];
 		for(int i = 0; i < numProjects; i++) {
-			titles[i] = JSONManager.getProjectTitle(this, projectFiles.get(i));
+			projects[i] = JSONManager.getProjectFromFilename(this, projectFiles.get(i));
 		}
 		
-		// Display titles with ArrayAdapter
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, titles);
+		// Display titles and users with ProjectListAdapter
+		ProjectListAdapter adapter = new ProjectListAdapter(this, R.layout.listview_project_row, projects);
 		ListView listView = (ListView)findViewById(R.id.listview_projects);
 		listView.setAdapter(adapter);
 		
@@ -77,6 +77,7 @@ public class ViewProjectsActivity extends Activity {
 		startActivity(i);
     }
     
+    // Gets list of project file names
     private void getProjectFiles() {
     	File projectsFile = new File(Constants.PATH_PROJECTS);
     	

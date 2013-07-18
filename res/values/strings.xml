@@ -17,9 +17,11 @@
     <string name="new_project">Create new project</string>
     <string name="update_thumbs">Update thumbnails</string>
     <string name="new_project_hint">Title</string>
-    <string name="project_new_user_hint">Username</string>
+    <string name="project_new_user_hint">Add user to project</string>
     <string name="project_add_user">Add user</string>
     <string name="project_add_videos">Add videos</string>
+    
+    <string name="listview_thumbnails_title">Videos:</string>
 
     <string name="hello_world">Hello world!</string>
 
