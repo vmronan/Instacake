@@ -66,13 +66,7 @@ public class MainActivity extends Activity {
     public void testGram(View v){
     	startActivity(new Intent(this, TestGramClientActivity.class));
     }
-    
 
-    
-
-    public void updateThumbs(View v) {
-    	//  Add Instagram video thumbnails to DIR_MY_THUMBS if they're missing
-    }
 
 
 }
