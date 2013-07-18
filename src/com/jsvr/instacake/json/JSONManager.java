@@ -9,7 +9,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,31 +16,46 @@ import com.jsvr.instacake.Constants;
 import com.jsvr.instacake.Project;
 
 public class JSONManager {
-	// The following functions all deal with a file like proj_123.json
+	// The following functions all deal with a file like "proj_12345.json"
 	
 	public static void saveNewProject(Project project) {
 		// Make proj_projectId.json
+		saveProject(project);
+	}
+	
+	// Get project object from JSON file with GSON
+	private static Project getProject(Context context, String projectId) {
+		String json = readFromFile(context, new File(Constants.getProjectPath(projectId)));		
+		Type type = new TypeToken<Project>(){}.getType();
+		return new Gson().fromJson(json, type);
+	}
+	
+	// Saves project object to JSON file
+	private static void saveProject(Project project) {
 		File projFile = new File(Constants.DIR_PROJECTS.getPath() + File.separator + "proj_" + project.getProjectId() + ".json");
 		String json = new Gson().toJson(project);
 		writeToFile(projFile, json);
 	}
 	
-	// Get project object from JSON file with GSON
-	public static Project getProject(Context context, String projectId) {
-		String json = readFromFile(context, new File(Constants.getProjectPath(projectId)));
-		Log.v("getProject", "json is " + json);
-		
-		Type type = new TypeToken<Project>(){}.getType();
-		return new Gson().fromJson(json, type);
+	// Add user	to specific project
+	public static void addUserToProject(Context context, String instaId, String projectId) {
+		Project project = getProject(context, projectId);
+		project.addUser(instaId);
+		saveProject(project);
 	}
 	
-	// Add user	
-	public void addUserToProject(String instaId, String projectId) {
-		
+	// Get project's users
+	public static ArrayList<String> getUsers(Context context, String projectId) {
+		return getProject(context, projectId).getUsers();
 	}
 	
-	// Get all users 
 	// Add video id or timestamp
+	public void addVideoToProject(Context context, String videoId, String projectId) {
+		Project project = getProject(context, projectId);
+		project.addVideo(videoId);	// TODO is it video id or timestamp? deal with each case
+		saveProject(project);
+	}
+	
 	// Get video id or timestamp
 	
 	private static void writeToFile(File file, String data) {
@@ -57,16 +71,11 @@ public class JSONManager {
 	
 	private static String readFromFile(Context context, File file) {
 		try {
-			Log.v("readFromFile", "about to read from file " + file.getPath());
 			BufferedReader reader = new BufferedReader(new FileReader(file));
-//			FileInputStream in = context.openFileInput(file);
-//		    InputStreamReader inputStreamReader = new InputStreamReader(in);
-//		    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 		    StringBuilder sb = new StringBuilder();
 		    String line;
 		    while ((line = reader.readLine()) != null) {
 		        sb.append(line);
-		        Log.v("readFromFile", "line is " + line);
 		    }
 		    reader.close();
 		    return sb.toString();
@@ -79,10 +88,8 @@ public class JSONManager {
 	
 	// Get project title from project filename (like "proj_123.json")
 	public static String getProjectTitle(Context context, String projectFilename) {
-		Log.v("getProjectTitle", "projectfilename is " + projectFilename);
 		Project project = getProject(context, Constants.getIdFromFilename(projectFilename));
 		String title = project.getTitle();
-		Log.v("getProjectTitle", "title is " + title);
 		return title;
 	}
 	

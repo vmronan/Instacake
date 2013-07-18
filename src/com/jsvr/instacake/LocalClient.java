@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import android.util.Log;
+import android.content.Context;
 
 import com.jsvr.instacake.json.JSONManager;
 
@@ -23,7 +23,6 @@ public class LocalClient {
 					projectstxt.createNewFile();
 			}
 			BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
-			Log.v("createProject", "appending " + Constants.getProjectFilename(projectId));
 			buf.append(Constants.getProjectFilename(projectId));
 			buf.newLine();
 			buf.close();
@@ -32,13 +31,8 @@ public class LocalClient {
 		}
 	}
 
-	public static void addUserToProject(String instaId, String projectId) {
-		if (projectId.equals("0")){
-			Log.v("addUserToProject", "project id is not valid");
-			return;
-		}
-		
-		// Add user to proj_123.json
+	public static void addUserToProject(Context context, String instaId, String projectId) {
+		JSONManager.addUserToProject(context, instaId, projectId);
 	}
 	
 	public static void addVideoToProject(String projectId, String videoId) {

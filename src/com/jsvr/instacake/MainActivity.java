@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
         };
         
         registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        
+        // TODO need to unregister receiver somewhere
         
     }
     

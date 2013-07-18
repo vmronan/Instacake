@@ -23,6 +23,10 @@ public class Project {
 	public void addUser(String instaId) {
 		mUsers.add(instaId);
 	}
+	
+	public void addVideo(String videoId) {
+		mVideoIds.add(videoId);
+	}
 
 	
 	// Getters and setters for instance variables

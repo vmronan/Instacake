@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -47,7 +46,6 @@ public class ViewProjectsActivity extends Activity {
 		String[] titles = new String[numProjects];
 		for(int i = 0; i < numProjects; i++) {
 			titles[i] = JSONManager.getProjectTitle(this, projectFiles.get(i));
-			Log.v("showProjects", "next title is " + titles[i]);
 		}
 		
 		// Display titles with ArrayAdapter
