@@ -17,25 +17,18 @@ import com.jsvr.instacake.Constants;
 import com.jsvr.instacake.Project;
 
 public class JSONManager {
-	// The following functions all deal with a file like "proj_12345.json"
 	
 	public static void saveNewProject(Project project) {
 		// Make proj_projectId.json
 		saveProject(project);
+		Log.v("saveNewProject", "users: " + project.getUsers());
 	}
 
-	// Get project object from JSON file with GSON
-	public static Project getProject(Context context, String projectId) {
-		Log.v("getProject", "reading from file " + Constants.getProjectPath(projectId));
-		String json = readFromFile(context, new File(Constants.getProjectPath(projectId)));
-		Type type = new TypeToken<Project>(){}.getType();
-		return new Gson().fromJson(json, type);
-	}
-	
 	// Saves project object to JSON file
 	private static void saveProject(Project project) {
 		File projFile = new File(Constants.getProjectPath(project.getProjectId()));
 		String json = new Gson().toJson(project);
+		Log.v("saveProject", "users: " + project.getUsers());
 		writeToFile(projFile, json);
 	}
 	
@@ -46,20 +39,12 @@ public class JSONManager {
 		saveProject(project);
 	}
 	
-	// Get project's users
-	public static ArrayList<String> getUsers(Context context, String projectId) {
-		return getProject(context, projectId).getUsers();
-	}
-	
-	// Add video id or timestamp
 	public void addVideoToProject(Context context, String videoId, String projectId) {
 		Project project = getProject(context, projectId);
 		project.addVideo(videoId);	// TODO is it video id or timestamp? deal with each case
 		saveProject(project);
 	}
-	
-	// Get video id or timestamp
-	
+
 	private static void writeToFile(File file, String data) {
 		try {
 			FileWriter fw = new FileWriter(file);
@@ -70,7 +55,7 @@ public class JSONManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static String readFromFile(Context context, File file) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -86,6 +71,21 @@ public class JSONManager {
 		}
 		
 		return null;
+	}
+
+	// Get project object from JSON file with GSON
+	public static Project getProject(Context context, String projectId) {
+		Log.v("getProject", "reading from file " + Constants.getProjectPath(projectId));
+		String json = readFromFile(context, new File(Constants.getProjectPath(projectId)));
+		Type type = new TypeToken<Project>(){}.getType();
+		Project p= new Gson().fromJson(json, type);
+		Log.v("getProject", "users: " + p.getUsers());
+		return p;
+	}
+
+	// Get project's users
+	public static ArrayList<String> getUsers(Context context, String projectId) {
+		return getProject(context, projectId).getUsers();
 	}
 	
 	// Get project title from project ID

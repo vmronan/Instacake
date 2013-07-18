@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,12 +50,12 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
 		holder.titleView.setText(project.getTitle());
 		
 		ArrayList<String> users = project.getUsers();
+		int numUsers = users.size();
 		String usersStr = "";
 		if(users.size() > 0) {
 			usersStr = users.get(0);
-			users.remove(0);
-			for(String user : users) {
-				usersStr += ", " + user;
+			for(int i = 1; i < numUsers; i++) {
+				usersStr += ", " + users.get(i);
 			}
 		}
 		holder.usersView.setText(usersStr);
