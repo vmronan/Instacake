@@ -110,12 +110,7 @@ public class Constants {
 	public static String getProjectPath(String projectId) {
 		return DIR_PROJECTS.getPath() + File.separator + "proj_" + projectId + ".json";
 	}
-	
-//	// Gets filepath of one thumbnail in Instagram pictures folder
-//	public static String getMyThumbnailFilePath(String created_time) {
-//		return DIR_MY_THUMBS.getPath() + File.separator + "IMG_" + created_time + ".jpg";
-//	}
-//	
+
 	public static String getThumbnailFilePath(String thumbnailId) {
 		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
 				Environment.DIRECTORY_PICTURES), "Instacake");

@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
+import com.jsvr.instacake.adapters.ThumbnailListArrayAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.JSONManager;
 import com.jsvr.instacake.local.LocalClient;
@@ -50,7 +50,7 @@ public class ViewProjectActivity extends Activity {
 	private void showThumbnails() {
 		final String[] thumbnailUris = getThumbnailUris();
 		
-		ThumbnailArrayAdapter adapter = new ThumbnailArrayAdapter(this, R.layout.thumbnail_row, thumbnailUris);
+		ThumbnailListArrayAdapter adapter = new ThumbnailListArrayAdapter(this, R.layout.thumbnail_row, thumbnailUris);
 		ListView listView = (ListView) findViewById(R.id.listview_thumbnails);
 		listView.setAdapter(adapter);
 		
@@ -92,7 +92,13 @@ public class ViewProjectActivity extends Activity {
 				usersStr += ", " + user;
 			}
 		}
-	    ((TextView)findViewById(R.id.users)).setText("Users: " + usersStr);
+	    ((TextView)findViewById(R.id.users)).setText(usersStr);
 	    ((EditText)findViewById(R.id.project_new_user)).setText("");
+	}
+	
+	public void addVideos(View v) {
+		Intent i = new Intent(this, ViewVideosActivity.class);
+		i.putExtra(Constants.PROJECT_ID_KEY, projectId);
+    	startActivity(i);
 	}
 }
