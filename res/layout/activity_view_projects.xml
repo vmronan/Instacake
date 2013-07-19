@@ -23,20 +23,15 @@
 	    
 	    <Button
 	        android:id="@+id/new_project"
-	        android:layout_width="40dp"
-	        android:layout_height="40dp"
-	        android:background="@drawable/ic_plus"
+	        style="@style/GreenPlus"
 	        android:onClick="newProject" />
     </LinearLayout>
     
     <TextView
         android:id="@+id/projects_title"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        style="@style/GreenBar"
         android:layout_below="@id/new_project_row"
-        android:background="#c3f97d"
-        android:text="@string/my_projects"
-        android:gravity="center" />
+        android:text="@string/my_projects" />
     
     <ListView
         android:id="@+id/listview_projects"

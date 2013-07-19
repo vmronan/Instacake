@@ -44,7 +44,7 @@
         <activity
             android:name="com.jsvr.instacake.ViewProjectActivity"
             android:label="@string/title_activity_view_project"
-            android:parentActivityName="com.jsvr.instacake.MainActivity" >
+            android:parentActivityName="com.jsvr.instacake.ViewProjectsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jsvr.instacake.MainActivity" />
