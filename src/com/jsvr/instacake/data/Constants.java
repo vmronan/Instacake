@@ -102,6 +102,7 @@ public class Constants {
 	public static String getProjectsFilePath(){
 		return getProjectsDir().getPath() + File.separator + "projects.txt";
 	}
+
 	
 	/* Directory builders */
 	private static File buildOrEnsureDirectory(File mediaStorageDir){

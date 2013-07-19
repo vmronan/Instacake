@@ -20,18 +20,13 @@ import com.jsvr.instacake.rails.TestRailsActivity;
 public class MainActivity extends Activity {
 	SharedPreferences mPrefs;
 	
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Constants.buildOrEnsureAllDirectories();
         
-        mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-        
-
-        
+        mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);      
     }
     
     public void getFeed(View v) {
@@ -41,6 +36,7 @@ public class MainActivity extends Activity {
     
     public void viewVideos(View v) {
     	Intent i = new Intent(this, ViewVideosActivity.class);
+    	i.putExtra(Constants.PROJECT_ID_KEY, "");		// no project ID, so it will show all videos
     	startActivity(i);
     }
     
@@ -68,7 +64,4 @@ public class MainActivity extends Activity {
     public void testGram(View v){
     	startActivity(new Intent(this, TestGramClientActivity.class));
     }
-
-
-
 }

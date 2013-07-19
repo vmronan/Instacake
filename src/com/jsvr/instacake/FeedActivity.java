@@ -18,7 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.jsvr.instacake.adapters.ThumbnailArrayAdapter;
+import com.jsvr.instacake.adapters.ThumbnailListArrayAdapter;
 import com.jsvr.instacake.data.Constants;
 
 public class FeedActivity extends Activity {
@@ -96,7 +96,7 @@ public class FeedActivity extends Activity {
     	@Override
     	protected void onPostExecute(Void result) {
     		Log.v("onPostExecute" , "now setting the adapter with mThumbnails");
-    		ThumbnailArrayAdapter adapter = new ThumbnailArrayAdapter(mContext, 
+    		ThumbnailListArrayAdapter adapter = new ThumbnailListArrayAdapter(mContext, 
     		        R.layout.thumbnail_row, mThumbnails);
     		ListView mFeed = (ListView) findViewById(R.id.feed);
     		mFeed.setAdapter(adapter);

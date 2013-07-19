@@ -31,7 +31,6 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
 		ViewHolder holder = null;
 		
 		if(v == null) {
-			System.out.println("view is null");
 			LayoutInflater inflater = ((Activity)context).getLayoutInflater();
 			v = inflater.inflate(layoutResourceId, parent, false);
 			
@@ -41,7 +40,6 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
 			v.setTag(holder);
 		}
 		else {
-			System.out.println("view is not null");
 			holder = (ViewHolder)v.getTag();
 		}
 		
