@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -35,8 +36,9 @@ public class ViewProjectActivity extends Activity {
 		
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         updateUsers();
+        updateVideos();
         
-        showThumbnails();
+//        showThumbnails();
 	}
 	
 	public void addUser(View v) {
@@ -100,5 +102,30 @@ public class ViewProjectActivity extends Activity {
 		Intent i = new Intent(this, ViewVideosActivity.class);
 		i.putExtra(Constants.PROJECT_ID_KEY, projectId);
     	startActivity(i);
+	}
+	
+	public void addVideo(View v) {
+    	String newVid = ((EditText)findViewById(R.id.new_video)).getText().toString();
+    	Log.v("addVideo", "adding video " + newVid);
+    	LocalClient.addVideoToProject(this, newVid, projectId);
+    	updateVideos();
+	}
+	
+	private void updateVideos() {
+		Log.v("updateVideos", "updating videos");
+	    ArrayList<String> videos = JSONManager.getVideoIds(this, projectId);
+	    String videosStr = "";
+		if(videos.size() > 0) {
+			videosStr = videos.get(0);
+			videos.remove(0);
+			for(String video : videos) {
+				videosStr += ", " + video;
+			}
+		}
+		else {
+			videosStr = "This project does not have any videos yet :(";
+		}
+	    ((TextView)findViewById(R.id.videos)).setText(videosStr);
+	    ((EditText)findViewById(R.id.new_video)).setText("");
 	}
 }
