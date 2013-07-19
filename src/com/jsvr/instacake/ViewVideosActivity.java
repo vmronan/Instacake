@@ -72,8 +72,8 @@ public class ViewVideosActivity extends Activity {
 				Log.v("showVideos", "just added my thumbnail at path: " + thumbnails[i]);
 			}
 			else if(friendsVideos.contains(filenames.get(i))) {
-				thumbnails[i] = Constants.getThumbnailPath(ids.get(i), false);
-				Log.v("showVideos", "just added friend's thumbnail at path: " + thumbnails[i]);
+				thumbnails[i] = getFilename(ids.get(i));
+				Log.v("showVideos", "just added friend's thumbnail at path: " + thumbnails[i]);	// TODO change adapter to take in full path
 			}
 			else {
 				Log.v("showVideos", "could not find file " + filenames.get(i));

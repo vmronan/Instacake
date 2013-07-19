@@ -39,5 +39,9 @@ public class LocalClient {
 	public static void addVideoToProject(Context context, String videoId, String projectId) {
 		JSONManager.addVideoToProject(context, videoId, projectId);
 	}
-
+	
+	// Returns array of thumbnail paths
+//	public static String[] getProjectThumbnails(String projectId) {
+//		
+//	}
 }
