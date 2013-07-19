@@ -46,8 +46,8 @@ public class ThumbnailGridArrayAdapter extends ArrayAdapter<String> {
 			holder = (ViewHolder)v.getTag();  
 		}
 		
-		Uri uri = Uri.parse("file://" + Constants.DIR_MY_THUMBS.getPath() + File.separator + data[position]);
-		String path = Constants.DIR_MY_THUMBS.getPath() + File.separator + data[position];
+		Uri uri = Uri.parse("file://" + Constants.getMyThumbsDir().getPath() + File.separator + data[position]);
+		String path = Constants.getMyThumbsDir().getPath() + File.separator + data[position];
 		Log.v("getView", "path: " + uri);
 
 		try {
