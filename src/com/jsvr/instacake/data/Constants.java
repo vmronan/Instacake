@@ -41,7 +41,7 @@ public class Constants {
 	public static final String PROJECT_ID_KEY = "yodawgi'maprojectid";
 	
 	public static String getProjectFilename(String projectId) {
-		return "proj_" + projectId + ".json";
+		return "PRJ_" + projectId + ".json";
 	}
 	
 	/* Critical Directories */
@@ -134,8 +134,8 @@ public class Constants {
 	}
 	
 	
-	// Gets what's between the _ and . in any filename
+	// Gets what's after the xxx_ and before the . in any filename
 	public static String getIdFromFilename(String filename) {
-		return (filename.split("_")[1]).split("\\.")[0];
+		return (filename.split(".")[0]).substring(4);
 	}
 }
