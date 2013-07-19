@@ -1,22 +1,21 @@
 package com.jsvr.instacake;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.TextView;
 
-import com.jsvr.instacake.adapters.ThumbnailListArrayAdapter;
+import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.JSONManager;
 import com.jsvr.instacake.local.LocalClient;
@@ -31,7 +30,7 @@ public class ViewProjectActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		projectId = getIntent().getStringExtra(Constants.PROJECT_ID_KEY);
-		this.setTitle(JSONManager.getProjectTitle(this, projectId));
+		this.setTitle(JSONManager.getProjectTitle(projectId));
 		setContentView(R.layout.activity_view_project);
 		
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
@@ -39,53 +38,114 @@ public class ViewProjectActivity extends Activity {
         updateVideos();
         
 //        showThumbnails();
+        showVideos(projectId);
 	}
 	
 	public void addUser(View v) {
     	String newUser = ((EditText)findViewById(R.id.project_new_user)).getText().toString();
     	RailsClient.addUserToProject(newUser, projectId);
-    	LocalClient.addUserToProject(this, newUser, projectId);
+    	LocalClient.addUserToProject(newUser, projectId);
     	updateUsers();
 	}
 	
-	// Shows the thumbnails for all videos in this project
-	private void showThumbnails() {
-		final String[] thumbnailUris = getThumbnailUris();
-		
-		ThumbnailListArrayAdapter adapter = new ThumbnailListArrayAdapter(this, R.layout.thumbnail_row, thumbnailUris);
-		ListView listView = (ListView) findViewById(R.id.listview_thumbnails);
-		listView.setAdapter(adapter);
-		
-		listView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				// Get URI of the clicked-on thumbnail, get the ID from the URI, and play the corresponding video
-				String videoId = (thumbnailUris[position].split("_")[1]).split(".")[0];
-				Uri videoUri = Uri.parse(Constants.getMoviesPath(videoId, true));
-				Intent i = new Intent();
-				i.setAction(Intent.ACTION_VIEW);
-				i.setDataAndType(videoUri, "video/mp4");
-				startActivity(i);
-			}
-		});
-	}
 	
-	private String[] getThumbnailUris() {
-    	ArrayList<String> idList = JSONManager.getVideoIds(this, projectId);
-		ArrayList<String> uriList = new ArrayList<String>();
-    	
-    	for(String id : idList) {
-    		uriList.add("IMG_" + id + ".bmp");		// TODO this will only show thumbnails in my thumbnail directory, not friends, because of the adapter
-    	}
-		// Convert arraylist to array of strings to we can use the image adapter later
-		String[] uriArray = new String[uriList.size()];
-		uriArray = uriList.toArray(uriArray);
+	
+	// Shows all videos in a certain project - gets thumbnails from Pictures/Instacake/Me or Pictures/Instacake/Friends
+		private void showVideos(String projectId) {
+			Log.v("showVideos", "starting");
+			ArrayList<String> ids = JSONManager.getVideoPaths(projectId);
+			int numThumbs = 0;
+			if(ids == null) {
+				return;
+			}
+			else {
+				numThumbs = ids.size();
+			}
+			ArrayList<String> filenames = getFilenames(ids);		// filenames of all videos in project
+			
+			Log.v("showVideos", "numThumbs: " + numThumbs);
+			String[] thumbnails = new String[numThumbs];
+			
+			List<String> myVideos = Arrays.asList(Constants.getMyThumbsDir().list());				// filenames of thumbnails of all my videos
+			List<String> friendsVideos = Arrays.asList(Constants.getFriendsThumbsDir().list());	// filenames of thumbnails of all my friends' videos
+			Log.v("showVideos", "num my videos: " + myVideos.size());
+			Log.v("showVideos", "num friends videos: " + friendsVideos.size());
+			
+			// Find each video in my or friends thumbnail directory and add its path to a list of thumbnails to display with the adapter
+			for(int i = 0; i < numThumbs; i++) {
+				String currentFile = filenames.get(i);
+				Log.v("showVideo", "current file: " + currentFile);
+				if(myVideos.contains(filenames.get(i))) {
+					thumbnails[i] = getFilename(ids.get(i)); //Constants.getThumbnailPath(ids.get(i), true);
+					Log.v("showVideos", "just added my thumbnail at path: " + thumbnails[i]);
+				}
+				else if(friendsVideos.contains(filenames.get(i))) {
+					thumbnails[i] = getFilename(ids.get(i));
+					Log.v("showVideos", "just added friend's thumbnail at path: " + thumbnails[i]);	// TODO change adapter to take in full path
+				}
+				else {
+					Log.v("showVideos", "could not find file " + filenames.get(i));
+				}
+			}
+			
+			ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
+			GridView grid = (GridView) findViewById(R.id.gridview_videos);
+			grid.setAdapter(adapter);
+		}
 		
-		return uriArray;
-    }
+		private String getFilename(String id) {
+			return "IMG_" + id + ".jpg";
+		}
+		
+		private ArrayList<String> getFilenames(ArrayList<String> ids) {
+			ArrayList<String> filenames = new ArrayList<String>();
+			for(String id : ids) {
+				filenames.add(getFilename(id));
+			}
+			return filenames;
+		}
+	
+	
+	
+	
+	// Shows the thumbnails for all videos in this project
+//	private void showThumbnails() {
+//		final String[] thumbnailUris = getThumbnailUris();
+//		
+//		ThumbnailListArrayAdapter adapter = new ThumbnailListArrayAdapter(this, R.layout.thumbnail_row, thumbnailUris);
+//		ListView listView = (ListView) findViewById(R.id.listview_thumbnails);
+//		listView.setAdapter(adapter);
+//		
+//		listView.setOnItemClickListener(new OnItemClickListener() {
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//				// Get URI of the clicked-on thumbnail, get the ID from the URI, and play the corresponding video
+//				String videoId = (thumbnailUris[position].split("_")[1]).split(".")[0];
+//				Uri videoUri = Uri.parse(Constants.getMoviesPath(videoId, true));
+//				Intent i = new Intent();
+//				i.setAction(Intent.ACTION_VIEW);
+//				i.setDataAndType(videoUri, "video/mp4");
+//				startActivity(i);
+//			}
+//		});
+//	}
+//	
+//	private String[] getThumbnailUris() {
+//    	ArrayList<String> idList = JSONManager.getVideoIds(this, projectId);
+//		ArrayList<String> uriList = new ArrayList<String>();
+//    	
+//    	for(String id : idList) {
+//    		uriList.add("IMG_" + id + ".bmp");		// TODO this will only show thumbnails in my thumbnail directory, not friends, because of the adapter
+//    	}
+//		// Convert arraylist to array of strings to we can use the image adapter later
+//		String[] uriArray = new String[uriList.size()];
+//		uriArray = uriList.toArray(uriArray);
+//		
+//		return uriArray;
+//    }
 	
 	private void updateUsers() {
-	    ArrayList<String> users = JSONManager.getUsers(this, projectId);
+	    ArrayList<String> users = JSONManager.getUsers(projectId);
 	    String usersStr = "";
 		if(users.size() > 0) {
 			usersStr = users.get(0);
@@ -107,15 +167,16 @@ public class ViewProjectActivity extends Activity {
 	public void addVideo(View v) {
     	String newVid = ((EditText)findViewById(R.id.new_video)).getText().toString();
     	Log.v("addVideo", "adding video " + newVid);
-    	LocalClient.addVideoToProject(this, newVid, projectId);
+    	LocalClient.addVideoToProject(newVid, projectId);
     	updateVideos();
 	}
 	
 	private void updateVideos() {
 		Log.v("updateVideos", "updating videos");
-	    ArrayList<String> videos = JSONManager.getVideoIds(this, projectId);
+	    ArrayList<String> videos = JSONManager.getVideoPaths(projectId);
 	    String videosStr = "";
-		if(videos.size() > 0) {
+		if(videos != null) {
+			Log.v("updateVideos", "videos.size() " + videos.size());
 			videosStr = videos.get(0);
 			videos.remove(0);
 			for(String video : videos) {
