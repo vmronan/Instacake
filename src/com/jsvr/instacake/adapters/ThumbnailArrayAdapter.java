@@ -60,7 +60,7 @@ public class ThumbnailArrayAdapter extends ArrayAdapter<String> {
 		}
 		else {
 			// URL is local and in Pictures/Instagram directory
-			Uri uri = Uri.parse(Constants.DIR_MY_THUMBS.getPath() + File.separator + data[position]);
+			Uri uri = Uri.parse(Constants.getMyThumbsDir().getPath() + File.separator + data[position]);
 			holder.thumbnailView.setImageURI(uri);
 		}
 		

@@ -59,7 +59,7 @@ public class ViewProjectActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				// Get URI of the clicked-on thumbnail, get the ID from the URI, and play the corresponding video
 				String videoId = (thumbnailUris[position].split("_")[1]).split(".")[0];
-				Uri videoUri = Uri.parse(Constants.getVideoFilePath(videoId));
+				Uri videoUri = Uri.parse(Constants.getMoviesPath(videoId, true));
 				Intent i = new Intent();
 				i.setAction(Intent.ACTION_VIEW);
 				i.setDataAndType(videoUri, "video/mp4");

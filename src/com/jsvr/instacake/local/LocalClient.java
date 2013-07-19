@@ -19,7 +19,7 @@ public class LocalClient {
 
 		// Save new project filename to projects.txt
 		try {
-			File projectstxt = new File(Constants.PATH_PROJECTS);
+			File projectstxt = new File(Constants.getProjectsFilePath());
 			if (!projectstxt.exists()){
 					projectstxt.createNewFile();
 			}

@@ -81,7 +81,7 @@ public class ViewProjectsActivity extends Activity {
     
     // Gets list of project IDs
     private void getProjectIds() {
-    	File projectsFile = new File(Constants.PATH_PROJECTS);
+    	File projectsFile = new File(Constants.getProjectsFilePath());
     	
     	Scanner scanner;
 		try {
