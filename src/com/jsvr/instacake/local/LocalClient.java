@@ -36,7 +36,8 @@ public class LocalClient {
 		JSONManager.addUserToProject(context, instaId, projectId);
 	}
 	
-	public static void addVideoToProject(String projectId, String videoId) {
-		// Add videoId to proj_123.json
+	public static void addVideoToProject(Context context, String videoId, String projectId) {
+		JSONManager.addVideoToProject(context, videoId, projectId);
 	}
+
 }

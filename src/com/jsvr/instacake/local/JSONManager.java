@@ -39,9 +39,10 @@ public class JSONManager {
 		saveProject(project);
 	}
 	
-	public void addVideoToProject(Context context, String videoId, String projectId) {
+	public static void addVideoToProject(Context context, String videoId, String projectId) {
 		Project project = getProject(context, projectId);
-		project.addVideo(videoId);	// TODO is it video id or timestamp? deal with each case
+		project.addVideo(videoId);
+		Log.v("addVideoToProject", "adding video " + videoId);
 		saveProject(project);
 	}
 
@@ -75,12 +76,9 @@ public class JSONManager {
 
 	// Get project object from JSON file with GSON
 	public static Project getProject(Context context, String projectId) {
-		Log.v("getProject", "reading from file " + Constants.getProjectPath(projectId));
 		String json = readFromFile(context, new File(Constants.getProjectPath(projectId)));
 		Type type = new TypeToken<Project>(){}.getType();
-		Project p= new Gson().fromJson(json, type);
-		Log.v("getProject", "users: " + p.getUsers());
-		return p;
+		return new Gson().fromJson(json, type);
 	}
 
 	// Get project's users
