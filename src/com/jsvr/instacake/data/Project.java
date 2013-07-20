@@ -25,6 +25,9 @@ public class Project {
 	}
 	
 	public void addVideo(String videoId) {
+		if(mVideoPaths == null) {
+			mVideoPaths = new ArrayList<String>();
+		}
 		mVideoPaths.add(videoId);
 	}
 
