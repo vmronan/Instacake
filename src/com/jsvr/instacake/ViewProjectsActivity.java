@@ -49,7 +49,7 @@ public class ViewProjectsActivity extends Activity {
 		int numProjects = projectIds.size();
 		Project[] projects = new Project[numProjects];
 		for(int i = 0; i < numProjects; i++) {
-			projects[i] = JSONManager.getProject(this, projectIds.get(i));
+			projects[i] = JSONManager.getProject(projectIds.get(i));
 		}
 		
 		// Display titles and users with ProjectListAdapter

@@ -73,6 +73,10 @@
             android:name="com.jsvr.instacake.gram.TestGramClientActivity"
             android:label="@string/title_activity_test_gram_client" >
         </activity>
+        <activity
+            android:name="com.jsvr.instacake.sync.TestSyncActivity"
+            android:label="@string/title_activity_test_sync" >
+        </activity>
     </application>
 
 </manifest>

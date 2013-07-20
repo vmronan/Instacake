@@ -46,7 +46,7 @@ public class ViewVideosActivity extends Activity {
 
 	// Shows all videos in a certain project - gets thumbnails from Pictures/Instacake/Me or Pictures/Instacake/Friends
 	private void showVideos(String projectId) {
-		ArrayList<String> ids = JSONManager.getVideoIds(this, projectId);
+		ArrayList<String> ids = JSONManager.getVideoIds(projectId);
 		for(String id : ids) {
 			Log.v("showVideos", "video id: " + id);
 		}

@@ -136,6 +136,6 @@ public class Constants {
 	
 	// Gets what's after the xxx_ and before the . in any filename
 	public static String getIdFromFilename(String filename) {
-		return (filename.split(".")[0]).substring(4);
+		return (filename.split("\\.")[0]).substring(4);
 	}
 }

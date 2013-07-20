@@ -16,6 +16,7 @@ import com.jsvr.instacake.gram.TestGramClientActivity;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.rails.RailsClient;
 import com.jsvr.instacake.rails.TestRailsActivity;
+import com.jsvr.instacake.sync.TestSyncActivity;
 
 public class MainActivity extends Activity {
 	SharedPreferences mPrefs;
@@ -63,5 +64,8 @@ public class MainActivity extends Activity {
     
     public void testGram(View v){
     	startActivity(new Intent(this, TestGramClientActivity.class));
+    }
+    public void testSync(View v){
+    	startActivity(new Intent(this, TestSyncActivity.class));
     }
 }

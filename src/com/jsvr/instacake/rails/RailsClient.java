@@ -1,17 +1,25 @@
 package com.jsvr.instacake.rails;
 
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.app.DownloadManager;
 import android.util.Log;
 
+import com.jsvr.instacake.gram.GramClient;
+import com.jsvr.instacake.local.LocalClient;
+import com.jsvr.instacake.sync.Sync;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 public class RailsClient {
 	
 	private static String mInstaId;
+	private static DownloadManager mDM;
+	private static String mAccessToken;
 	
 	private static final String BASE_URL = "http://54.218.123.27:3000/";
     private static String getAbsoluteUrl(String relativeUrl) {
@@ -34,10 +42,6 @@ public class RailsClient {
 		RequestParams params = new RequestParams();
 		params.put("project[title]", title);		
 		RestClient.post(getAbsoluteUrl("projects/create"), params, newProjectHandler);
-	}
-
-	private static void addFirstUserToProject(String project_id) {
-		addUserToProject(mInstaId, project_id);
 	}
 
 	public static void addUserToProject(String instaId, String projectId) {
@@ -68,7 +72,7 @@ public class RailsClient {
 		@Override
 		public void onSuccess(String response) {
 			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
-			addFirstUserToProject(getProjectIdFromResponse(response));
+			addUserToProject(mInstaId, getProjectIdFromResponse(response));
 		}
 
 		private String getProjectIdFromResponse(String response) {
@@ -96,6 +100,7 @@ public class RailsClient {
 		String tag = "addUser";
 		@Override
 		public void onSuccess(String response) {
+			super.onSuccess(response);
 			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
 		}
 
@@ -106,6 +111,8 @@ public class RailsClient {
 			super.onFailure(e, response);
 		}
 	};
+
+
 	
 	public static void getProjectsList(String insta_id) {
 		RequestParams params = new RequestParams();
@@ -119,6 +126,51 @@ public class RailsClient {
 		params.put("project_id", project_id);
 		
 		RestClient.post(getAbsoluteUrl("projects/get_videos_for_project"), params, RestClient.getResponseHandler("getVideosForProject"));
+	}
+
+	public static void syncProjectsFile(String instaId, String accessToken, DownloadManager dm) {
+		mAccessToken = accessToken;
+		mDM = dm;
+		mInstaId = instaId;
+		RequestParams params = new RequestParams();
+		params.put("insta_id", mInstaId);
+		
+		RestClient.post(getAbsoluteUrl("projects/get_projects_list"), params, new AsyncHttpResponseHandler(){
+			@Override
+			public void onSuccess(String response){
+				super.onSuccess(response);
+				ArrayList<String> myRailsProjects = RailsJSONManager.getProjectListFromResponse(response);
+				ArrayList<String> myLocalProjects = LocalClient.readProjectsFile();
+				for (String project : myRailsProjects){
+					if (!myLocalProjects.contains(project)){
+						System.out.println("Creating project with id " + project);
+						LocalClient.createProject(project, "some title", mInstaId);
+						Sync.syncProject(project, mAccessToken, mDM);
+					}
+				}
+			}
+		});
+		
+	}
+
+	public static void syncProject(final String projectId, String accessToken, DownloadManager dm) {
+		mAccessToken = accessToken;
+		mDM = dm;
+		
+		RequestParams params = new RequestParams();
+		params.put("project_id", projectId);
+		RestClient.post(getAbsoluteUrl("projects/get_videos_for_project"), params, new AsyncHttpResponseHandler(){
+			@Override
+			public void onSuccess(String response){
+				super.onSuccess(response);
+				ArrayList<String> videos = RailsJSONManager.getVideosForProjectFromResponse(response);
+				for (String video : videos){
+					GramClient.syncMovie(video, mAccessToken, mDM, false);
+					LocalClient.addVideoToProject(video, projectId);
+				}
+			}
+		});
+		
 	}
 	
 }

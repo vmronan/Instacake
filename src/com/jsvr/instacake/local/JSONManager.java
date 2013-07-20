@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -33,16 +32,16 @@ public class JSONManager {
 	}
 	
 	// Add user	to specific project
-	public static void addUserToProject(Context context, String instaId, String projectId) {
-		Project project = getProject(context, projectId);
+	public static void addUserToProject(String instaId, String projectId) {
+		Project project = getProject(projectId);
 		project.addUser(instaId);
 		saveProject(project);
 	}
 	
-	public static void addVideoToProject(Context context, String videoId, String projectId) {
-		Project project = getProject(context, projectId);
-		project.addVideo(videoId);
-		Log.v("addVideoToProject", "adding video " + videoId);
+	public static void addVideoToProject(String videoPath, String projectId) {
+		Project project = getProject(projectId);
+		project.addVideo(videoPath);
+		Log.v("addVideoToProject", "adding video " + videoPath);
 		saveProject(project);
 	}
 
@@ -57,7 +56,7 @@ public class JSONManager {
 		}
 	}
 
-	private static String readFromFile(Context context, File file) {
+	private static String readFromFile(File file) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 		    StringBuilder sb = new StringBuilder();
@@ -75,28 +74,28 @@ public class JSONManager {
 	}
 
 	// Get project object from JSON file with GSON
-	public static Project getProject(Context context, String projectId) {
-		String json = readFromFile(context, new File(Constants.getProjectPath(projectId)));
+	public static Project getProject(String projectId) {
+		String json = readFromFile(new File(Constants.getProjectPath(projectId)));
 		Type type = new TypeToken<Project>(){}.getType();
 		return new Gson().fromJson(json, type);
 	}
 
 	// Get project's users
-	public static ArrayList<String> getUsers(Context context, String projectId) {
-		return getProject(context, projectId).getUsers();
+	public static ArrayList<String> getUsers(String projectId) {
+		return getProject(projectId).getUsers();
 	}
 	
 	// Get project title from project ID
-	public static String getProjectTitle(Context context, String projectId) {
-		Project project = getProject(context, projectId);
+	public static String getProjectTitle(String projectId) {
+		Project project = getProject(projectId);
 		String title = project.getTitle();
 		return title;
 	}
 	
-	// Get list of video IDs from project ID
-	public static ArrayList<String> getVideoIds(Context context, String projectId) {
-		Project project = getProject(context, projectId);
-		ArrayList<String> videoIds = project.getVideoIds();
+	// Get list of video paths from project ID
+	public static ArrayList<String> getVideoPaths(String projectId) {
+		Project project = getProject(projectId);
+		ArrayList<String> videoIds = project.getVideoPaths();
 		return videoIds;
 	}
 	
