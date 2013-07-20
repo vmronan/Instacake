@@ -23,7 +23,7 @@ import com.jsvr.instacake.local.LocalClient;
 public class ViewVideosActivity extends Activity implements OnItemSelectedListener {
 	
 	String projectId;
-	ArrayList<String> videoPaths;
+	ArrayList<String> projectIds;
 	boolean selectorOn;
 	
 	@Override
@@ -33,7 +33,7 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		
 		projectId = getIntent().getStringExtra(Constants.PROJECT_ID_KEY);
 		selectorOn = false;
-		videoPaths = new ArrayList<String>();
+		projectIds = LocalClient.readProjectsFile();
 		setupSpinner();
 		if(projectId.equals("")) {
 			Log.v("onCreate", "showing all my videos");
@@ -41,9 +41,10 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		}
 		else {
 			Log.v("onCreate", "showing videos for project " + projectId);
-//			showVideos(projectId);
+			showVideos();
 		}
 	}
+	
 	// Connect title with ID
 	private void setupSpinner() {
 		// Get list of projects
@@ -52,23 +53,59 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, projects);
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(this);
+		spinner.setSelection(projectIds.indexOf(projectId));
 	}
 	
-	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-		String project = parent.getItemAtPosition(pos).toString();
-		Log.v("onItemSelected", "project: " + pos);
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		projectId = projectIds.get(position);
+		Log.v("onItemSelected", "project: " + projectId + ", " + parent.getItemAtPosition(position).toString());
 	}
 	
 	public void onNothingSelected(AdapterView<?> parent) {
 		// Nothing to do
 	}
 
+	
+	private void showVideos() {
+		File myDir = Constants.getMyThumbsDir();
+		File friendsDir = Constants.getFriendsThumbsDir();
+		String[] myThumbs = myDir.list();
+		String[] friendsThumbs = friendsDir.list();
+		int numMyThumbs = myThumbs.length;
+		int numFriendsThumbs = friendsThumbs.length;
+		String[] thumbnails = new String[numMyThumbs + numFriendsThumbs];
+		for(int i = 0; i < numMyThumbs; i++) {
+			thumbnails[i] = Constants.getMyThumbsDir().getPath() + File.separator + myThumbs[i];
+		}
+		for(int i = numMyThumbs; i < numMyThumbs+numFriendsThumbs; i++) {
+			thumbnails[i] = Constants.getFriendsThumbsDir().getPath() + File.separator + friendsThumbs[i-numMyThumbs];
+		}
+		
+		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
+		GridView grid = (GridView) findViewById(R.id.gridview_videos);
+		grid.setAdapter(adapter);
+		
+		grid.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+				if(selectorOn) {
+					LocalClient.addVideoToProject(parent.getItemAtPosition(pos).toString(), projectId);
+					Log.v("onItemClick", "added " + parent.getItemAtPosition(pos) + " to project " + projectId);
+				}
+			}
+		});
+		
+	}
+	
+	
 	// Show all of my videos - gets all thumbnails from Pictures/Instacake/Me
 	private void showMyVideos() {
 		File directory = Constants.getMyThumbsDir();
 		String[] thumbnails = directory.list();
-		for(String s : thumbnails) {
-			Log.v("showMyVideos", "thumbnail: " + s);
+		int numThumbs = thumbnails.length;
+		for(int i = 0; i < numThumbs; i++) {
+			thumbnails[i] = Constants.getMyThumbsDir().getPath() + File.separator + thumbnails[i];
+			Log.v("showMyVideos", "thumbnail: " + thumbnails[i]);
 		}
 		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
 		GridView grid = (GridView) findViewById(R.id.gridview_videos);
@@ -77,8 +114,10 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-				Log.v("onItemClick", "clicked on " + parent.getItemAtPosition(pos));
-//				LocalClient.addVideoToProject(videoPath, projectId);
+				if(selectorOn) {
+					LocalClient.addVideoToProject(parent.getItemAtPosition(pos).toString(), projectId);
+					Log.v("onItemClick", "added " + parent.getItemAtPosition(pos) + " to project " + projectId);
+				}
 			}
 		});
 	}
@@ -87,10 +126,10 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		selectorOn = !selectorOn;
 		Log.v("toggleSelector", "selector is " + selectorOn);
 		if(selectorOn) {
-			((Button)findViewById(R.id.select)).setTextColor(0xff3300);		// red if selected
+			((Button)findViewById(R.id.select)).setTextColor(getResources().getColor(R.color.lime_green));		// red if selected
 		}
 		else {
-			((Button)findViewById(R.id.select)).setTextColor(0x0);		// black otherwise
+			((Button)findViewById(R.id.select)).setTextColor(getResources().getColor(R.color.black));		// black otherwise
 		}
 	}
 	

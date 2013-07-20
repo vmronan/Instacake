@@ -1,13 +1,9 @@
 package com.jsvr.instacake.adapters;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.jsvr.instacake.R;
-import com.jsvr.instacake.data.Constants;
 
 public class ThumbnailGridArrayAdapter extends ArrayAdapter<String> {
 	
@@ -46,9 +41,9 @@ public class ThumbnailGridArrayAdapter extends ArrayAdapter<String> {
 			holder = (ViewHolder)v.getTag();  
 		}
 		
-		Uri uri = Uri.parse("file://" + Constants.getMyThumbsDir().getPath() + File.separator + data[position]);
-		String path = Constants.getMyThumbsDir().getPath() + File.separator + data[position];
-		Log.v("getView", "path: " + uri);
+//		Uri uri = Uri.parse("file://" + Constants.getMyThumbsDir().getPath() + File.separator + data[position]);
+//		String path = Constants.getMyThumbsDir().getPath() + File.separator + data[position];
+		String path = data[position];
 
 		try {
 			holder.thumbnailView.setImageBitmap(meh(path, 100, 100));
