@@ -128,7 +128,7 @@ public class RailsClient {
 		RestClient.post(getAbsoluteUrl("projects/get_videos_for_project"), params, RestClient.getResponseHandler("getVideosForProject"));
 	}
 
-	public static void syncProjectsFile(String instaId, String accessToken, DownloadManager dm) {
+	public static void syncAllProjects(String instaId, String accessToken, DownloadManager dm) {
 		mAccessToken = accessToken;
 		mDM = dm;
 		mInstaId = instaId;
@@ -145,8 +145,8 @@ public class RailsClient {
 					if (!myLocalProjects.contains(project)){
 						System.out.println("Creating project with id " + project);
 						LocalClient.createProject(project, "some title", mInstaId);
-						Sync.syncProject(project, mAccessToken, mDM);
 					}
+					Sync.syncProject(project, mAccessToken, mDM);
 				}
 			}
 		});
@@ -163,11 +163,19 @@ public class RailsClient {
 			@Override
 			public void onSuccess(String response){
 				super.onSuccess(response);
+				Log.v("syncProject " + projectId, "onSuccess() has response \n" + response);
 				ArrayList<String> videos = RailsJSONManager.getVideosForProjectFromResponse(response);
 				for (String video : videos){
 					GramClient.syncMovie(video, mAccessToken, mDM, false);
 					LocalClient.addVideoToProject(video, projectId);
 				}
+			}
+			
+			@Override
+			public void onFailure(Throwable e, String response) {
+				Log.v("syncProject " + projectId, "onFailure() has response \n" + response);
+				e.printStackTrace();
+				super.onFailure(e, response);
 			}
 		});
 		

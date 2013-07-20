@@ -23,9 +23,9 @@ public class TestSyncActivity extends Activity {
 
 	public void syncProjects(View v){
 		dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-		Sync.syncProjectsFile(mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"), 
-							  mPrefs.getString(Constants.ACCESS_TOKEN_KEY, "NOTOKEN"),
-							  dm);
+		Sync.syncAllProjects(mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"), 
+							 mPrefs.getString(Constants.ACCESS_TOKEN_KEY, "NOTOKEN"),
+							 dm);
 	}
 
 }

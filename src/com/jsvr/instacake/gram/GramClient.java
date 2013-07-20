@@ -96,7 +96,7 @@ public class GramClient {
 							System.out.println("vid is " + myVid);
 						}
 						
-						VideoSync.compareAndDownloadVids(myVids);
+						VideoSync.compareAndDownloadVids(myVids); 
 					}
 				}
 				

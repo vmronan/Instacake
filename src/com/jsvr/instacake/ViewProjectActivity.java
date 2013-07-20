@@ -175,7 +175,7 @@ public class ViewProjectActivity extends Activity {
 		Log.v("updateVideos", "updating videos");
 	    ArrayList<String> videos = JSONManager.getVideoPaths(projectId);
 	    String videosStr = "";
-		if(videos != null) {
+		if(videos.size() > 0) {
 			Log.v("updateVideos", "videos.size() " + videos.size());
 			videosStr = videos.get(0);
 			videos.remove(0);
