@@ -34,10 +34,18 @@
         android:text="download both" />
     
     <Button
-        android:id="@+id/viewDownloads"
+        android:id="@+id/syncWithMyFeed"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/downloadBoth"
+        android:onClick="syncWithMyFeed" 
+        android:text="sync feed" />
+    
+    <Button
+        android:id="@+id/viewDownloads"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/syncWithMyFeed"
         android:onClick="viewDownloads" 
         android:text="viewDownloads" />
 

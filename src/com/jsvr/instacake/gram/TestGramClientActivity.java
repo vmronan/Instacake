@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.jsvr.instacake.R;
 import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.sync.VideoSync;
 
 public class TestGramClientActivity extends Activity {
 	SharedPreferences mPrefs;
@@ -70,6 +71,11 @@ public class TestGramClientActivity extends Activity {
     public void downloadBoth(View v){
     	dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
     	GramClient.syncMovie("501532579250690997_467380373", mAccessToken, dm, true);
+    }
+    
+    public void syncWithMyFeed(View v){
+    	dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+    	VideoSync.syncWithMyFeed(mAccessToken, dm);
     }
     
     public void viewDownloads(View view) {

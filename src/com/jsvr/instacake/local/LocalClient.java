@@ -1,9 +1,12 @@
 package com.jsvr.instacake.local;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import android.content.Context;
 
@@ -32,12 +35,31 @@ public class LocalClient {
 		}
 	}
 
-	public static void addUserToProject(Context context, String instaId, String projectId) {
-		JSONManager.addUserToProject(context, instaId, projectId);
+	public static void addUserToProject(String instaId, String projectId) {
+		JSONManager.addUserToProject(instaId, projectId);
 	}
 	
-	public static void addVideoToProject(Context context, String videoId, String projectId) {
-		JSONManager.addVideoToProject(context, videoId, projectId);
+	public static void addVideoToProject(String videoPath, String projectId) {
+		JSONManager.addVideoToProject(videoPath, projectId);
 	}
+
+	public static ArrayList<String> readProjectsFile() {
+		ArrayList<String> projectIds  = new ArrayList<String>();
+		try {
+			BufferedReader br;
+			File projectsFile = new File(Constants.getProjectsFilePath());
+			br = new BufferedReader(new FileReader(projectsFile));
+			String line;
+			while ((line = br.readLine()) != null) {
+				projectIds.add(line.trim());
+			}
+			br.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return projectIds;
+	}
+	
 
 }
