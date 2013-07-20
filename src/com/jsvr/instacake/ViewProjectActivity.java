@@ -31,7 +31,7 @@ public class ViewProjectActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		projectId = getIntent().getStringExtra(Constants.PROJECT_ID_KEY);
-		this.setTitle(JSONManager.getProjectTitle(this, projectId));
+		this.setTitle(JSONManager.getProjectTitle(projectId));
 		setContentView(R.layout.activity_view_project);
 		
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
@@ -44,7 +44,7 @@ public class ViewProjectActivity extends Activity {
 	public void addUser(View v) {
     	String newUser = ((EditText)findViewById(R.id.project_new_user)).getText().toString();
     	RailsClient.addUserToProject(newUser, projectId);
-    	LocalClient.addUserToProject(this, newUser, projectId);
+    	LocalClient.addUserToProject(newUser, projectId);
     	updateUsers();
 	}
 	
@@ -71,7 +71,7 @@ public class ViewProjectActivity extends Activity {
 	}
 	
 	private String[] getThumbnailUris() {
-    	ArrayList<String> idList = JSONManager.getVideoIds(this, projectId);
+    	ArrayList<String> idList = JSONManager.getVideoIds(projectId);
 		ArrayList<String> uriList = new ArrayList<String>();
     	
     	for(String id : idList) {
@@ -85,7 +85,7 @@ public class ViewProjectActivity extends Activity {
     }
 	
 	private void updateUsers() {
-	    ArrayList<String> users = JSONManager.getUsers(this, projectId);
+	    ArrayList<String> users = JSONManager.getUsers(projectId);
 	    String usersStr = "";
 		if(users.size() > 0) {
 			usersStr = users.get(0);
@@ -107,7 +107,7 @@ public class ViewProjectActivity extends Activity {
 	public void addVideo(View v) {
     	String newVid = ((EditText)findViewById(R.id.new_video)).getText().toString();
     	Log.v("addVideo", "adding video " + newVid);
-    	LocalClient.addVideoToProject(this, newVid, projectId);
+    	LocalClient.addVideoToProject(newVid, projectId);
     	updateVideos();
 	}
 	
