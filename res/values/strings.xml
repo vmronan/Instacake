@@ -23,5 +23,7 @@
     <string name="listview_thumbnails_title">Videos</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_test_gram_client">TestGramClientActivity</string>
+    <string name="select">Select</string>
+    <string name="done">Done</string>
 
 </resources>

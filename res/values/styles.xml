@@ -1,6 +1,7 @@
 <resources>
 
     <color name="lime_green">#c3f97d</color>
+    <color name="black">#000000</color>
     
     <!--
         Base application theme, dependent on API level. This theme is replaced

@@ -1,8 +1,10 @@
 package com.jsvr.instacake.local;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +47,24 @@ public class LocalClient {
 //	public static String[] getProjectThumbnails(String projectId) {
 //		
 //	}
+	
+	public static ArrayList<String> getProjectIds() {
+		ArrayList<String> projectIds  = new ArrayList<String>();
+		try {
+			BufferedReader br;
+			File projectsFile = new File(Constants.getProjectsFilePath());
+			br = new BufferedReader(new FileReader(projectsFile));
+			String line;
+			while ((line = br.readLine()) != null) {
+				projectIds.add(line.trim());
+			}
+			br.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return projectIds;
+	}
 	
 	public static String[] getProjectTitles() {
 		// Get arraylist of project IDs from projects.txt
