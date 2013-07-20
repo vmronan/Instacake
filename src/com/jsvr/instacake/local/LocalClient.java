@@ -48,24 +48,6 @@ public class LocalClient {
 //		
 //	}
 	
-	public static ArrayList<String> getProjectIds() {
-		ArrayList<String> projectIds  = new ArrayList<String>();
-		try {
-			BufferedReader br;
-			File projectsFile = new File(Constants.getProjectsFilePath());
-			br = new BufferedReader(new FileReader(projectsFile));
-			String line;
-			while ((line = br.readLine()) != null) {
-				projectIds.add(line.trim());
-			}
-			br.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return projectIds;
-	}
-	
 	public static String[] getProjectTitles() {
 		// Get arraylist of project IDs from projects.txt
 		ArrayList<String> projectIds = new ArrayList<String>();
@@ -89,5 +71,23 @@ public class LocalClient {
 		}
 		
 		return titles;
+	}
+
+	public static ArrayList<String> readProjectsFile() {
+		ArrayList<String> projectIds  = new ArrayList<String>();
+		try {
+			BufferedReader br;
+			File projectsFile = new File(Constants.getProjectsFilePath());
+			br = new BufferedReader(new FileReader(projectsFile));
+			String line;
+			while ((line = br.readLine()) != null) {
+				projectIds.add(line.trim());
+			}
+			br.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return projectIds;
 	}
 }

@@ -62,6 +62,14 @@
         android:onClick="testGram" 
         android:text="test gram" />
     
+    <Button 
+        android:id="@+id/testSync"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/testGram"
+        android:onClick="testSync" 
+        android:text="test sync" />
+    
 
 
 </RelativeLayout>
