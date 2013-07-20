@@ -85,9 +85,18 @@ public class LocalClient {
 			}
 			br.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return projectIds;
+	}
+	
+	// Turns ArrayList<String> into String[]
+	public static String[] getArray(ArrayList<String> arraylist) {
+		int size = arraylist.size();
+		String[] array = new String[size];
+		for(int i = 0; i < size; i++) {
+			array[i] = arraylist.get(i);
+		}
+		return array;
 	}
 }

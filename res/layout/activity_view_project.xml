@@ -45,38 +45,12 @@
         style="@style/GreenBar"
         android:layout_below="@id/new_user_row"
         android:text="@string/listview_thumbnails_title" />
-    
-    <TextView
-        android:id="@+id/videos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/listview_thumbnails_title" />
-    
-    <LinearLayout
-        android:id="@+id/new_video_row"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@id/videos"
-        android:orientation="horizontal" >
-        
-		<EditText 
-	        android:id="@+id/new_video"
-	        android:layout_width="0dip"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:hint="Video ID"/>
-	    
-	    <Button
-	        android:id="@+id/new_video_button"
-	        style="@style/GreenPlus"
-	        android:onClick="addVideo" />
-    </LinearLayout>
-    
-  <Button
+
+  	<Button
         android:id="@+id/project_add_videos"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/new_video_row"
+        android:layout_below="@id/listview_thumbnails_title"
         android:text="@string/project_add_videos"
         android:onClick="addVideos" />
     
