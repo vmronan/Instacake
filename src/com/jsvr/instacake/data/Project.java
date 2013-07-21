@@ -2,6 +2,8 @@ package com.jsvr.instacake.data;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 public class Project {
 	String mProjectUid;
 	String mTitle;
@@ -24,16 +26,17 @@ public class Project {
 		mUsers.add(userUid);
 	}
 	
-	public void addVideo(String videoId) {
+	public void addVideo(String videoPath) {
 		if(mVideoPaths == null) {
 			mVideoPaths = new ArrayList<String>();
 		}
-		mVideoPaths.add(videoId);
+		mVideoPaths.add(videoPath);
+		Log.v("addVideo", "adding " + videoPath);
 	}
 
 	
 	// Getters and setters for instance variables
-	public String getProjectId() {
+	public String getProjectUid() {
 		return mProjectUid;
 	}
 
