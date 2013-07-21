@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.jsvr.instacake.data.Constants;
@@ -111,5 +112,14 @@ public class LocalClient {
 			Log.v("showMyVideos", "thumbnail: " + thumbnails[i]);
 		}
 		return thumbnails;
+	}
+
+	public static ArrayList<String> getVideoUidsForProject(String projectUid) {
+		ArrayList<String> videoPaths = LocalJSONManager.getVideoPaths(projectUid);
+		ArrayList<String> videoUids = new ArrayList<String>();
+		for (String videoPath : videoPaths){
+			videoUids.add(Constants.getIdFromFilename(Uri.parse(videoPath).getLastPathSegment()));
+		}
+		return videoUids;
 	}
 }

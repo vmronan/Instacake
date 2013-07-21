@@ -28,17 +28,17 @@ public class TestRailsActivity extends Activity {
     }
     
     
-	public void createUser(View v){
-		RailsClient.createUser(mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
-	}
-	
-	public void createOtherUser(View v){
-		RailsClient.createUser("somebogusvalue");
-	}
-	
-	public void createProject(View v){
-		RailsClient.createProject("blabla", "My super cool project", mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
-	}
+//	public void createUser(View v){
+//		RailsClient.createUser(mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
+//	}
+//	
+//	public void createOtherUser(View v){
+//		RailsClient.createUser("somebogusvalue");
+//	}
+//	
+//	public void createProject(View v){
+//		RailsClient.createProject("blabla", "My super cool project", mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
+//	}
 	
 	public void addVideoToProject(View v){
 		String project_id = "1";
@@ -48,9 +48,9 @@ public class TestRailsActivity extends Activity {
 		RailsClient.addVideoToProject(project_id, insta_user_id, created_at, insta_video_id);
 	}
 	
-	public void addUserToProject(View v){
-		RailsClient.addUserToProject("somebogusvalue", "1");
-	}
+//	public void addUserToProject(View v){
+//		RailsClient.addUserToProject("somebogusvalue", "1");
+//	}
 	
 	public void addVideoToProjectAsOtherUser(View v){
 		RailsClient.addVideoToProject("1", "somebogusvalue", "12312312", "8768768"); 
