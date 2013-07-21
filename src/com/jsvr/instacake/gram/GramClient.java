@@ -14,6 +14,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.sync.Sync;
+import com.jsvr.instacake.sync.Sync.SyncCallback;
 import com.jsvr.instacake.sync.VideoSync;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -25,6 +27,7 @@ public class GramClient {
 	private static final String GET_THUMB = "getThumbnail";
 	private static final String GET_MOVIE = "getMovie";
 	private static final String SYNC_WITH_FEED = "syncWithFeed";
+	public static final String NO_USER_FOUND = "No User was found";
 	
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
@@ -147,6 +150,7 @@ public class GramClient {
 		public static ArrayList<String> getMovieIdsFromJson(JSONObject json){
 			ArrayList<String> myMovies = new ArrayList<String>();
 			try {
+				// Response is an array of feed items, both video and image.
 				JSONArray array = json.getJSONArray("data");
 				int length = array.length();
 				for (int i=0; i<length; i++){
@@ -156,11 +160,59 @@ public class GramClient {
 					}
 				}				
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return myMovies;
 			
 		}
+
+		public static String getUserUidFromJson(JSONObject json, String desiredUsername) {
+			try{
+				// Response is an array of similar usernames.
+				// TODO: Allow user to choose correct user from these usernames.
+				JSONArray array = json.getJSONArray("data");
+				int length = array.length();
+				for (int i=0; i<length; i++){
+					JSONObject user = array.getJSONObject(i);
+					//TODO: toLowerCase() threw a warning regarding locale, which I accidentally suppressed in this file.
+					if (user.getString("username").toLowerCase().equals(desiredUsername.toLowerCase())){
+						return user.getString("id");
+					}
+				}
+				return NO_USER_FOUND;
+				
+			} catch (JSONException e){
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+
+	public static void getUserUid(final String newUsername, String accessToken, final SyncCallback foundUserUid) {
+		// Asynchronously find UserUid and pass it through the provided SyncCallback
+		RequestParams params = new RequestParams();
+		params.put("q", newUsername);
+		params.put("access_token", accessToken);
+		client.get(getAbsoluteUrl("users/search"), params, new AsyncHttpResponseHandler(){
+			@Override
+			public void onSuccess(String response){
+				super.onSuccess(response);
+				String userUid = GramJSONManager.getUserUidFromJson(GramJSONManager.parseMediaResponse(response), newUsername);
+				if (userUid.equals(NO_USER_FOUND)){
+					foundUserUid.callbackCall(Sync.ERROR, NO_USER_FOUND);
+				} else {
+					foundUserUid.callbackCall(Sync.RESPONSE_OK, userUid);
+				}
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable e, String response){
+				super.onFailure(e, response);
+				e.printStackTrace();
+				foundUserUid.callbackCall(Sync.ERROR, response);
+			}
+		});
+		
 	}
 }
