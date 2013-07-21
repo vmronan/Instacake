@@ -85,7 +85,7 @@ public class AuthWebViewClient extends WebViewClient {
     
     public void saveInstaId(String instaId) {
 		Editor editor = mContext.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE).edit();
-    	editor.putString(Constants.INSTA_ID_KEY, instaId);
+    	editor.putString(Constants.USER_UID_KEY, instaId);
     	editor.commit();
     	Log.v("saveInstaId", "saved instaId " + instaId);
 		

@@ -29,7 +29,7 @@ public class TestRailsActivity extends Activity {
     
     
 	public void createUser(View v){
-		RailsClient.createUser(mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
+		RailsClient.createUser(mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
 	}
 	
 	public void createOtherUser(View v){
@@ -37,12 +37,12 @@ public class TestRailsActivity extends Activity {
 	}
 	
 	public void createProject(View v){
-		RailsClient.createProject("My super cool project", mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
+		RailsClient.createProject("blabla", "My super cool project", mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
 	}
 	
 	public void addVideoToProject(View v){
 		String project_id = "1";
-		String insta_user_id = mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY");
+		String insta_user_id = mPrefs.getString(Constants.USER_UID_KEY, "NOKEY");
 		String created_at = "12312312312";
 		String insta_video_id = "324234234";
 		RailsClient.addVideoToProject(project_id, insta_user_id, created_at, insta_video_id);
@@ -57,7 +57,7 @@ public class TestRailsActivity extends Activity {
 	}
 	
 	public void getProjectList(View v){
-		RailsClient.getProjectsList(mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY"));
+		RailsClient.getProjectsList(mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
 	}
 	
 	public void getVideosForProject(View v){

@@ -14,5 +14,13 @@
         android:layout_height="wrap_content"
         android:onClick="syncProjects"
         android:text="syncProjects" />
+    
+    <Button 
+        android:id="@+id/addUserToProject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/syncProjects"
+        android:onClick="addUserToProject"
+        android:text="addUserToProject" />
 
 </RelativeLayout>
