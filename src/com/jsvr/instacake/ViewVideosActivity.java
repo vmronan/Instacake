@@ -25,8 +25,8 @@ import com.jsvr.instacake.local.LocalClient;
 
 public class ViewVideosActivity extends Activity implements OnItemSelectedListener {
 	
-	String projectId;
-	ArrayList<String> projectIds;
+	String projectId;					// id of the project the user is adding videos to
+	ArrayList<String> projectIds;		// list of all project IDs
 	boolean selectorOn;
 	SharedPreferences mPrefs;
 	
@@ -36,7 +36,6 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		setContentView(R.layout.activity_view_videos);
 		
 		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-		
 		projectId = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
 		selectorOn = false;
 		projectIds = LocalClient.readProjectsFile();
@@ -53,7 +52,6 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		
 	}
 	
-	// Connect title with ID
 	private void setupSpinner() {
 		// Get list of projects
 		String[] projects = LocalClient.getProjectTitles();

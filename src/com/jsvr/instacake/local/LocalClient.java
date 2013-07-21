@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import android.net.Uri;
@@ -18,20 +17,17 @@ import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
 
 public class LocalClient {
-		
-	public static void createProject(String projectId, String title, String userUid) {
+
+	public static void createProject(String projectUid, String title, String userUid, String username) {
 		// Create proj_123.json file for project
-		Project project = new Project(projectId, title, userUid);
+		Project project = new Project(projectUid, title, userUid, username);
 		LocalJSONManager.saveNewProject(project);
 
 		// Save new project filename to projects.txt
 		try {
 			File projectstxt = new File(Constants.getProjectsFilePath());
-			if (!projectstxt.exists()){
-				projectstxt.createNewFile();
-			}
 			BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
-			buf.append(projectId);
+			buf.append(projectUid);
 			buf.newLine();
 			buf.close();
 		} catch (IOException e) {
@@ -39,8 +35,8 @@ public class LocalClient {
 		}
 	}
 
-	public static void addUserToProject(String instaId, String projectId) {
-		LocalJSONManager.addUserToProject(instaId, projectId);
+	public static void addUserToProject(String userUid, String projectUid, String username) {
+		LocalJSONManager.addUserToProject(userUid, projectUid, username);
 	}
 	
 	public static void addVideoToProject(String videoPath, String projectUid) {
@@ -95,7 +91,7 @@ public class LocalClient {
 	}
 	
 	// Turns ArrayList<String> into String[]
-	public static String[] getArray(ArrayList<String> arraylist) {
+	public static String[] listToArray(ArrayList<String> arraylist) {
 		int size = arraylist.size();
 		String[] array = new String[size];
 		for(int i = 0; i < size; i++) {
@@ -115,13 +111,14 @@ public class LocalClient {
 		return thumbnails;
 	}
 
+	// Parses list of thumbnail paths to get the UIDs for project's videos
 	public static ArrayList<String> getVideoUidsForProject(String projectUid) {
-		ArrayList<String> videoPaths = LocalJSONManager.getVideoPaths(projectUid);
-		ArrayList<String> videoUids = new ArrayList<String>();
-		for (String videoPath : videoPaths){
-			videoUids.add(Constants.getIdFromFilename(Uri.parse(videoPath).getLastPathSegment()));
+		ArrayList<String> thumbPaths = LocalJSONManager.getThumbnailPaths(projectUid);
+		ArrayList<String> uids = new ArrayList<String>();
+		for (String thumbPath : thumbPaths){
+			uids.add(Constants.getIdFromFilename(Uri.parse(thumbPath).getLastPathSegment()));
 		}
-		return videoUids;
+		return uids;
 	}
 
 	public static ArrayList<String> getMyVideoUids() {
@@ -131,5 +128,25 @@ public class LocalClient {
 			myVideoUids.add(Constants.getIdFromFilename(videoFilename));
 		}
 		return myVideoUids;
+	}
+	
+	public static Project getProject(String projectUid) {
+		return LocalJSONManager.getProject(projectUid);		
+	}
+	
+	public static String getProjectTitle(String projectUid) {
+		return LocalJSONManager.getProjectTitle(projectUid);		
+	}
+	
+	public static ArrayList<String> getProjectUserUids(String projectUid) {
+		return LocalJSONManager.getUserUids(projectUid);
+	}
+	
+	public static ArrayList<String> getProjectUsernames(String projectUid) {
+		return LocalJSONManager.getUsernames(projectUid);
+	}
+	
+	public static String[] getThumbnailPaths(String projectUid) {
+		return listToArray(LocalJSONManager.getThumbnailPaths(projectUid));
 	}
 }

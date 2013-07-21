@@ -1,6 +1,7 @@
 package com.jsvr.instacake.data;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.os.Environment;
 import android.util.Log;
@@ -120,6 +121,7 @@ public class Constants {
 		return mediaStorageDir;
 	}
 
+	/* Builds all directories and makes sure projects.txt exists */
 	public static boolean buildOrEnsureAllDirectories() {
 
 		File[] directories = new File[] {moviesDir,
@@ -127,13 +129,23 @@ public class Constants {
 										 friendsMoviesDir,
 										 thumbsDir,
 										 myThumbsDir,
-										 friendsThumbsDir};
+										 friendsThumbsDir,
+										 projectsDir};
 		
 		for (File dir : directories){
 			if (buildOrEnsureDirectory(dir) == null){
 				return false;
 			}
 		}
+		
+		try {
+			File projectstxt = new File(Constants.getProjectsFilePath());
+			if (!projectstxt.exists())
+				projectstxt.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		return true;
 	}
 	
