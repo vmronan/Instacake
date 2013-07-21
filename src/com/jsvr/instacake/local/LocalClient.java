@@ -15,16 +15,16 @@ import com.jsvr.instacake.data.Project;
 
 public class LocalClient {
 		
-	public static void createProject(String projectId, String title, String instaId) {
+	public static void createProject(String projectId, String title, String userUid) {
 		// Create proj_123.json file for project
-		Project project = new Project(projectId, title, instaId);
-		JSONManager.saveNewProject(project);
+		Project project = new Project(projectId, title, userUid);
+		LocalJSONManager.saveNewProject(project);
 
 		// Save new project filename to projects.txt
 		try {
 			File projectstxt = new File(Constants.getProjectsFilePath());
 			if (!projectstxt.exists()){
-					projectstxt.createNewFile();
+				projectstxt.createNewFile();
 			}
 			BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
 			buf.append(projectId);
@@ -36,11 +36,11 @@ public class LocalClient {
 	}
 
 	public static void addUserToProject(String instaId, String projectId) {
-		JSONManager.addUserToProject(instaId, projectId);
+		LocalJSONManager.addUserToProject(instaId, projectId);
 	}
 	
 	public static void addVideoToProject(String videoPath, String projectId) {
-		JSONManager.addVideoToProject(videoPath, projectId);
+		LocalJSONManager.addVideoToProject(videoPath, projectId);
 	}
 	
 	// Returns array of thumbnail paths
@@ -67,7 +67,7 @@ public class LocalClient {
 		int numProjects = projectIds.size();
 		String[] titles = new String[numProjects];
 		for(int i = 0; i < numProjects; i++) {
-			titles[i] = JSONManager.getProjectTitle(projectIds.get(i));
+			titles[i] = LocalJSONManager.getProjectTitle(projectIds.get(i));
 		}
 		
 		return titles;

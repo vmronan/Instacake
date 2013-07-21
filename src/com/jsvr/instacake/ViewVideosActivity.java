@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,7 +32,7 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_videos);
 		
-		projectId = getIntent().getStringExtra(Constants.PROJECT_ID_KEY);
+		projectId = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
 		selectorOn = false;
 		projectIds = LocalClient.readProjectsFile();
 		setupSpinner();
@@ -80,6 +81,7 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		for(int i = numMyThumbs; i < numMyThumbs+numFriendsThumbs; i++) {
 			thumbnails[i] = Constants.getFriendsThumbsDir().getPath() + File.separator + friendsThumbs[i-numMyThumbs];
 		}
+		final String[] finalThumbnails = thumbnails;
 		
 		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
 		GridView grid = (GridView) findViewById(R.id.gridview_videos);
@@ -87,10 +89,16 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if(selectorOn) {
-					LocalClient.addVideoToProject(parent.getItemAtPosition(pos).toString(), projectId);
-					Log.v("onItemClick", "added " + parent.getItemAtPosition(pos) + " to project " + projectId);
+					LocalClient.addVideoToProject(parent.getItemAtPosition(position).toString(), projectId);
+					Log.v("onItemClick", "added " + parent.getItemAtPosition(position) + " to project " + projectId);
+				}
+				else {
+					Intent intent = new Intent();
+					intent.setAction(Intent.ACTION_VIEW);
+					intent.setDataAndType(Uri.parse(Constants.getVideoPathFromThumbnailPath(finalThumbnails[position])), "video/mp4");
+					startActivity(intent);	
 				}
 			}
 		});
@@ -107,16 +115,23 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 			thumbnails[i] = Constants.getMyThumbsDir().getPath() + File.separator + thumbnails[i];
 			Log.v("showMyVideos", "thumbnail: " + thumbnails[i]);
 		}
+		final String[] finalThumbnails = thumbnails;
 		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
 		GridView grid = (GridView) findViewById(R.id.gridview_videos);
 		grid.setAdapter(adapter);
 		
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if(selectorOn) {
-					LocalClient.addVideoToProject(parent.getItemAtPosition(pos).toString(), projectId);
-					Log.v("onItemClick", "added " + parent.getItemAtPosition(pos) + " to project " + projectId);
+					LocalClient.addVideoToProject(parent.getItemAtPosition(position).toString(), projectId);
+					Log.v("onItemClick", "added " + parent.getItemAtPosition(position) + " to project " + projectId);
+				}
+				else {
+					Intent intent = new Intent();
+					intent.setAction(Intent.ACTION_VIEW);
+					intent.setDataAndType(Uri.parse(Constants.getVideoPathFromThumbnailPath(finalThumbnails[position])), "video/mp4");
+					startActivity(intent);	
 				}
 			}
 		});
@@ -135,7 +150,7 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 	
 	public void done(View v) {
 		Intent i = new Intent(this, ViewProjectActivity.class);
-		i.putExtra(Constants.PROJECT_ID_KEY, projectId);
+		i.putExtra(Constants.PROJECT_UID_KEY, projectId);
 		startActivity(i);
 	}
 }
