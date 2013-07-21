@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jsvr.instacake.data.Constants;
@@ -17,32 +15,27 @@ import com.jsvr.instacake.data.Project;
 
 public class LocalJSONManager {
 	
-	public static void saveNewProject(Project project) {
-		// Make proj_projectId.json
+	protected static void saveNewProject(Project project) {
 		saveProject(project);
-		Log.v("saveNewProject", "users: " + project.getUsers());
 	}
 
 	// Saves project object to JSON file
 	private static void saveProject(Project project) {
 		File projFile = new File(Constants.getProjectPath(project.getProjectUid()));
 		String json = new Gson().toJson(project);
-		Log.v("saveProject", "users: " + project.getUsers());
-		Log.v("saveProject", "number of videos:" + project.getThumbnailPaths().size());
 		writeToFile(projFile, json);
 	}
 	
 	// Add user	to specific project
-	public static void addUserToProject(String instaId, String projectId) {
+	protected static void addUserToProject(String instaId, String projectId) {
 		Project project = getProject(projectId);
 		project.addUser(instaId);
 		saveProject(project);
 	}
 	
-	public static void addVideoToProject(String videoPath, String projectUid) {
+	protected static void addVideoToProject(String videoPath, String projectUid) {
 		Project project = getProject(projectUid);
 		project.addVideo(videoPath);
-		Log.v("addVideoToProject", "adding video " + videoPath);
 		saveProject(project);
 	}
 
@@ -75,15 +68,14 @@ public class LocalJSONManager {
 	}
 
 	// Get project object from JSON file with GSON
-	public static Project getProject(String projectUid) {
+	protected static Project getProject(String projectUid) {
 		String json = readFromFile(new File(Constants.getProjectPath(projectUid)));
 		Type type = new TypeToken<Project>(){}.getType();
-		Log.v("getProject", "has json: " + json);
 		return new Gson().fromJson(json, type);
 	}
 
 	// Get project's users
-	public static ArrayList<String> getUsers(String projectId) {
+	protected static ArrayList<String> getUsers(String projectId) {
 		return getProject(projectId).getUsers();
 	}
 	
@@ -93,17 +85,15 @@ public class LocalJSONManager {
 //	}
 	
 	// Get project title from project ID
-	public static String getProjectTitle(String projectUid) {
+	protected static String getProjectTitle(String projectUid) {
 		Project project = getProject(projectUid);
 		String title = project.getTitle();
 		return title;
 	}
 	
 	// Get list of thumbnail paths from project ID
-	public static ArrayList<String> getThumbnailPaths(String projectUid) {
+	protected static ArrayList<String> getThumbnailPaths(String projectUid) {
 		Project project = getProject(projectUid);
-		Log.v("getThumbnailPaths", "title: " + project.getTitle());
 		return project.getThumbnailPaths();
 	}
-	
 }

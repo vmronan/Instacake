@@ -50,8 +50,6 @@ public class MainActivity extends Activity {
     	startActivity(new Intent(this, VideoGridActivity.class));
     }
     
-
-    
 //    public void testRails(View v){
 //    	startActivity(new Intent(this, TestRailsActivity.class));
 //    }
@@ -62,6 +60,4 @@ public class MainActivity extends Activity {
 //    public void testSync(View v){
 //    	startActivity(new Intent(this, TestSyncActivity.class));
 //    }
-    
-
 }

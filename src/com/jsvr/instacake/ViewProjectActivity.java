@@ -18,7 +18,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
+import com.jsvr.instacake.adapters.ImageAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.sync.Sync;
@@ -92,12 +92,12 @@ public class ViewProjectActivity extends Activity {
 	private void showThumbnails() {
 		final String[] thumbnails = LocalClient.getThumbnailPaths(mProjectUid);
 		
-		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
-		GridView grid = (GridView) findViewById(R.id.gridview_videos);
-		grid.setAdapter(adapter);
+//		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
+//		GridView grid = (GridView) findViewById(R.id.gridview_videos);
+//		grid.setAdapter(adapter);
 		
-//		GridView grid = (GridView) findViewById(R.id.gridview);
-//	    grid.setAdapter(new ImageAdapter(this, thumbnails));
+		GridView grid = (GridView) findViewById(R.id.gridview_videos);
+	    grid.setAdapter(new ImageAdapter(this, thumbnails));
 		
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -110,6 +110,7 @@ public class ViewProjectActivity extends Activity {
 		});
 	}
 	
+	// Updates TextView showing the list of users
 	private void updateUsers() {
 	    ArrayList<String> users = LocalClient.getProjectUsers(mProjectUid);
 	    String usersStr = "";
