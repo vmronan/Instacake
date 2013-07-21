@@ -10,7 +10,8 @@ public class Constants {
 	/* Shared Prefs */
 	public static final String PREFS_NAME = "com.jsvr.instacake.SHARED_PREFS";
 	public static final String ACCESS_TOKEN_KEY = "yodawgi'mtheaccesstokenkey";
-	public static final String INSTA_ID_KEY = "yodawgi'mliketheinstagramidyouget";
+	public static final String USER_UID_KEY = "yodawgi'mliketheinstagramidyouget";
+	public static final String ERROR = "Key or Value Error";
 	
 	/* Instagram App Authorization */
 	public static final String CLIENT_ID = "2441a48392cf4ab6a7343038f858ae15";
@@ -38,7 +39,7 @@ public class Constants {
 	}
 	
 	/* Project Key and Helpers */
-	public static final String PROJECT_ID_KEY = "yodawgi'maprojectid";
+	public static final String PROJECT_UID_KEY = "yodawgi'maprojectid";
 	
 	public static String getProjectFilename(String projectId) {
 		return "PRJ_" + projectId + ".json";
@@ -54,6 +55,7 @@ public class Constants {
 	private static final File thumbsDir = new File(PICTURES_DIR, "Instacake");
 	private static final File myThumbsDir = new File(PICTURES_DIR, "Instacake/Me");
 	private static final File friendsThumbsDir = new File(PICTURES_DIR, "Instacake/Friends");
+	
 
 	/* Getters for Directories */
 	public static File getProjectsDir() {
@@ -137,5 +139,9 @@ public class Constants {
 	// Gets what's after the xxx_ and before the . in any filename
 	public static String getIdFromFilename(String filename) {
 		return (filename.split("\\.")[0]).substring(4);
+	}
+	
+	public static String getVideoPathFromThumbnailPath(String thumbnailPath) {
+		return thumbnailPath.replace("Pictures", "Movies").replace("IMG", "VID").replace(".jpg", ".mp4");
 	}
 }

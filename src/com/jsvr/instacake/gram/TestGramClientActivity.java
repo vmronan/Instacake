@@ -34,7 +34,7 @@ public class TestGramClientActivity extends Activity {
 
 	private void getPrefs() {
 		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-		mInstaId = mPrefs.getString(Constants.INSTA_ID_KEY, "NOKEY");
+		mInstaId = mPrefs.getString(Constants.USER_UID_KEY, "NOKEY");
 		mAccessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, "NOTOKEN");
 		System.out.println("access token is " + mAccessToken);
 	}

@@ -3,25 +3,25 @@ package com.jsvr.instacake.data;
 import java.util.ArrayList;
 
 public class Project {
-	String mProjectId;
+	String mProjectUid;
 	String mTitle;
 	ArrayList<String> mUsers;			// Instagram id of each user in project
 	ArrayList<String> mVideoPaths;		// local path of each video
 //	ArrayList<String> mVideoTimes;		// created_time of each video
 	
 	// Create new project with one user and no videos
-	public Project(String projectId, String title, String instaId) {
-		mProjectId = projectId;
+	public Project(String projectUid, String title, String userUid) {
+		mProjectUid = projectUid;
 		mTitle = title;
 		mUsers = new ArrayList<String>();
 		mVideoPaths = new ArrayList<String>();
 //		mVideoTimes = new ArrayList<String>();
 		
-		addUser(instaId);
+		addUser(userUid);
 	}
 	
-	public void addUser(String instaId) {
-		mUsers.add(instaId);
+	public void addUser(String userUid) {
+		mUsers.add(userUid);
 	}
 	
 	public void addVideo(String videoId) {
@@ -34,7 +34,7 @@ public class Project {
 	
 	// Getters and setters for instance variables
 	public String getProjectId() {
-		return mProjectId;
+		return mProjectUid;
 	}
 
 	public String getTitle() {
@@ -51,4 +51,11 @@ public class Project {
 	public ArrayList<String> getVideoPaths() {
 		return mVideoPaths;
 	}
+
+//	public ArrayList<String> getUsernames() {
+//		ArrayList<String> usernames = new ArrayList<String>();
+//		for (String user : mUsers){
+//			usernames.add()
+//		}
+//	}
 }

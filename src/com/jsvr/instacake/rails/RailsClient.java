@@ -2,13 +2,10 @@ package com.jsvr.instacake.rails;
 
 import java.util.ArrayList;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import android.app.DownloadManager;
 import android.util.Log;
 
+import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.gram.GramClient;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.sync.Sync;
@@ -17,7 +14,7 @@ import com.loopj.android.http.RequestParams;
 
 public class RailsClient {
 	
-	private static String mInstaId;
+	private static String mUserUid;
 	private static DownloadManager mDM;
 	private static String mAccessToken;
 	
@@ -26,35 +23,73 @@ public class RailsClient {
         return BASE_URL + relativeUrl;
     }
 	
-	public static void createUser(String instaId) {
+	public static void createUser(String userUid) {
 		RequestParams params = new RequestParams();
-		params.put("user[insta_id]", instaId);
+		params.put("user[insta_id]", userUid);
 		RestClient.post(getAbsoluteUrl("users/create"), params, RestClient.getResponseHandler("createUser"));
 	}
 
-	public static void createProject(String title, String insta_id) {
-		if (insta_id.equals("NOKEY")){
-			Log.v("createProject", "failed to find valid insta_id");
+	// Create project and add first user
+	public static void createProject(String projectUid, String title, String userUid) {
+		if (userUid.equals(Constants.ERROR)){
+			Log.v("createProject", "failed to find valid userUid");
 			return;
 		}
 		
-		mInstaId = insta_id;
+		mUserUid = userUid;
 		RequestParams params = new RequestParams();
+		params.put("project[uid]", projectUid);
 		params.put("project[title]", title);		
-		RestClient.post(getAbsoluteUrl("projects/create"), params, newProjectHandler);
+		RestClient.post(getAbsoluteUrl("projects/create"), params, createProjectHandler);
 	}
-
-	public static void addUserToProject(String instaId, String projectId) {
-		if (projectId.equals("0")){
-			Log.v("addUserToProject", "project id is not valid");
+	
+	// Handle project creation... if successful, adds first user to new project
+	public static AsyncHttpResponseHandler createProjectHandler = new AsyncHttpResponseHandler(){
+		String tag = "newProject";
+		@Override
+		public void onSuccess(String response) {
+			super.onSuccess(response);
+			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
+			addUserToProject(mUserUid, RailsJSONManager.getProjectUidFromResponse(response));
+		}
+		@Override
+		public void onFailure(Throwable e, String response) {
+			Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
+			e.printStackTrace();
+			super.onFailure(e, response);
+		}
+	};
+	
+	// Adds user to project
+	public static void addUserToProject(String userUid, String projectUid) {
+		if (projectUid.equals(Constants.ERROR)){
+			Log.v("addUserToProject", "project uid is not valid");
 			return;
 		}
 		
 		RequestParams params = new RequestParams();
-		params.put("user_insta_id", instaId);
-		params.put("project_id", projectId);
+		params.put("user_uid", userUid);
+		params.put("project_uid", projectUid);
+//		System.out.println("project_uid is " + projectUid);
 		RestClient.post(getAbsoluteUrl("projects/add_user"), params, addUserHandler);
 	}
+	
+	// Handles response from rails
+	public static AsyncHttpResponseHandler addUserHandler = new AsyncHttpResponseHandler(){
+		String tag = "addUser";
+		@Override
+		public void onSuccess(String response) {
+			super.onSuccess(response);
+			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
+		}
+	
+		@Override
+		public void onFailure(Throwable e, String response) {
+			Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
+			e.printStackTrace();
+			super.onFailure(e, response);
+		}
+	};
 	
 	
 	public static void addVideoToProject(String project_id, String insta_user_id, String created_at, String insta_video_id){
@@ -66,53 +101,6 @@ public class RailsClient {
 		
 		RestClient.post(getAbsoluteUrl("projects/create_video_and_add_to_project"), params, RestClient.getResponseHandler("addVideoToProject"));
 	}
-	
-	public static AsyncHttpResponseHandler newProjectHandler = new AsyncHttpResponseHandler(){
-		String tag = "newProject";
-		@Override
-		public void onSuccess(String response) {
-			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
-			addUserToProject(mInstaId, getProjectIdFromResponse(response));
-		}
-
-		private String getProjectIdFromResponse(String response) {
-			try {
-				JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
-				String projectId = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("id");
-				Log.v(tag + " response handler", "getProjectIdFromResponse has found the projectId: " + projectId);
-				return projectId;
-				
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			return "0";
-		}
-
-		@Override
-		public void onFailure(Throwable e, String response) {
-			Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
-			e.printStackTrace();
-			super.onFailure(e, response);
-		}
-	};
-	
-	public static AsyncHttpResponseHandler addUserHandler = new AsyncHttpResponseHandler(){
-		String tag = "addUser";
-		@Override
-		public void onSuccess(String response) {
-			super.onSuccess(response);
-			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
-		}
-
-		@Override
-		public void onFailure(Throwable e, String response) {
-			Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
-			e.printStackTrace();
-			super.onFailure(e, response);
-		}
-	};
-
-
 	
 	public static void getProjectsList(String insta_id) {
 		RequestParams params = new RequestParams();
@@ -131,9 +119,9 @@ public class RailsClient {
 	public static void syncAllProjects(String instaId, String accessToken, DownloadManager dm) {
 		mAccessToken = accessToken;
 		mDM = dm;
-		mInstaId = instaId;
+		mUserUid = instaId;
 		RequestParams params = new RequestParams();
-		params.put("insta_id", mInstaId);
+		params.put("insta_id", mUserUid);
 		
 		RestClient.post(getAbsoluteUrl("projects/get_projects_list"), params, new AsyncHttpResponseHandler(){
 			@Override
@@ -144,7 +132,7 @@ public class RailsClient {
 				for (String project : myRailsProjects){
 					if (!myLocalProjects.contains(project)){
 						System.out.println("Creating project with id " + project);
-						LocalClient.createProject(project, "some title", mInstaId);
+						LocalClient.createProject(project, "some title", mUserUid);
 					}
 					Sync.syncProject(project, mAccessToken, mDM);
 				}

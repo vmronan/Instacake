@@ -31,6 +31,18 @@ public class RailsJSONManager {
 		
 		return myProjects;
 	}
+	
+	public static String getProjectIdFromResponse(String response) {
+		try {
+			JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+			String projectId = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("id");
+			return projectId;
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
 
 	public static ArrayList<String> getVideosForProjectFromResponse(String response) {
 		ArrayList<String> videoIds = new ArrayList<String>();
@@ -48,6 +60,18 @@ public class RailsJSONManager {
 			e.printStackTrace();
 		}
 		return videoIds;
+	}
+
+	public static String getProjectUidFromResponse(String response) {
+		try {
+			JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+			String projectUid = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("uid");
+			return projectUid;
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return "0";
 	}
 
 }
