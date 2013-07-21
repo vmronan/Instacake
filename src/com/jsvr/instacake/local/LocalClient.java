@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import android.util.Log;
+
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
 
@@ -39,8 +41,8 @@ public class LocalClient {
 		LocalJSONManager.addUserToProject(instaId, projectId);
 	}
 	
-	public static void addVideoToProject(String videoPath, String projectId) {
-		LocalJSONManager.addVideoToProject(videoPath, projectId);
+	public static void addVideoToProject(String videoPath, String projectUid) {
+		LocalJSONManager.addVideoToProject(videoPath, projectUid);
 	}
 	
 	// Returns array of thumbnail paths
@@ -98,5 +100,16 @@ public class LocalClient {
 			array[i] = arraylist.get(i);
 		}
 		return array;
+	}
+	
+	public static String[] getMyThumbnailPaths(){
+		File directory = Constants.getMyThumbsDir();
+		String[] thumbnails = directory.list();
+		int numThumbs = thumbnails.length;
+		for(int i = 0; i < numThumbs; i++) {
+			thumbnails[i] = Constants.getMyThumbsDir().getPath() + File.separator + thumbnails[i];
+			Log.v("showMyVideos", "thumbnail: " + thumbnails[i]);
+		}
+		return thumbnails;
 	}
 }

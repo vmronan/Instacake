@@ -9,16 +9,39 @@
     tools:context=".VideoGridActivity" >
 	
     
-    <!-- <GridView
-	    android:id="@+id/js_gridview_videos"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    /> -->
+     <LinearLayout
+        android:id="@+id/js_spinner_row"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal" >
+        
+		<Spinner
+	        android:id="@+id/js_projects_spinner"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+			
+		<Button
+	        android:id="@+id/js_select"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/select"
+	        android:onClick="toggleSelector" />
+	    
+	    <Button
+	        android:id="@+id/js_done"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/done"
+	        android:onClick="done" />
+    </LinearLayout>
 
     <GridView
 	    android:id="@+id/gridview"
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"
+	    android:layout_below="@id/js_spinner_row"
 	    android:columnWidth="90dp"
 	    android:numColumns="auto_fit"
 	    android:verticalSpacing="10dp"
