@@ -77,6 +77,14 @@
             android:name="com.jsvr.instacake.sync.TestSyncActivity"
             android:label="@string/title_activity_test_sync" >
         </activity>
+        <activity
+            android:name="com.jsvr.instacake.VideoGridActivity"
+            android:label="@string/title_activity_video_grid"
+            android:parentActivityName="com.jsvr.instacake.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jsvr.instacake.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

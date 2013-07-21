@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.LocalClient;
+import com.jsvr.instacake.sync.Sync;
 
 public class ViewVideosActivity extends Activity implements OnItemSelectedListener {
 	
@@ -124,7 +125,8 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if(selectorOn) {
-					LocalClient.addVideoToProject(parent.getItemAtPosition(position).toString(), projectId);
+					Sync.addVideoToProject(parent.getItemAtPosition(position).toString(), projectId);
+//					LocalClient.addVideoToProject(parent.getItemAtPosition(position).toString(), projectId);
 					Log.v("onItemClick", "added " + parent.getItemAtPosition(position) + " to project " + projectId);
 				}
 				else {
