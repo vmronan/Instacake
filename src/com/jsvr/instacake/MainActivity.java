@@ -21,6 +21,11 @@ public class MainActivity extends Activity {
         Constants.buildOrEnsureAllDirectories();
         
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+        String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, "");
+        if(accessToken == "") {
+        	Intent i = new Intent(this, LoginActivity.class);
+        	startActivity(i);
+        }
         
         //TODO: For now, let's assume we saved a string under the key USERNAME_KEY at the same
         // time we save USER_UID_KEY.
@@ -29,7 +34,6 @@ public class MainActivity extends Activity {
         RailsClient.createUser(mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR), 
         						mPrefs.getString(Constants.USERNAME_KEY, Constants.ERROR));
     }
-    
     
     public void viewVideos(View v) {
     	Intent i = new Intent(this, ViewVideosActivity.class);

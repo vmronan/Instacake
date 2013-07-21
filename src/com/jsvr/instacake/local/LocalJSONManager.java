@@ -28,7 +28,7 @@ public class LocalJSONManager {
 		File projFile = new File(Constants.getProjectPath(project.getProjectUid()));
 		String json = new Gson().toJson(project);
 		Log.v("saveProject", "users: " + project.getUsers());
-		Log.v("saveProject", "number of videos:" + project.getVideoPaths().size());
+		Log.v("saveProject", "number of videos:" + project.getThumbnailPaths().size());
 		writeToFile(projFile, json);
 	}
 	
@@ -99,11 +99,11 @@ public class LocalJSONManager {
 		return title;
 	}
 	
-	// Get list of video paths from project ID
-	public static ArrayList<String> getVideoPaths(String projectUid) {
+	// Get list of thumbnail paths from project ID
+	public static ArrayList<String> getThumbnailPaths(String projectUid) {
 		Project project = getProject(projectUid);
-		ArrayList<String> videoIds = project.getVideoPaths();
-		return videoIds;
+		Log.v("getThumbnailPaths", "title: " + project.getTitle());
+		return project.getThumbnailPaths();
 	}
 	
 }

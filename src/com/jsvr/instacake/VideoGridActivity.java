@@ -37,7 +37,8 @@ public class VideoGridActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_video_grid);
 		
-		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);  
+		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+		projectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
 		selectorOn = false;
 		
 		projectUids =  LocalClient.readProjectsFile();
@@ -105,10 +106,6 @@ public class VideoGridActivity extends Activity {
 										   Constants.getIdFromFilename(Uri.parse(thumbs[pos]).getLastPathSegment()),
 										   projectUid,
 										   mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR));
-					
-					
-					
-
 					Log.v("onItemClick", "added " + Constants.getVideoPathFromThumbnailPath(thumbs[pos]) + " to project " + projectUid);
 				}
 				else {
