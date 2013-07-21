@@ -3,6 +3,7 @@ package com.jsvr.instacake;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
 import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.gram.GramClient;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.local.LocalJSONManager;
 import com.jsvr.instacake.sync.Sync;
@@ -32,14 +34,29 @@ public class ViewProjectActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
-		this.setTitle(LocalJSONManager.getProjectTitle(mProjectUid));
 		setContentView(R.layout.activity_view_project);
+		this.setTitle(LocalJSONManager.getProjectTitle(mProjectUid));
 		
+		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-        updateUsers();
         
+        updateUsers();
         showThumbnails();
+        
+        // For updating and syncing project
+        SyncCallback refreshVideosOnUiThread = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				if (statusCode == Sync.RESPONSE_OK){
+					showThumbnails();
+				}
+			}
+		};
+		
+		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
+        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+		
+		Sync.syncProject(mProjectUid, accessToken, dm, refreshVideosOnUiThread);
 	}
 	
 	public void addUser(View v) {

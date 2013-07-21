@@ -100,8 +100,8 @@ public class LocalJSONManager {
 	}
 	
 	// Get list of video paths from project ID
-	public static ArrayList<String> getVideoPaths(String projectId) {
-		Project project = getProject(projectId);
+	public static ArrayList<String> getVideoPaths(String projectUid) {
+		Project project = getProject(projectUid);
 		ArrayList<String> videoIds = project.getVideoPaths();
 		return videoIds;
 	}

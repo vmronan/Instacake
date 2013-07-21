@@ -215,4 +215,82 @@ public class GramClient {
 		});
 		
 	}
+
+
+	//TODO: This does not truly wait for each download to finish.  Instead it waits for each download to start.
+	// We need to override some of DownloadManager's stuff to wait for each download to finish before starting the next.
+	public static void downloadVideosOneAtATime(final ArrayList<String> videoUidsToDownload,
+												final String accessToken,
+												final DownloadManager dm, 
+												final SyncCallback refreshVideosOnUiThread) {
+		/*  For each video in videoUidsToDownload, we wait for a callback indicating we 
+		 *  have finished with on videoUid before moving on to the next.
+		 */
+		
+		SyncCallback moveToNextVideo = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response) {
+				if (statusCode == Sync.RESPONSE_OK){
+					Log.v("moveToNextVideo", "Successfully downloaded " + response);
+				}
+				videoUidsToDownload.remove(response);
+				if (videoUidsToDownload.size() > 0){
+					download(videoUidsToDownload.get(0), accessToken, this, dm);
+				} else {
+					refreshVideosOnUiThread.callbackCall(Sync.RESPONSE_OK, "All new videos downloaded.");
+				}
+			}
+		};
+		
+		if (videoUidsToDownload.size() > 0){
+			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm);
+		} else {
+			refreshVideosOnUiThread.callbackCall(Sync.RESPONSE_OK, "No new videos downloaded.");
+		}
+	}
+
+	// Download a video and its thumbnail
+	public static void download(final String videoUid, 
+							     String accessToken, 
+							     SyncCallback moveToNextVideo,
+							     final DownloadManager dm) {
+		
+		RequestParams params = new RequestParams();
+		params.put("access_token", accessToken);
+		client.get(getAbsoluteUrl("/media/" + videoUid), params, new AsyncHttpResponseHandler(){
+			@Override
+			public void onSuccess(String response) {
+				boolean isMine = false; // For now, we assume all of the videos we need to sync are not our own.
+				super.onSuccess(response);
+				
+				// Download the thumbnail
+				Request requestForThumb = new Request(GramJSONManager.getThumbUriFromJson(GramJSONManager.parseMediaResponse(response)));
+				requestForThumb.setTitle("Downloading Thumbnail " + videoUid);
+		        Constants.getThumbnailPath(videoUid, false); // To ensure that the directory exists.
+				if (isMine){
+					requestForThumb.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, "Instacake/Me/IMG_" + videoUid + ".jpg");
+				} else {
+					requestForThumb.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, "Instacake/Friends/IMG_" + videoUid + ".jpg");
+				}
+		        dm.enqueue(requestForThumb); 
+		        
+		        // Download the video
+				Request requestForVid = new Request(GramJSONManager.getVidUriFromJson(GramJSONManager.parseMediaResponse(response)));
+				requestForVid.setTitle("Downloading Video " + videoUid);
+				Constants.getMoviesPath(videoUid, false); // To ensure that the directory exists.
+				if (isMine){
+					requestForVid.setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES, "Instacake/Me/VID_" + videoUid + ".mp4");
+				} else {
+					requestForVid.setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES, "Instacake/Friends/VID_" + videoUid + ".mp4");
+				}
+				dm.enqueue(requestForVid);
+			}
+
+			@Override
+			public void onFailure(Throwable e, String response) {
+				super.onFailure(e, response);
+				e.printStackTrace();
+			}
+		});
+	}
 }
