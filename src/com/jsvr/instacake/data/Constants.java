@@ -11,6 +11,7 @@ public class Constants {
 	public static final String PREFS_NAME = "com.jsvr.instacake.SHARED_PREFS";
 	public static final String ACCESS_TOKEN_KEY = "yodawgi'mtheaccesstokenkey";
 	public static final String USER_UID_KEY = "yodawgi'mliketheinstagramidyouget";
+	public static final String USERNAME_KEY = "yodawgizlykugottahaveausernamenaaaahmsayin??";
 	public static final String ERROR = "Key or Value Error";
 	
 	/* Instagram App Authorization */
@@ -41,8 +42,8 @@ public class Constants {
 	/* Project Key and Helpers */
 	public static final String PROJECT_UID_KEY = "yodawgi'maprojectid";
 	
-	public static String getProjectFilename(String projectId) {
-		return "PRJ_" + projectId + ".json";
+	public static String getProjectFilename(String projectUid) {
+		return "PRJ_" + projectUid + ".json";
 	}
 	
 	/* Critical Directories */
@@ -55,6 +56,7 @@ public class Constants {
 	private static final File thumbsDir = new File(PICTURES_DIR, "Instacake");
 	private static final File myThumbsDir = new File(PICTURES_DIR, "Instacake/Me");
 	private static final File friendsThumbsDir = new File(PICTURES_DIR, "Instacake/Friends");
+	
 	
 
 	/* Getters for Directories */
@@ -81,8 +83,8 @@ public class Constants {
 	
 	
 	/* Getters for file paths */
-	public static String getProjectPath(String projectId){
-		return getProjectsDir().getPath() + File.separator + getProjectFilename(projectId);
+	public static String getProjectPath(String projectUid){
+		return getProjectsDir().getPath() + File.separator + getProjectFilename(projectUid);
 	}
 	
 	public static String getThumbnailPath(String thumbnailId, boolean isMine) {

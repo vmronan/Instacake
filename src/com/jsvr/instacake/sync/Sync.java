@@ -1,5 +1,6 @@
 package com.jsvr.instacake.sync;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import android.app.DownloadManager;
@@ -19,27 +20,95 @@ public class Sync {
 	}
 	
 	
-	public static void syncAllProjects(String instaId, String accessToken, DownloadManager dm){
-		RailsClient.syncAllProjects(instaId, accessToken, dm);
+	public static void updateMyMovies(final String accessToken,
+									  final DownloadManager dm,
+									  final SyncCallback refreshVideosOnUiThread){
+		/* In order to update my videos:
+		 *  1. Get the list of videos from the GramClient
+		 *  2. Compare the list of videos found in my video folder.
+		 *  3. Download the videos I am missing.
+		 *  4. Update the UI thread with the given SyncCallback Object
+		 */
+		
+		SyncCallback instaVideoListReturned = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				//TODO: track and implement statusCode properly
+				if (statusCode == RESPONSE_OK){
+					System.out.println("Going to download all of the videos here: " + response);
+					GramClient.downloadVideosOneAtATime(getMyVideoUidsForDownloading(response), accessToken, dm, refreshVideosOnUiThread, true);
+				}
+			}
+		};
+		
+		GramClient.getMyMovieList(accessToken, instaVideoListReturned);
 	}
 
-	public static void syncProject(String projectId, String accessToken, DownloadManager dm) {
-		RailsClient.syncProject(projectId, accessToken, dm);
+	protected static ArrayList<String> getMyVideoUidsForDownloading(String response) {
+		String[] gramVideoUids = response.split("[\\r\\n]+");
+		ArrayList<String> localVideoUids = LocalClient.getMyVideoUids();
+		
+		ArrayList<String> videoUidsForDownload = new ArrayList<String>();
+		for (String gramVid : gramVideoUids){
+			if (!localVideoUids.contains(gramVid)){
+				// Our Local Storage is not aware of this video, so we download it
+				videoUidsForDownload.add(gramVid);
+			}
+		}
+		return videoUidsForDownload;
+		
+	}
+
+	public static void syncProject(final String projectUid, 
+								   final String accessToken, 
+								   final DownloadManager dm, 
+								   final SyncCallback refreshVideosOnUiThread) {
+		/* In order to sync a project:
+		 *  1. Get the list of videos in a project from the rails client, returned by a SyncCallback
+		 *  2. From the listener, get the list of videos in a project from the LocalClient
+		 *  3. Identify videos that need to be downloaded and download each with the GramClient
+		 *  4. When the videos have been downloaded, send a callback to the UI thread to update the gridview
+		 */
+		
+		SyncCallback videoUidsForProjectReturned = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				//TODO: Track and check statusCode
+				ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(response, projectUid);
+				GramClient.downloadVideosOneAtATime(videoUidsToDownload, accessToken, dm, refreshVideosOnUiThread, false);
+			}
+		};
+		
+		RailsClient.getVideosForProject(projectUid, videoUidsForProjectReturned);
 	}
 	
-	public static String createProject(String title, String userUid){
+	// Compare rails data against local data to find videos that need to be downloaded.
+	private static ArrayList<String> getVideoUidsForDownload(String response, String projectUid) {
+		String[] railsVideoUids = response.split("[\\r\\n]+");
+		ArrayList<String> localVideoUids = LocalClient.getVideoUidsForProject(projectUid);
+		
+		ArrayList<String> videoUidsForDownload = new ArrayList<String>();
+		for (String railsVid : railsVideoUids){
+			if (!localVideoUids.contains(railsVid)){
+				// Our Local Storage is not aware of this video, so we download it
+				videoUidsForDownload.add(railsVid);
+			}
+		}
+		return videoUidsForDownload;
+	}
+
+	public static String createProject(String title, String userUid, String username){
 		// TODO: Verify uniqueness of uid's
 		String projectUid = Integer.toString(new Random().nextInt());
 		
 		// Save data locally and in the cloud.
 		LocalClient.createProject(projectUid, title, userUid);
-		RailsClient.createProject(projectUid, title, userUid);
+		RailsClient.createProject(projectUid, title, userUid, username);
 		
 		return projectUid;
 	}
 	
-	
-	public static void addUserToProject(String newUsername, String accessToken, final String projectUid, final SyncCallback updateUsersOnUiThread){
+	public static void addUserToProject(final String newUsername, String accessToken, final String projectUid, final SyncCallback updateUsersOnUiThread){
 		/* Since users are free to change their instagram username at anytime,
 		 * we save the unique (unchanging) userUid along with the current username
 		 * when we add a user to a project.
@@ -57,7 +126,7 @@ public class Sync {
 			public void callbackCall(int statusCode, String response) {
 				if (statusCode == RESPONSE_OK){
 					// response contains userUid, so we save
-					RailsClient.addUserToProject(response, projectUid);
+					RailsClient.addUserToProject(response, projectUid, newUsername);
 					LocalClient.addUserToProject(response, projectUid);
 					updateUsersOnUiThread.callbackCall(RESPONSE_OK, "User should now be added to the project.");
 				} else if (statusCode == ERROR){
@@ -71,7 +140,11 @@ public class Sync {
 		};
 		
 		GramClient.getUserUid(newUsername, accessToken, foundUserUid);
+	}
 
+	public static void addVideoToProject(String videoPath, String videoUid, String projectUid, String userUid) {
+		LocalClient.addVideoToProject(videoPath, projectUid);
+		RailsClient.addVideoToProject(projectUid, userUid, "created some time ago", videoUid);
 	}
 	
 	

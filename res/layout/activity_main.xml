@@ -30,6 +30,14 @@
         android:onClick="viewProjects" 
         android:text="@string/my_projects" />
     
+    <Button 
+        android:id="@+id/grid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_projects"
+        android:onClick="grid" 
+        android:text="grid" />
+    
 <!--     <EditText 
         android:id="@+id/new_project_title"
         android:layout_width="fill_parent"

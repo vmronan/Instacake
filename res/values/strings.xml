@@ -26,5 +26,6 @@
     <string name="select">Select</string>
     <string name="done">Done</string>
     <string name="title_activity_test_sync">TestSyncActivity</string>
+    <string name="title_activity_video_grid">VideoGridActivity</string>
 
 </resources>
