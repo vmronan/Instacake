@@ -7,23 +7,26 @@ import android.util.Log;
 public class Project {
 	String mProjectUid;
 	String mTitle;
-	ArrayList<String> mUsers;				// Instagram user id of each user in project
+	ArrayList<String> mUserUids;			// Instagram user id of each user in project
+	ArrayList<String> mUsernames;			// Instagram username of each user in project
 	ArrayList<String> mThumbnailPaths;		// local path of each video's thumbnail
 //	ArrayList<String> mVideoTimes;			// created_time of each video
 	
 	// Create new project with one user and no videos
-	public Project(String projectUid, String title, String userUid) {
+	public Project(String projectUid, String title, String userUid, String username) {
 		mProjectUid = projectUid;
 		mTitle = title;
-		mUsers = new ArrayList<String>();
+		mUserUids = new ArrayList<String>();
+		mUsernames = new ArrayList<String>();
 		mThumbnailPaths = new ArrayList<String>();
 //		mVideoTimes = new ArrayList<String>();
 		
-		addUser(userUid);
+		addUser(userUid, username);
 	}
 	
-	public void addUser(String userUid) {
-		mUsers.add(userUid);
+	public void addUser(String userUid, String username) {
+		mUserUids.add(userUid);
+		mUsernames.add(username);
 	}
 	
 	public void addVideo(String videoPath) {
@@ -47,8 +50,12 @@ public class Project {
 		this.mTitle = mTitle;
 	}
 
-	public ArrayList<String> getUsers() {
-		return mUsers;
+	public ArrayList<String> getUserUids() {
+		return mUserUids;
+	}
+	
+	public ArrayList<String> getUsernames() {
+		return mUsernames;
 	}
 	
 	public ArrayList<String> getThumbnailPaths() {

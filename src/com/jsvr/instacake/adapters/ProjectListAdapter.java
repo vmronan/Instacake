@@ -46,7 +46,7 @@ public class ProjectListAdapter extends ArrayAdapter<Project> {
 		Project project = projects[position];
 		holder.titleView.setText(project.getTitle());
 		
-		ArrayList<String> users = project.getUsers();
+		ArrayList<String> users = project.getUsernames();
 		int numUsers = users.size();
 		String usersStr = "";
 		if(users.size() > 0) {

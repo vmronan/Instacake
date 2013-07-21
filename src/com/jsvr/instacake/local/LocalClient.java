@@ -17,17 +17,17 @@ import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
 
 public class LocalClient {
-		
-	public static void createProject(String projectId, String title, String userUid) {
+
+	public static void createProject(String projectUid, String title, String userUid, String username) {
 		// Create proj_123.json file for project
-		Project project = new Project(projectId, title, userUid);
+		Project project = new Project(projectUid, title, userUid, username);
 		LocalJSONManager.saveNewProject(project);
 
 		// Save new project filename to projects.txt
 		try {
 			File projectstxt = new File(Constants.getProjectsFilePath());
 			BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
-			buf.append(projectId);
+			buf.append(projectUid);
 			buf.newLine();
 			buf.close();
 		} catch (IOException e) {
@@ -35,8 +35,8 @@ public class LocalClient {
 		}
 	}
 
-	public static void addUserToProject(String instaId, String projectId) {
-		LocalJSONManager.addUserToProject(instaId, projectId);
+	public static void addUserToProject(String userUid, String projectUid, String username) {
+		LocalJSONManager.addUserToProject(userUid, projectUid, username);
 	}
 	
 	public static void addVideoToProject(String videoPath, String projectUid) {
@@ -138,8 +138,12 @@ public class LocalClient {
 		return LocalJSONManager.getProjectTitle(projectUid);		
 	}
 	
-	public static ArrayList<String> getProjectUsers(String projectUid) {
-		return LocalJSONManager.getUsers(projectUid);
+	public static ArrayList<String> getProjectUserUids(String projectUid) {
+		return LocalJSONManager.getUserUids(projectUid);
+	}
+	
+	public static ArrayList<String> getProjectUsernames(String projectUid) {
+		return LocalJSONManager.getUsernames(projectUid);
 	}
 	
 	public static String[] getThumbnailPaths(String projectUid) {

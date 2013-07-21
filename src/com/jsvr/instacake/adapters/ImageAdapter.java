@@ -41,7 +41,7 @@ public class ImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-
+        
         int num = mThumbs.length;
         Log.v("***", "number of thumbs: " + num);
     	for(int i = 0; i < num; i++) {

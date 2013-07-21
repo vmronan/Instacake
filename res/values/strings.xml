@@ -9,6 +9,10 @@
     <string name="title_activity_view_projects">My Projects</string>
     <string name="title_activity_view_videos">My Videos</string>
     <string name="title_activity_test_rails">TestRailsActivity</string>
+    <string name="title_activity_test_gram_client">TestGramClientActivity</string>
+    <string name="title_activity_test_sync">TestSyncActivity</string>
+    <string name="title_activity_video_grid">My Videos</string>
+    
     <string name="authorize">Authorize</string>
     <string name="get_feed">Feed</string>
     <string name="view_videos">My videos</string>
@@ -21,11 +25,7 @@
     <string name="project_add_videos">Add videos</string>
     <string name="users_title">Users</string>
     <string name="listview_thumbnails_title">Videos</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_test_gram_client">TestGramClientActivity</string>
     <string name="select">Select</string>
     <string name="done">Done</string>
-    <string name="title_activity_test_sync">TestSyncActivity</string>
-    <string name="title_activity_video_grid">VideoGridActivity</string>
 
 </resources>

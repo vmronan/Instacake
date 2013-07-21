@@ -27,9 +27,9 @@ public class LocalJSONManager {
 	}
 	
 	// Add user	to specific project
-	protected static void addUserToProject(String instaId, String projectId) {
-		Project project = getProject(projectId);
-		project.addUser(instaId);
+	protected static void addUserToProject(String userUid, String projectUid, String username) {
+		Project project = getProject(projectUid);
+		project.addUser(userUid, username);
 		saveProject(project);
 	}
 	
@@ -74,15 +74,15 @@ public class LocalJSONManager {
 		return new Gson().fromJson(json, type);
 	}
 
-	// Get project's users
-	protected static ArrayList<String> getUsers(String projectId) {
-		return getProject(projectId).getUsers();
+	// Get project's user's IDs
+	protected static ArrayList<String> getUserUids(String projectId) {
+		return getProject(projectId).getUserUids();
 	}
 	
-//	// Get project's users' usernames
-//	public static ArrayList<String> getUsernames(String projectId) {
-//		return getProject(projectId).getUsernames();
-//	}
+	// Get project's users' usernames
+	public static ArrayList<String> getUsernames(String projectId) {
+		return getProject(projectId).getUsernames();
+	}
 	
 	// Get project title from project ID
 	protected static String getProjectTitle(String projectUid) {
