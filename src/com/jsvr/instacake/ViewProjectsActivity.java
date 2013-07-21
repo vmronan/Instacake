@@ -68,9 +68,10 @@ public class ViewProjectsActivity extends Activity {
     public void newProject(View v) {
     	String title = ((EditText)findViewById(R.id.new_project_title)).getText().toString();
     	String userUid = mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR);
+    	String username = mPrefs.getString(Constants.USERNAME_KEY, Constants.ERROR);
     	
     	// Use Sync to create project with LocalClient and RailsClient
-    	String projectUid = Sync.createProject(title, userUid);
+    	String projectUid = Sync.createProject(title, userUid, username);
 
     	// Show the new project
 		Intent i = new Intent(this, ViewProjectActivity.class);

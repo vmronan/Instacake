@@ -11,6 +11,7 @@ public class Constants {
 	public static final String PREFS_NAME = "com.jsvr.instacake.SHARED_PREFS";
 	public static final String ACCESS_TOKEN_KEY = "yodawgi'mtheaccesstokenkey";
 	public static final String USER_UID_KEY = "yodawgi'mliketheinstagramidyouget";
+	public static final String USERNAME_KEY = "yodawgizlykugottahaveausernamenaaaahmsayin??";
 	public static final String ERROR = "Key or Value Error";
 	
 	/* Instagram App Authorization */
@@ -55,6 +56,7 @@ public class Constants {
 	private static final File thumbsDir = new File(PICTURES_DIR, "Instacake");
 	private static final File myThumbsDir = new File(PICTURES_DIR, "Instacake/Me");
 	private static final File friendsThumbsDir = new File(PICTURES_DIR, "Instacake/Friends");
+	
 	
 
 	/* Getters for Directories */
