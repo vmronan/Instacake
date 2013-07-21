@@ -4,7 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,12 +22,14 @@ import android.widget.Spinner;
 import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.LocalClient;
+import com.jsvr.instacake.rails.RailsClient;
 
 public class ViewVideosActivity extends Activity implements OnItemSelectedListener {
 	
 	String projectId;
 	ArrayList<String> projectIds;
 	boolean selectorOn;
+	SharedPreferences mPrefs;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,8 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		projectId = getIntent().getStringExtra(Constants.PROJECT_ID_KEY);
 		selectorOn = false;
 		projectIds = LocalClient.readProjectsFile();
+        mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);      
+
 		setupSpinner();
 		if(projectId.equals("")) {
 			Log.v("onCreate", "showing all my videos");
@@ -87,10 +94,17 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if(selectorOn) {
-					LocalClient.addVideoToProject(parent.getItemAtPosition(pos).toString(), projectId);
-					Log.v("onItemClick", "added " + parent.getItemAtPosition(pos) + " to project " + projectId);
+					String videoPath = parent.getItemAtPosition(position).toString();
+					LocalClient.addVideoToProject(videoPath, projectId);
+					
+					String instaId = mPrefs.getString(Constants.INSTA_ID_KEY, "");
+					
+					// Get video ID from video path
+					String videoId = Constants.getIdFromFilename(Uri.parse(videoPath).getLastPathSegment());
+					RailsClient.addVideoToProject(projectId, instaId, "", videoId);
+					Log.v("onItemClick", "added " + videoPath + " to project " + projectId);
 				}
 			}
 		});
