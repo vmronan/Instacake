@@ -3,6 +3,7 @@ package com.jsvr.instacake;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,7 @@ import com.jsvr.instacake.adapters.ImageAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.sync.Sync;
+import com.jsvr.instacake.sync.Sync.SyncCallback;
 
 public class VideoGridActivity extends Activity {
 	
@@ -41,6 +43,22 @@ public class VideoGridActivity extends Activity {
 		projectUids =  LocalClient.readProjectsFile();
 		setupSpinner();
 		buildGrid();
+		
+		SyncCallback refreshVideosOnUiThread = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				System.out.println("response is " + response);
+				//TODO: track and implement statusCode properly
+				if (statusCode == Sync.RESPONSE_OK){
+					System.out.println("response is " + response);
+					buildGrid();
+				}
+			}
+		};
+		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
+        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        
+		Sync.updateMyMovies(accessToken, dm, refreshVideosOnUiThread);
 
 	}
 

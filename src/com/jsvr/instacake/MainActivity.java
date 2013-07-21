@@ -24,16 +24,12 @@ public class MainActivity extends Activity {
         
         //TODO: For now, let's assume we saved a string under the key USERNAME_KEY at the same
         // time we save USER_UID_KEY.
-        mPrefs.edit().putString(Constants.USERNAME_KEY, Constants.ERROR).commit();
+        mPrefs.edit().putString(Constants.USERNAME_KEY, "Sample Username").commit();
         
         RailsClient.createUser(mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR), 
         						mPrefs.getString(Constants.USERNAME_KEY, Constants.ERROR));
     }
     
-//    public void getFeed(View v) {
-//    	Intent i = new Intent(this, FeedActivity.class);
-//    	startActivity(i);
-//    }
     
     public void viewVideos(View v) {
     	Intent i = new Intent(this, ViewVideosActivity.class);

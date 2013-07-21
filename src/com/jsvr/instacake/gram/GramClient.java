@@ -163,7 +163,6 @@ public class GramClient {
 				e.printStackTrace();
 			}
 			return myMovies;
-			
 		}
 
 		public static String getUserUidFromJson(JSONObject json, String desiredUsername) {
@@ -222,7 +221,8 @@ public class GramClient {
 	public static void downloadVideosOneAtATime(final ArrayList<String> videoUidsToDownload,
 												final String accessToken,
 												final DownloadManager dm, 
-												final SyncCallback refreshVideosOnUiThread) {
+												final SyncCallback refreshVideosOnUiThread,
+												final boolean isMine) {
 		/*  For each video in videoUidsToDownload, we wait for a callback indicating we 
 		 *  have finished with on videoUid before moving on to the next.
 		 */
@@ -235,7 +235,7 @@ public class GramClient {
 				}
 				videoUidsToDownload.remove(response);
 				if (videoUidsToDownload.size() > 0){
-					download(videoUidsToDownload.get(0), accessToken, this, dm);
+					download(videoUidsToDownload.get(0), accessToken, this, dm, isMine);
 				} else {
 					refreshVideosOnUiThread.callbackCall(Sync.RESPONSE_OK, "All new videos downloaded.");
 				}
@@ -243,7 +243,7 @@ public class GramClient {
 		};
 		
 		if (videoUidsToDownload.size() > 0){
-			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm);
+			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
 		} else {
 			refreshVideosOnUiThread.callbackCall(Sync.RESPONSE_OK, "No new videos downloaded.");
 		}
@@ -252,15 +252,14 @@ public class GramClient {
 	// Download a video and its thumbnail
 	public static void download(final String videoUid, 
 							     String accessToken, 
-							     SyncCallback moveToNextVideo,
-							     final DownloadManager dm) {
-		
+							     final SyncCallback moveToNextVideo,
+							     final DownloadManager dm,
+							     final boolean isMine) {
 		RequestParams params = new RequestParams();
 		params.put("access_token", accessToken);
 		client.get(getAbsoluteUrl("/media/" + videoUid), params, new AsyncHttpResponseHandler(){
 			@Override
 			public void onSuccess(String response) {
-				boolean isMine = false; // For now, we assume all of the videos we need to sync are not our own.
 				super.onSuccess(response);
 				
 				// Download the thumbnail
@@ -283,7 +282,8 @@ public class GramClient {
 				} else {
 					requestForVid.setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES, "Instacake/Friends/VID_" + videoUid + ".mp4");
 				}
-				dm.enqueue(requestForVid);
+				dm.enqueue(requestForVid); 
+				
 			}
 
 			@Override
@@ -291,6 +291,30 @@ public class GramClient {
 				super.onFailure(e, response);
 				e.printStackTrace();
 			}
+			
+			@Override
+			public void onFinish(){
+				super.onFinish();
+				moveToNextVideo.callbackCall(Sync.RESPONSE_OK, videoUid);
+			}
 		});
+	}
+
+	public static void getMyMovieList(String accessToken, final SyncCallback instaVideoListReturned) {
+		RequestParams params = new RequestParams();
+		params.put("access_token", accessToken);
+		client.get(getAbsoluteUrl("/users/self/feed"), params, new AsyncHttpResponseHandler(){
+			@Override 
+			public void onSuccess(String response){
+				ArrayList<String> myVids = GramJSONManager.getMovieIdsFromJson(GramJSONManager.parseMediaResponse(response));
+				String gramVidsString = "";
+				for (String vid : myVids){
+					System.out.println("vid is " + vid);
+					gramVidsString = gramVidsString.concat(vid + "\n");
+				}
+				instaVideoListReturned.callbackCall(Sync.RESPONSE_OK, gramVidsString);
+			}
+		});
+		
 	}
 }

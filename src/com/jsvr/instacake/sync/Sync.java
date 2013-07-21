@@ -20,9 +20,44 @@ public class Sync {
 	}
 	
 	
-//	public static void syncAllProjects(String instaId, String accessToken, DownloadManager dm){
-//		RailsClient.syncAllProjects(instaId, accessToken, dm);
-//	}
+	public static void updateMyMovies(final String accessToken,
+									  final DownloadManager dm,
+									  final SyncCallback refreshVideosOnUiThread){
+		/* In order to update my videos:
+		 *  1. Get the list of videos from the GramClient
+		 *  2. Compare the list of videos found in my video folder.
+		 *  3. Download the videos I am missing.
+		 *  4. Update the UI thread with the given SyncCallback Object
+		 */
+		
+		SyncCallback instaVideoListReturned = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				//TODO: track and implement statusCode properly
+				if (statusCode == RESPONSE_OK){
+					System.out.println("Going to download all of the videos here: " + response);
+					GramClient.downloadVideosOneAtATime(getMyVideoUidsForDownloading(response), accessToken, dm, refreshVideosOnUiThread, true);
+				}
+			}
+		};
+		
+		GramClient.getMyMovieList(accessToken, instaVideoListReturned);
+	}
+
+	protected static ArrayList<String> getMyVideoUidsForDownloading(String response) {
+		String[] gramVideoUids = response.split("[\\r\\n]+");
+		ArrayList<String> localVideoUids = LocalClient.getMyVideoUids();
+		
+		ArrayList<String> videoUidsForDownload = new ArrayList<String>();
+		for (String gramVid : gramVideoUids){
+			if (!localVideoUids.contains(gramVid)){
+				// Our Local Storage is not aware of this video, so we download it
+				videoUidsForDownload.add(gramVid);
+			}
+		}
+		return videoUidsForDownload;
+		
+	}
 
 	public static void syncProject(final String projectUid, 
 								   final String accessToken, 
@@ -40,7 +75,7 @@ public class Sync {
 			public void callbackCall(int statusCode, String response){
 				//TODO: Track and check statusCode
 				ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(response, projectUid);
-				GramClient.downloadVideosOneAtATime(videoUidsToDownload, accessToken, dm, refreshVideosOnUiThread);
+				GramClient.downloadVideosOneAtATime(videoUidsToDownload, accessToken, dm, refreshVideosOnUiThread, false);
 			}
 		};
 		
@@ -72,7 +107,6 @@ public class Sync {
 		
 		return projectUid;
 	}
-	
 	
 	public static void addUserToProject(final String newUsername, String accessToken, final String projectUid, final SyncCallback updateUsersOnUiThread){
 		/* Since users are free to change their instagram username at anytime,
@@ -106,7 +140,6 @@ public class Sync {
 		};
 		
 		GramClient.getUserUid(newUsername, accessToken, foundUserUid);
-
 	}
 
 	public static void addVideoToProject(String videoPath, String videoUid, String projectUid, String userUid) {

@@ -24,7 +24,7 @@ public class RailsClient {
 	
 	public static void createUser(String userUid, String username) {
 		RequestParams params = new RequestParams();
-		params.put("user[insta_id]", userUid);
+		params.put("user[uid]", userUid);
 		params.put("user[username]", username);
 		RestClient.post(getAbsoluteUrl("users/create"), params, RestClient.getResponseHandler("createUser"));
 	}
@@ -121,7 +121,7 @@ public class RailsClient {
 
 	public static void getVideosForProject(String projectUid, final SyncCallback videoUidsForProjectReturned) {
 		RequestParams params = new RequestParams();
-		params.put("projectUid", projectUid);
+		params.put("project_uid", projectUid);
 		
 		RestClient.post(getAbsoluteUrl("projects/get_videos_for_project"), params, new AsyncHttpResponseHandler(){
 			@Override

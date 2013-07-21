@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
 import com.jsvr.instacake.data.Constants;
-import com.jsvr.instacake.gram.GramClient;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.local.LocalJSONManager;
 import com.jsvr.instacake.sync.Sync;
@@ -35,9 +34,10 @@ public class ViewProjectActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_project);
-		this.setTitle(LocalJSONManager.getProjectTitle(mProjectUid));
 		
 		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
+		this.setTitle(LocalJSONManager.getProjectTitle(mProjectUid));
+	
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         
         updateUsers();

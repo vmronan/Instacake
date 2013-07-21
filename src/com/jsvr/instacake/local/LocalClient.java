@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import android.net.Uri;
@@ -121,5 +122,14 @@ public class LocalClient {
 			videoUids.add(Constants.getIdFromFilename(Uri.parse(videoPath).getLastPathSegment()));
 		}
 		return videoUids;
+	}
+
+	public static ArrayList<String> getMyVideoUids() {
+		String[] myVideoFilenames = Constants.getMyMoviesDir().list();
+		ArrayList<String> myVideoUids = new ArrayList<String>();
+		for (String videoFilename : myVideoFilenames){
+			myVideoUids.add(Constants.getIdFromFilename(videoFilename));
+		}
+		return myVideoUids;
 	}
 }

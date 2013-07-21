@@ -93,8 +93,8 @@ public class LocalJSONManager {
 //	}
 	
 	// Get project title from project ID
-	public static String getProjectTitle(String projectId) {
-		Project project = getProject(projectId);
+	public static String getProjectTitle(String projectUid) {
+		Project project = getProject(projectUid);
 		String title = project.getTitle();
 		return title;
 	}
