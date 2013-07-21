@@ -35,10 +35,10 @@ public class Sync {
 		 *  4. When the videos have been downloaded, send a callback to the UI thread to update the gridview
 		 */
 		
-		
 		SyncCallback videoUidsForProjectReturned = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCose, String response){
+			public void callbackCall(int statusCode, String response){
+				//TODO: Track and check statusCode
 				ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(response, projectUid);
 				GramClient.downloadVideosOneAtATime(videoUidsToDownload, accessToken, dm, refreshVideosOnUiThread);
 			}
