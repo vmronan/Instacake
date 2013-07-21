@@ -73,6 +73,12 @@ public class Sync {
 		GramClient.getUserUid(newUsername, accessToken, foundUserUid);
 
 	}
+
+	public static void addVideoToProject(String videoPath, String videoUid, String projectUid, String userUid) {
+		LocalClient.addVideoToProject(videoPath, projectUid);
+		RailsClient.addVideoToProject(projectUid, userUid, "created some time ago", videoUid);
+		
+	}
 	
 	
 }

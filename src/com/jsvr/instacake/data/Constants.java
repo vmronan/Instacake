@@ -41,8 +41,8 @@ public class Constants {
 	/* Project Key and Helpers */
 	public static final String PROJECT_UID_KEY = "yodawgi'maprojectid";
 	
-	public static String getProjectFilename(String projectId) {
-		return "PRJ_" + projectId + ".json";
+	public static String getProjectFilename(String projectUid) {
+		return "PRJ_" + projectUid + ".json";
 	}
 	
 	/* Critical Directories */
@@ -81,8 +81,8 @@ public class Constants {
 	
 	
 	/* Getters for file paths */
-	public static String getProjectPath(String projectId){
-		return getProjectsDir().getPath() + File.separator + getProjectFilename(projectId);
+	public static String getProjectPath(String projectUid){
+		return getProjectsDir().getPath() + File.separator + getProjectFilename(projectUid);
 	}
 	
 	public static String getThumbnailPath(String thumbnailId, boolean isMine) {

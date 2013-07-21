@@ -21,7 +21,6 @@ import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.local.LocalJSONManager;
-import com.jsvr.instacake.rails.RailsClient;
 import com.jsvr.instacake.sync.Sync;
 import com.jsvr.instacake.sync.Sync.SyncCallback;
 

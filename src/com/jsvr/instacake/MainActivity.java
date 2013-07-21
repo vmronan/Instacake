@@ -40,6 +40,10 @@ public class MainActivity extends Activity {
     	startActivity(i);
     }
     
+    public void grid(View v){
+    	startActivity(new Intent(this, VideoGridActivity.class));
+    }
+    
 
     
 //    public void testRails(View v){

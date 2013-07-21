@@ -25,9 +25,10 @@ public class LocalJSONManager {
 
 	// Saves project object to JSON file
 	private static void saveProject(Project project) {
-		File projFile = new File(Constants.getProjectPath(project.getProjectId()));
+		File projFile = new File(Constants.getProjectPath(project.getProjectUid()));
 		String json = new Gson().toJson(project);
 		Log.v("saveProject", "users: " + project.getUsers());
+		Log.v("saveProject", "number of videos:" + project.getVideoPaths().size());
 		writeToFile(projFile, json);
 	}
 	
@@ -38,8 +39,8 @@ public class LocalJSONManager {
 		saveProject(project);
 	}
 	
-	public static void addVideoToProject(String videoPath, String projectId) {
-		Project project = getProject(projectId);
+	public static void addVideoToProject(String videoPath, String projectUid) {
+		Project project = getProject(projectUid);
 		project.addVideo(videoPath);
 		Log.v("addVideoToProject", "adding video " + videoPath);
 		saveProject(project);
@@ -74,9 +75,10 @@ public class LocalJSONManager {
 	}
 
 	// Get project object from JSON file with GSON
-	public static Project getProject(String projectId) {
-		String json = readFromFile(new File(Constants.getProjectPath(projectId)));
+	public static Project getProject(String projectUid) {
+		String json = readFromFile(new File(Constants.getProjectPath(projectUid)));
 		Type type = new TypeToken<Project>(){}.getType();
+		Log.v("getProject", "has json: " + json);
 		return new Gson().fromJson(json, type);
 	}
 
