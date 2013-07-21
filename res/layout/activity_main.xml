@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:onClick="getFeed" 
         android:text="@string/get_feed" /> -->
-    
+
     <Button
         android:id="@+id/view_videos"
         android:layout_width="fill_parent"
@@ -37,6 +37,7 @@
         android:layout_below="@id/view_projects"
         android:onClick="grid" 
         android:text="grid" />
+
     
 <!--     <EditText 
         android:id="@+id/new_project_title"

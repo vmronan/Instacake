@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.jsvr.instacake.data.Constants;
@@ -20,16 +21,21 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Constants.buildOrEnsureAllDirectories();
         
+        Log.v("onCreate", "starting LoginActivity");
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+        String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, "");
+        if(accessToken == "") {
+        	Intent i = new Intent(this, LoginActivity.class);
+        	startActivity(i);
+        }
         
         //TODO: For now, let's assume we saved a string under the key USERNAME_KEY at the same
         // time we save USER_UID_KEY.
-        mPrefs.edit().putString(Constants.USERNAME_KEY, "Sample Username").commit();
+//        mPrefs.edit().putString(Constants.USERNAME_KEY, "Sample Username").commit();
         
         RailsClient.createUser(mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR), 
         						mPrefs.getString(Constants.USERNAME_KEY, Constants.ERROR));
     }
-    
     
     public void viewVideos(View v) {
     	Intent i = new Intent(this, ViewVideosActivity.class);
@@ -46,8 +52,6 @@ public class MainActivity extends Activity {
     	startActivity(new Intent(this, VideoGridActivity.class));
     }
     
-
-    
 //    public void testRails(View v){
 //    	startActivity(new Intent(this, TestRailsActivity.class));
 //    }
@@ -58,6 +62,4 @@ public class MainActivity extends Activity {
 //    public void testSync(View v){
 //    	startActivity(new Intent(this, TestSyncActivity.class));
 //    }
-    
-
 }

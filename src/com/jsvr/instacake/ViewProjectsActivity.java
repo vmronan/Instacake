@@ -19,7 +19,7 @@ import android.widget.ListView;
 import com.jsvr.instacake.adapters.ProjectListAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
-import com.jsvr.instacake.local.LocalJSONManager;
+import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.sync.Sync;
 
 public class ViewProjectsActivity extends Activity {
@@ -47,7 +47,7 @@ public class ViewProjectsActivity extends Activity {
 		int numProjects = projectUids.size();
 		Project[] projects = new Project[numProjects];
 		for(int i = 0; i < numProjects; i++) {
-			projects[i] = LocalJSONManager.getProject(projectUids.get(i));
+			projects[i] = LocalClient.getProject(projectUids.get(i));
 		}
 		
 		// Display titles and users with ProjectListAdapter

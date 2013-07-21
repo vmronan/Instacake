@@ -63,8 +63,10 @@ public class AuthWebViewClient extends WebViewClient {
 				String response = readStream(urlConnection.getInputStream());
 				System.out.println(response);
 				JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
-				saveInstaId(jsonObject.getJSONObject("user").getString("id"));
-			    saveAccessToken(jsonObject.getString("access_token")); 	
+				String userUid = jsonObject.getJSONObject("user").getString("id");
+				String username = jsonObject.getJSONObject("user").getString("username");
+				String accessToken = jsonObject.getString("access_token");
+				saveUserInfo(userUid, username, accessToken);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -83,18 +85,14 @@ public class AuthWebViewClient extends WebViewClient {
         return new Scanner(inputStream).useDelimiter("\\A").next();
     }
     
-    public void saveInstaId(String instaId) {
+    public void saveUserInfo(String userUid, String username, String accessToken) {
 		Editor editor = mContext.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE).edit();
-    	editor.putString(Constants.USER_UID_KEY, instaId);
-    	editor.commit();
-    	Log.v("saveInstaId", "saved instaId " + instaId);
-		
-	}
-
-	public void saveAccessToken(String accessToken) {
-    	Editor editor = mContext.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE).edit();
+    	editor.putString(Constants.USER_UID_KEY, userUid);
+    	editor.putString(Constants.USERNAME_KEY, username);
     	editor.putString(Constants.ACCESS_TOKEN_KEY, accessToken);
     	editor.commit();
-    	Log.v("saveAccessToken", "saved access token " + accessToken);
-    }
+    	Log.v("saveUserInfo", "saved userUid " + userUid);	
+    	Log.v("saveUserInfo", "saved username " + username);
+    	Log.v("saveUserInfo", "saved access token " + accessToken);
+	}
 }

@@ -41,10 +41,7 @@ public class ThumbnailGridArrayAdapter extends ArrayAdapter<String> {
 			holder = (ViewHolder)v.getTag();  
 		}
 		
-//		Uri uri = Uri.parse("file://" + Constants.getMyThumbsDir().getPath() + File.separator + data[position]);
-//		String path = Constants.getMyThumbsDir().getPath() + File.separator + data[position];
 		String path = data[position];
-
 		try {
 			holder.thumbnailView.setImageBitmap(meh(path, 100, 100));
 		} catch (Exception e) {
@@ -55,7 +52,6 @@ public class ThumbnailGridArrayAdapter extends ArrayAdapter<String> {
 	}
 	
 	public static Bitmap meh(String path, int reqWidth, int reqHeight) {
-
 	    // First decode with inJustDecodeBounds=true to check dimensions
 	    final BitmapFactory.Options options = new BitmapFactory.Options();
 	    options.inJustDecodeBounds = true;

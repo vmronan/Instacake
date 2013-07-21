@@ -102,7 +102,7 @@ public class Sync {
 		String projectUid = Integer.toString(new Random().nextInt());
 		
 		// Save data locally and in the cloud.
-		LocalClient.createProject(projectUid, title, userUid);
+		LocalClient.createProject(projectUid, title, userUid, username);
 		RailsClient.createProject(projectUid, title, userUid, username);
 		
 		return projectUid;
@@ -127,7 +127,7 @@ public class Sync {
 				if (statusCode == RESPONSE_OK){
 					// response contains userUid, so we save
 					RailsClient.addUserToProject(response, projectUid, newUsername);
-					LocalClient.addUserToProject(response, projectUid);
+					LocalClient.addUserToProject(response, projectUid, newUsername);
 					updateUsersOnUiThread.callbackCall(RESPONSE_OK, "User should now be added to the project.");
 				} else if (statusCode == ERROR){
 					// response contains error message

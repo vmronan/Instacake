@@ -37,7 +37,8 @@ public class VideoGridActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_video_grid);
 		
-		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);  
+		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+		projectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
 		selectorOn = false;
 		
 		projectUids =  LocalClient.readProjectsFile();
@@ -77,14 +78,13 @@ public class VideoGridActivity extends Activity {
 				projectUid = projectUids.get(position);
 				Log.v("onItemSelected", "project: " + projectUid + ", " + parent.getItemAtPosition(position).toString());
 			}
-
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-				
+				// Nothing to do
 			}
 		});
 		
-		// Update the UI
+		// Show the current project by default
 		spinner.setSelection(projectUids.indexOf(projectUid));
 	}
 
@@ -105,10 +105,6 @@ public class VideoGridActivity extends Activity {
 										   Constants.getIdFromFilename(Uri.parse(thumbs[pos]).getLastPathSegment()),
 										   projectUid,
 										   mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR));
-					
-					
-					
-
 					Log.v("onItemClick", "added " + Constants.getVideoPathFromThumbnailPath(thumbs[pos]) + " to project " + projectUid);
 				}
 				else {
@@ -124,15 +120,15 @@ public class VideoGridActivity extends Activity {
 	
 	public void toggleSelector(View v) {
 		selectorOn = !selectorOn;
-		Log.v("toggleSelector", "selector is " + selectorOn);
 		if(selectorOn) {
-			((Button)findViewById(R.id.js_select)).setTextColor(getResources().getColor(R.color.lime_green));		// red if selected
+			((Button)findViewById(R.id.js_select)).setTextColor(getResources().getColor(R.color.lime_green));	// green if selected
 		}
 		else {
 			((Button)findViewById(R.id.js_select)).setTextColor(getResources().getColor(R.color.black));		// black otherwise
 		}
 	}
 	
+	// Go back to project
 	public void done(View v) {
 		Intent i = new Intent(this, ViewProjectActivity.class);
 		i.putExtra(Constants.PROJECT_UID_KEY, projectUid);

@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.LocalClient;
-import com.jsvr.instacake.local.LocalJSONManager;
 import com.jsvr.instacake.sync.Sync;
 import com.jsvr.instacake.sync.Sync.SyncCallback;
 
@@ -36,7 +35,7 @@ public class ViewProjectActivity extends Activity {
 		setContentView(R.layout.activity_view_project);
 		
 		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
-		this.setTitle(LocalJSONManager.getProjectTitle(mProjectUid));
+		this.setTitle(LocalClient.getProjectTitle(mProjectUid));
 	
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         
@@ -60,9 +59,11 @@ public class ViewProjectActivity extends Activity {
 	}
 	
 	public void addUser(View v) {
-    	String newUsername = ((EditText)findViewById(R.id.project_new_user)).getText().toString();
+		EditText editText = (EditText)findViewById(R.id.project_new_user);
+    	String newUsername = editText.getText().toString();
+	    editText.setText("");
     	
-    	// After Sync asynchronously adds the user to the project, it will send a callback through the
+	    // After Sync asynchronously adds the user to the project, it will send a callback through the
     	// SyncCallback passed to addUserToProject
     	
     	// Set up listener
@@ -91,11 +92,14 @@ public class ViewProjectActivity extends Activity {
 	}
 	
 	private void showThumbnails() {
-		final String[] thumbnails = LocalClient.getArray(LocalJSONManager.getVideoPaths(mProjectUid));
+		final String[] thumbnails = LocalClient.getThumbnailPaths(mProjectUid);
 		
 		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
 		GridView grid = (GridView) findViewById(R.id.gridview_videos);
 		grid.setAdapter(adapter);
+		
+//		GridView grid = (GridView) findViewById(R.id.gridview_videos);
+//	    grid.setAdapter(new ImageAdapter(this, thumbnails));
 		
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -108,8 +112,9 @@ public class ViewProjectActivity extends Activity {
 		});
 	}
 	
+	// Updates TextView showing the list of users
 	private void updateUsers() {
-	    ArrayList<String> users = LocalJSONManager.getUsers(mProjectUid);
+	    ArrayList<String> users = LocalClient.getProjectUsernames(mProjectUid);
 	    String usersStr = "";
 		if(users.size() > 0) {
 			usersStr = users.get(0);
@@ -119,11 +124,10 @@ public class ViewProjectActivity extends Activity {
 			}
 		}
 	    ((TextView)findViewById(R.id.users)).setText(usersStr);
-	    ((EditText)findViewById(R.id.project_new_user)).setText("");
 	}
 	
 	public void addVideos(View v) {
-		Intent i = new Intent(this, ViewVideosActivity.class);
+		Intent i = new Intent(this, VideoGridActivity.class);
 		i.putExtra(Constants.PROJECT_UID_KEY, mProjectUid);
     	startActivity(i);
 	}

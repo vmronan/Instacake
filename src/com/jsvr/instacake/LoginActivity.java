@@ -1,12 +1,12 @@
 package com.jsvr.instacake;
 
-import com.jsvr.instacake.data.Constants;
-import com.jsvr.instacake.gram.AuthWebViewClient;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
+
+import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.gram.AuthWebViewClient;
 
 public class LoginActivity extends Activity {
 
