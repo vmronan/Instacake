@@ -42,7 +42,7 @@ public class ViewProjectActivity extends Activity {
         showThumbnails();
         
         // For updating and syncing project
-        SyncCallback refreshVideosOnUiThread = new SyncCallback(){
+        SyncCallback updateVideosOnUiThread = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, String response){
 				if (statusCode == Sync.RESPONSE_OK){
@@ -51,7 +51,7 @@ public class ViewProjectActivity extends Activity {
 				}
 			}
 		};
-		SyncCallback refreshTitleOnUiThread = new SyncCallback(){
+		SyncCallback updateTitleOnUiThread = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, String response){
 				System.out.println("response is " + response);
@@ -61,7 +61,7 @@ public class ViewProjectActivity extends Activity {
 				}
 			}
 		};
-		SyncCallback refreshUsersOnUiThread = new SyncCallback(){
+		SyncCallback updateUsersOnUiThread = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, String response){
 				System.out.println("response is " + response);
@@ -75,9 +75,10 @@ public class ViewProjectActivity extends Activity {
 		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 		
-        Sync.updateProjectTitle(mProjectUid, dm, refreshTitleOnUiThread);
-        Sync.updateProjectUsers(mProjectUid, dm, refreshUsersOnUiThread);
-		Sync.syncProject(mProjectUid, accessToken, dm, refreshVideosOnUiThread);
+		Sync.syncProject(mProjectUid, accessToken, dm,
+				updateTitleOnUiThread,
+				updateUsersOnUiThread,
+				updateVideosOnUiThread);
 
 	}
 	
