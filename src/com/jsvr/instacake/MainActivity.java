@@ -21,16 +21,23 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Constants.buildOrEnsureAllDirectories();
         
-        Log.v("onCreate", "starting LoginActivity");
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
-        String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, "");
-        if(accessToken == "") {
+        
+        loginIfNecessary();
+    }
+    
+    public void loginIfNecessary(){
+    	String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, "");
+        if(accessToken.equals("")) {
         	Intent i = new Intent(this, LoginActivity.class);
         	startActivity(i);
         }
-
-        RailsClient.createUser(mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR), 
-        						mPrefs.getString(Constants.USERNAME_KEY, Constants.ERROR));
+        
+        if (Constants.DEVELOPMENT_MODE){
+        	RailsClient.createUser(mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR), 
+    				mPrefs.getString(Constants.USERNAME_KEY, Constants.ERROR));
+        }
+        
     }
     
     public void viewVideos(View v) {
