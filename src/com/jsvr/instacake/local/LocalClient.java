@@ -155,4 +155,8 @@ public class LocalClient {
 	public static void setUsernamesList(String projectUid, ArrayList<String> usernames) {
 		LocalJSONManager.setUsernames(projectUid, usernames);
 	}
+	
+	public static void setTitle(String projectUid, String title) {
+		LocalJSONManager.setTitle(projectUid, title);
+	}
 }

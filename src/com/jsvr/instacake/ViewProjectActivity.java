@@ -34,11 +34,10 @@ public class ViewProjectActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_project);
 		
-		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
-		this.setTitle(LocalClient.getProjectTitle(mProjectUid));
-	
+		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);	
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         
+        updateTitle();
         updateUsers();
         showThumbnails();
         
@@ -49,6 +48,16 @@ public class ViewProjectActivity extends Activity {
 				if (statusCode == Sync.RESPONSE_OK){
 					showThumbnails();
 					Log.v("refreshVideosOnUiThread", response);
+				}
+			}
+		};
+		SyncCallback refreshTitleOnUiThread = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				System.out.println("response is " + response);
+				//TODO: track and implement statusCode properly
+				if (statusCode == Sync.RESPONSE_OK){
+					updateTitle();
 				}
 			}
 		};
@@ -66,6 +75,7 @@ public class ViewProjectActivity extends Activity {
 		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 		
+        Sync.updateProjectTitle(mProjectUid, dm, refreshTitleOnUiThread);
         Sync.updateProjectUsers(mProjectUid, dm, refreshUsersOnUiThread);
 		Sync.syncProject(mProjectUid, accessToken, dm, refreshVideosOnUiThread);
 
@@ -123,6 +133,10 @@ public class ViewProjectActivity extends Activity {
 				startActivity(intent);			
 			}
 		});
+	}
+	
+	private void updateTitle() {
+		this.setTitle(LocalClient.getProjectTitle(mProjectUid));
 	}
 	
 	// Updates TextView showing the list of users

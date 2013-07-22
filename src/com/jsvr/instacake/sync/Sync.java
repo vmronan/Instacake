@@ -80,6 +80,31 @@ public class Sync {
 		RailsClient.getUserUidsForProject(projectUid, userUidsReturned);
 		RailsClient.getUsernamesForProject(projectUid, usernamesReturned);
 	}
+	
+	
+	public static void updateProjectTitle(final String projectUid,
+										  final DownloadManager dm,
+										  final SyncCallback refreshTitleOnUiThread) {
+		/* In order to update title:
+		*  1. Get title from the RailsClient
+		*  2. Save title to local client
+		*  3. Update the UI thread with the title
+		*/
+		
+		SyncCallback titleReturned = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+			//TODO: track and implement statusCode properly
+				if (statusCode == RESPONSE_OK){
+					LocalClient.setTitle(projectUid, response);
+					refreshTitleOnUiThread.callbackCall(Sync.RESPONSE_OK, "Done updating title.");
+				}
+			}
+		};
+		
+		RailsClient.getTitleForProject(projectUid, titleReturned);
+	}
+	
 
 	protected static ArrayList<String> getMyVideoUidsForDownloading(String response) {
 		String[] gramVideoUids = response.split("[\\r\\n]+");

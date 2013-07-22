@@ -174,7 +174,20 @@ public class RailsClient {
 				videoUidsForProjectReturned.callbackCall(Sync.RESPONSE_OK, videoUidsForProject);
 			}
 		});
+	}
+	
+	public static void getTitleForProject(String projectUid, final SyncCallback titleForProjectReturned) {
+		RequestParams params = new RequestParams();
+		params.put("project_uid", projectUid);
 		
+		RestClient.post(getAbsoluteUrl("projects/get_users_for_project"), params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(String response) {
+				super.onSuccess(response);
+				String title = RailsJSONManager.getProjectTitleFromResponse(response);
+				titleForProjectReturned.callbackCall(Sync.RESPONSE_OK, title);
+			}
+		});
 	}
 
 //	public static void syncAllProjects(String instaId, String accessToken, DownloadManager dm) {

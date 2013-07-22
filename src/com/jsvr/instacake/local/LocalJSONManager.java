@@ -125,9 +125,16 @@ public class LocalJSONManager {
 	}
 	
 	// Set list of usernames
-		protected static void setUsernames(String projectUid, ArrayList<String> usernames) {
-			Project project = getProject(projectUid);
-			project.setUsernames(usernames);
-			saveProject(project);
-		}
+	protected static void setUsernames(String projectUid, ArrayList<String> usernames) {
+		Project project = getProject(projectUid);
+		project.setUsernames(usernames);
+		saveProject(project);
+	}
+	
+	// Set title
+	protected static void setTitle(String projectUid, String title) {
+		Project project = getProject(projectUid);
+		project.setTitle(title);
+		saveProject(project);
+	}
 }

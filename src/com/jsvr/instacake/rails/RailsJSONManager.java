@@ -107,5 +107,17 @@ public class RailsJSONManager {
 		}
 		return "0";
 	}
+	
+	public static String getProjectTitleFromResponse(String response) {
+		try {
+			JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+			String title = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("title");
+			return title;
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
 
 }
