@@ -66,6 +66,7 @@ public class ViewProjectsActivity extends Activity {
 		
 		// Get each project
 		int numProjects = projectUids.size();
+		System.out.println(numProjects + " projects found");
 		Project[] projects = new Project[numProjects];
 		for(int i = 0; i < numProjects; i++) {
 			projects[i] = LocalClient.getProject(projectUids.get(i));
@@ -103,6 +104,7 @@ public class ViewProjectsActivity extends Activity {
     // Gets list of project UIDs
     private void getProjectUids() {
     	File projectsFile = new File(Constants.getProjectsFilePath());
+    	projectUids.clear();
     	
     	Scanner scanner;
 		try {
