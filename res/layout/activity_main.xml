@@ -19,8 +19,8 @@
         android:id="@+id/view_videos"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:onClick="viewVideos"
-        android:text="@string/view_videos" />
+        android:onClick="grid"
+        android:text="@string/my_videos" />
     
     <Button 
         android:id="@+id/view_projects"
@@ -29,14 +29,6 @@
         android:layout_below="@id/view_videos"
         android:onClick="viewProjects" 
         android:text="@string/my_projects" />
-    
-    <Button 
-        android:id="@+id/grid"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/view_projects"
-        android:onClick="grid" 
-        android:text="grid" />
 
     
 <!--     <EditText 
