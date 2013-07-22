@@ -1,7 +1,8 @@
 package com.jsvr.instacake.adapters;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,13 +42,12 @@ public class ImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-        
-        int num = mThumbs.length;
-        Log.v("***", "number of thumbs: " + num);
-    	for(int i = 0; i < num; i++) {
-        	Log.v("***", "thumbnail: " + mThumbs[i]);        	
-        }
-        imageView.setImageURI(Uri.parse(mThumbs[position]));
+    	
+    	BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inSampleSize = 5;
+		Bitmap previewBitmap = Bitmap.createScaledBitmap(
+		                BitmapFactory.decodeFile(mThumbs[position], o), 85, 85, false);
+		imageView.setImageBitmap(previewBitmap);
         return imageView;
     }
 

@@ -28,7 +28,6 @@ public class RailsJSONManager {
 			e.printStackTrace();
 		}
 		
-		
 		return myProjects;
 	}
 	
@@ -53,13 +52,48 @@ public class RailsJSONManager {
 			int numVideos = videos.length();
 			for (int i=0; i<numVideos; i++){
 				String videoUid = videos.getJSONObject(i).getString("uid");
-				System.out.println("videoUid is " + videoUid);
 				videoIds.add(videoUid);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return videoIds;
+	}
+	
+	public static ArrayList<String> getUserUidsForProjectFromResponse(String response) {
+		ArrayList<String> userUids = new ArrayList<String>();
+		JSONObject jsonObject = null;
+		try {
+			jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+			JSONArray users = (JSONArray) new JSONTokener(jsonObject.getString("users")).nextValue();
+			int numUsers = users.length();
+			for (int i = 0; i < numUsers; i++){
+				String userUid = users.getJSONObject(i).getString("uid");
+				System.out.println("userUid is " + userUid);
+				userUids.add(userUid);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return userUids;
+	}
+	
+	public static ArrayList<String> getUsernamesForProjectFromResponse(String response) {
+		ArrayList<String> usernames = new ArrayList<String>();
+		JSONObject jsonObject = null;
+		try {
+			jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+			JSONArray users = (JSONArray) new JSONTokener(jsonObject.getString("users")).nextValue();
+			int numUsers = users.length();
+			for (int i = 0; i < numUsers; i++){
+				String username = users.getJSONObject(i).getString("username");
+				System.out.println("username is " + username);
+				usernames.add(username);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return usernames;
 	}
 
 	public static String getProjectUidFromResponse(String response) {

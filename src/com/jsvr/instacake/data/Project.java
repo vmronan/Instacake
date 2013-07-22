@@ -59,6 +59,14 @@ public class Project {
 	public ArrayList<String> getThumbnailPaths() {
 		return mThumbnailPaths;
 	}
+	
+	public void setUserUids(ArrayList<String> userUids) {
+		mUserUids = userUids;
+	}
+	
+	public void setUsernames(ArrayList<String> usernames) {
+		mUsernames = usernames;
+	}
 
 //	public ArrayList<String> getUsernames() {
 //		ArrayList<String> usernames = new ArrayList<String>();

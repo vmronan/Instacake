@@ -1,6 +1,7 @@
 package com.jsvr.instacake.sync;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import android.app.DownloadManager;
@@ -19,7 +20,6 @@ public class Sync {
 	public interface SyncCallback {
 		void callbackCall(int statusCode, String response);
 	}
-	
 	
 	public static void updateMyMovies(final String accessToken,
 									  final DownloadManager dm,
@@ -44,6 +44,42 @@ public class Sync {
 		
 		GramClient.getMyMovieList(accessToken, instaVideoListReturned);
 	}
+	
+	public static void updateProjectUsers(final String projectUid,
+										  final DownloadManager dm,
+										  final SyncCallback refreshUsersOnUiThread) {
+		/* In order to update my videos:
+		 *  1. Get the lists of userUids and usernames from the RailsClient
+		 *  2. Save lists to local client
+		 *  3. Update the UI thread with username list
+		 */
+		SyncCallback userUidsReturned = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				//TODO: track and implement statusCode properly
+				if (statusCode == RESPONSE_OK){
+					// Update local list of users
+					LocalClient.setUserUidsList(projectUid, getProjectUserList(response));
+					// TODO need way to only update users if both this and usernamesReturn come back ok
+//					refreshUsersOnUiThread.callbackCall(Sync.RESPONSE_OK, "Done updating list of usersUids.");
+				}
+			}
+		};
+		SyncCallback usernamesReturned = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				//TODO: track and implement statusCode properly
+				if (statusCode == RESPONSE_OK){
+					// Update local list of users
+					LocalClient.setUsernamesList(projectUid, getProjectUserList(response));
+					refreshUsersOnUiThread.callbackCall(Sync.RESPONSE_OK, "Done updating list of usernames.");
+				}
+			}
+		};
+		
+		RailsClient.getUserUidsForProject(projectUid, userUidsReturned);
+		RailsClient.getUsernamesForProject(projectUid, usernamesReturned);
+	}
 
 	protected static ArrayList<String> getMyVideoUidsForDownloading(String response) {
 		String[] gramVideoUids = response.split("[\\r\\n]+");
@@ -57,7 +93,10 @@ public class Sync {
 			}
 		}
 		return videoUidsForDownload;
-		
+	}
+	
+	protected static ArrayList<String> getProjectUserList(String response) {
+		return new ArrayList<String>(Arrays.asList(response.split("[\\r\\n]+")));
 	}
 
 	public static void syncProject(final String projectUid, 
@@ -95,13 +134,8 @@ public class Sync {
 		}
 		ArrayList<String> localVideoUids = LocalClient.getVideoUidsForProject(projectUid);
 		
-		for (String localVid : localVideoUids){
-			Log.v("getVideoUidsForDownload", "localVid is " + localVid);
-		}
-		
 		ArrayList<String> videoUidsForDownload = new ArrayList<String>();
 		for (String railsVid : railsVideoUids){
-			Log.v("getVideoUidsForDownlaod", "railsVid is " + railsVid);
 			if (!localVideoUids.contains(railsVid)){
 				// Our Local Storage is not aware of this video, so we download it
 				videoUidsForDownload.add(railsVid);
