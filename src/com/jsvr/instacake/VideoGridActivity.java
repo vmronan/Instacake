@@ -56,11 +56,11 @@ public class VideoGridActivity extends Activity {
 				}
 			}
 		};
+		
 		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         
 		Sync.updateMyMovies(accessToken, dm, refreshVideosOnUiThread);
-
 	}
 
 	private void setupSpinner() {

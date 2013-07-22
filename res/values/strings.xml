@@ -15,7 +15,7 @@
     
     <string name="authorize">Authorize</string>
     <string name="get_feed">Feed</string>
-    <string name="view_videos">My videos</string>
+    <string name="my_videos">My videos</string>
     <string name="my_projects">My projects</string>
     <string name="new_project">Create new project</string>
     <string name="update_thumbs">Update thumbnails</string>

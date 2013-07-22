@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
@@ -106,7 +105,6 @@ public class LocalClient {
 		int numThumbs = thumbnails.length;
 		for(int i = 0; i < numThumbs; i++) {
 			thumbnails[i] = Constants.getMyThumbsDir().getPath() + File.separator + thumbnails[i];
-			Log.v("showMyVideos", "thumbnail: " + thumbnails[i]);
 		}
 		return thumbnails;
 	}
@@ -148,5 +146,17 @@ public class LocalClient {
 	
 	public static String[] getThumbnailPaths(String projectUid) {
 		return listToArray(LocalJSONManager.getThumbnailPaths(projectUid));
+	}
+	
+	public static void setUserUidsList(String projectUid, ArrayList<String> userUids) {
+		LocalJSONManager.setUserUids(projectUid, userUids);
+	}
+	
+	public static void setUsernamesList(String projectUid, ArrayList<String> usernames) {
+		LocalJSONManager.setUsernames(projectUid, usernames);
+	}
+	
+	public static void setTitle(String projectUid, String title) {
+		LocalJSONManager.setTitle(projectUid, title);
 	}
 }
