@@ -19,9 +19,9 @@ public class RailsJSONManager {
 			
 			int numProjects = projects.length();
 			for (int i=0; i<numProjects; i++){
-				String projectId = projects.getJSONObject(i).getString("id");
-				System.out.println("projectId is " + projectId);
-				myProjects.add(projectId);
+				String projectUid = projects.getJSONObject(i).getString("uid");
+				System.out.println("projectUid is " + projectUid);
+				myProjects.add(projectUid);
 				
 			}
 		} catch (JSONException e) {
@@ -52,9 +52,9 @@ public class RailsJSONManager {
 			JSONArray videos = (JSONArray) new JSONTokener(jsonObject.getString("videos")).nextValue();
 			int numVideos = videos.length();
 			for (int i=0; i<numVideos; i++){
-				String videoId = videos.getJSONObject(i).getString("insta_id");
-				System.out.println("videoId is " + videoId);
-				videoIds.add(videoId);
+				String videoUid = videos.getJSONObject(i).getString("uid");
+				System.out.println("videoUid is " + videoUid);
+				videoIds.add(videoUid);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();

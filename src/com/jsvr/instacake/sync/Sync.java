@@ -9,6 +9,7 @@ import android.util.Log;
 import com.jsvr.instacake.gram.GramClient;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.rails.RailsClient;
+import com.jsvr.instacake.rails.RailsJSONManager;
 
 public class Sync {
 	
@@ -36,7 +37,7 @@ public class Sync {
 				//TODO: track and implement statusCode properly
 				if (statusCode == RESPONSE_OK){
 					System.out.println("Going to download all of the videos here: " + response);
-					GramClient.downloadVideosOneAtATime(getMyVideoUidsForDownloading(response), accessToken, dm, refreshVideosOnUiThread, true);
+					GramClient.downloadVideosOneAtATime(getMyVideoUidsForDownloading(response), accessToken, dm, refreshVideosOnUiThread, true, "");
 				}
 			}
 		};
@@ -74,8 +75,12 @@ public class Sync {
 			@Override
 			public void callbackCall(int statusCode, String response){
 				//TODO: Track and check statusCode
+				Log.v("videoUidsForProjectReturned", "response is " + response);
 				ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(response, projectUid);
-				GramClient.downloadVideosOneAtATime(videoUidsToDownload, accessToken, dm, refreshVideosOnUiThread, false);
+				for (String video : videoUidsToDownload){
+					Log.v("syncProject", "Wants to download " + video);
+				}
+				GramClient.downloadVideosOneAtATime(videoUidsToDownload, accessToken, dm, refreshVideosOnUiThread, false, projectUid);
 			}
 		};
 		
@@ -85,10 +90,18 @@ public class Sync {
 	// Compare rails data against local data to find videos that need to be downloaded.
 	private static ArrayList<String> getVideoUidsForDownload(String response, String projectUid) {
 		String[] railsVideoUids = response.split("[\\r\\n]+");
+		if (LocalClient.getProject(projectUid).getTitle().equals("temporary title")){
+			System.out.println("added project " + projectUid);
+		}
 		ArrayList<String> localVideoUids = LocalClient.getVideoUidsForProject(projectUid);
+		
+		for (String localVid : localVideoUids){
+			Log.v("getVideoUidsForDownload", "localVid is " + localVid);
+		}
 		
 		ArrayList<String> videoUidsForDownload = new ArrayList<String>();
 		for (String railsVid : railsVideoUids){
+			Log.v("getVideoUidsForDownlaod", "railsVid is " + railsVid);
 			if (!localVideoUids.contains(railsVid)){
 				// Our Local Storage is not aware of this video, so we download it
 				videoUidsForDownload.add(railsVid);
@@ -145,6 +158,56 @@ public class Sync {
 	public static void addVideoToProject(String videoPath, String videoUid, String projectUid, String userUid) {
 		LocalClient.addVideoToProject(videoPath, projectUid);
 		RailsClient.addVideoToProject(projectUid, userUid, "created some time ago", videoUid);
+	}
+
+	public static void updateMyProjects(final String userUid,
+										final String accessToken, 
+										final DownloadManager dm,
+										final SyncCallback updateProjectsListOnUiThread) {
+		/* 1. Get the project list from RailsClient
+		 * 2. Compare with project list returned by LocalClient.
+		 * 3. Update the project and download necessary videos/thumbs
+		 * 4. Throw a callback to the UI thread to update the list of projects.
+		 */
+		
+		SyncCallback projectListReturnedFromRailsClient = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response) {
+				if (statusCode == RESPONSE_OK){
+					// response contains userUid, so we save
+					ArrayList<String> projectsToUpdate = getListOfNewProjects(response);
+					for (String projectUid : projectsToUpdate){
+						syncProject(projectUid, 
+								   	accessToken, 
+								   	dm, 
+								    new SyncCallback(){
+							@Override
+							public void callbackCall(int statusCode, String response){};
+						});
+						Log.v("projectListReturnedFromRailsClient", "trying to sync project " + projectUid);
+					}
+					updateProjectsListOnUiThread.callbackCall(RESPONSE_OK, "Tried to update " + projectsToUpdate.size() + " projects.");
+				} else if (statusCode == ERROR){
+				} else {
+					// Really bad error...
+				}
+			}
+		};
+		
+		RailsClient.getProjectsList(userUid, projectListReturnedFromRailsClient);
+		
+	}
+
+	protected static ArrayList<String> getListOfNewProjects(String response) {
+		ArrayList<String> railsProjectsList = RailsJSONManager.getProjectListFromResponse(response);
+		ArrayList<String> localProjectsList = LocalClient.readProjectsFile();
+		ArrayList<String> newProjects = new ArrayList<String>();
+		for (String railsProject : railsProjectsList){
+			if (!localProjectsList.contains(railsProject)){
+				newProjects.add(railsProject);
+			}
+		}
+		return newProjects;
 	}
 	
 	

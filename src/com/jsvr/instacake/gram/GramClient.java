@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.sync.Sync;
 import com.jsvr.instacake.sync.Sync.SyncCallback;
 import com.jsvr.instacake.sync.VideoSync;
@@ -222,7 +223,8 @@ public class GramClient {
 												final String accessToken,
 												final DownloadManager dm, 
 												final SyncCallback refreshVideosOnUiThread,
-												final boolean isMine) {
+												final boolean isMine,
+												final String projectUid) {
 		/*  For each video in videoUidsToDownload, we wait for a callback indicating we 
 		 *  have finished with on videoUid before moving on to the next.
 		 */
@@ -232,6 +234,12 @@ public class GramClient {
 			public void callbackCall(int statusCode, String response) {
 				if (statusCode == Sync.RESPONSE_OK){
 					Log.v("moveToNextVideo", "Successfully downloaded " + response);
+					if (!projectUid.equals("")){
+						//TODO: this should not happen... just hacking it together for now. 
+						//TODO: fix the damn localclient
+						LocalClient.addVideoToProject(Constants.getThumbnailPath(response, isMine), projectUid);
+					}
+					 
 				}
 				videoUidsToDownload.remove(response);
 				if (videoUidsToDownload.size() > 0){
@@ -242,7 +250,8 @@ public class GramClient {
 			}
 		};
 		
-		if (videoUidsToDownload.size() > 0){
+		if (videoUidsToDownload.size() > 0 && !videoUidsToDownload.get(0).equals("")){
+			Log.v("downloadVideosOneAtATime", "Downloading " + videoUidsToDownload.get(0));
 			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
 		} else {
 			refreshVideosOnUiThread.callbackCall(Sync.RESPONSE_OK, "No new videos downloaded.");

@@ -55,14 +55,14 @@ public class TestRailsActivity extends Activity {
 	public void addVideoToProjectAsOtherUser(View v){
 		RailsClient.addVideoToProject("1", "somebogusvalue", "12312312", "8768768"); 
 	}
-	
-	public void getProjectList(View v){
-		RailsClient.getProjectsList(mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
-	}
-	
-	public void getVideosForProject(View v){
-		RailsClient.getVideosForProject("1");
-	}
+//	
+//	public void getProjectList(View v){
+//		RailsClient.getProjectsList(mPrefs.getString(Constants.USER_UID_KEY, "NOKEY"));
+//	}
+//	
+//	public void getVideosForProject(View v){
+//		RailsClient.getVideosForProject("1");
+//	}
 	
 
 }

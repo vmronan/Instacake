@@ -95,29 +95,35 @@ public class RailsClient {
 	};
 	
 	
-	public static void addVideoToProject(String project_id, String insta_user_id, String created_at, String insta_video_id){
+	public static void addVideoToProject(String projectId, String userUid, String createdAt, String videoUid){
 		RequestParams params = new RequestParams();
-		params.put("insta_user_id", insta_user_id);
-		params.put("project_id", project_id);
-		params.put("video[created_at]", created_at);
-		params.put("video[insta_id]", insta_video_id);
+		params.put("user_uid", userUid);
+		params.put("project_uid", projectId);
+		params.put("video[created_at]", createdAt);
+		params.put("video[uid]", videoUid);
 		
 		RestClient.post(getAbsoluteUrl("projects/create_video_and_add_to_project"), params, RestClient.getResponseHandler("addVideoToProject"));
 	}
 	
-	public static void getProjectsList(String insta_id) {
+	public static void getProjectsList(String userUid, final SyncCallback projectListReturnedFromRailsClient) {
 		RequestParams params = new RequestParams();
-		params.put("insta_id", insta_id);
+		params.put("user_uid", userUid);
 		
-		RestClient.post(getAbsoluteUrl("projects/get_projects_list"), params, RestClient.getResponseHandler("getProjectsList"));
+		RestClient.post(getAbsoluteUrl("projects/get_projects_list"), params, new AsyncHttpResponseHandler(){
+			@Override
+			public void onSuccess(String response){
+				super.onSuccess(response);
+				projectListReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, response);
+			}
+		});
 	}
 	
-	public static void getVideosForProject(String projectUid) { 
-		RequestParams params = new RequestParams();
-		params.put("projectUid", projectUid);
-		
-		RestClient.post(getAbsoluteUrl("projects/get_videos_for_project"), params, RestClient.getResponseHandler("getVideosForProject"));
-	}
+//	public static void getVideosForProject(String projectUid) { 
+//		RequestParams params = new RequestParams();
+//		params.put("projectUid", projectUid);
+//		
+//		RestClient.post(getAbsoluteUrl("projects/get_videos_for_project"), params, RestClient.getResponseHandler("getVideosForProject"));
+//	}
 
 	public static void getVideosForProject(String projectUid, final SyncCallback videoUidsForProjectReturned) {
 		RequestParams params = new RequestParams();
@@ -127,10 +133,11 @@ public class RailsClient {
 			@Override
 			public void onSuccess(String response){
 				super.onSuccess(response);
-				ArrayList<String> railsVideoUids = RailsJSONManager.getProjectListFromResponse(response);
+				ArrayList<String> railsVideoUids = RailsJSONManager.getVideosForProjectFromResponse(response);
 				String videoUidsForProject = "";
 				for (String line : railsVideoUids){
-					videoUidsForProject.concat(line + "\n");
+					Log.v("getVideosForProject... railsclient", "adding line " + line);
+					videoUidsForProject = videoUidsForProject.concat(line + "\n");
 				}
 				videoUidsForProjectReturned.callbackCall(Sync.RESPONSE_OK, videoUidsForProject);
 			}

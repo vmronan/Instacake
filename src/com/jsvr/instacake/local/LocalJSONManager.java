@@ -1,6 +1,7 @@
 package com.jsvr.instacake.local;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -69,7 +70,26 @@ public class LocalJSONManager {
 
 	// Get project object from JSON file with GSON
 	protected static Project getProject(String projectUid) {
-		String json = readFromFile(new File(Constants.getProjectPath(projectUid)));
+		File projectFile = new File(Constants.getProjectPath(projectUid));
+		String json = ""; 
+		if (!projectFile.exists()){
+			// This project does not exist... we must create it.
+			saveNewProject(new Project(projectUid, "temporary title", "temporary userUid", "temporary username"));
+			json = readFromFile(projectFile);
+			// Save new project filename to projects.txt
+			try {
+				File projectstxt = new File(Constants.getProjectsFilePath());
+				BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
+				buf.append(projectUid);
+				buf.newLine();
+				buf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		} else {
+			json = readFromFile(projectFile);
+		}
 		Type type = new TypeToken<Project>(){}.getType();
 		return new Gson().fromJson(json, type);
 	}

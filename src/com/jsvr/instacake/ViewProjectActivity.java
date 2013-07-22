@@ -48,6 +48,7 @@ public class ViewProjectActivity extends Activity {
 			public void callbackCall(int statusCode, String response){
 				if (statusCode == Sync.RESPONSE_OK){
 					showThumbnails();
+					Log.v("refreshVideosOnUiThread", response);
 				}
 			}
 		};

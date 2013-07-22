@@ -30,9 +30,11 @@ public class Project {
 	}
 	
 	public void addVideo(String videoPath) {
+		//TODO: honestly what the fuck. this is breaking everything
 		if(mThumbnailPaths == null) {
 			mThumbnailPaths = new ArrayList<String>();
 		}
+		
 		mThumbnailPaths.add(videoPath);
 		Log.v("addVideo", "adding " + videoPath);
 	}

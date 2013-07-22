@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -21,6 +23,7 @@ import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.sync.Sync;
+import com.jsvr.instacake.sync.Sync.SyncCallback;
 
 public class ViewProjectsActivity extends Activity {
 
@@ -38,6 +41,24 @@ public class ViewProjectsActivity extends Activity {
 		mContext = this;
 		
 		showProjects();
+		
+		SyncCallback updateProjectsListOnUiThread = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response) {
+				if (statusCode == Sync.RESPONSE_OK){
+					//TODO: We should not create a new adapter each time.  
+					//      We should instead tell the adapter that the underlying dataset has changed.
+					showProjects();	
+					Log.v("updateProjectsListOnUiThread", "Success: " + response);
+				} else if (statusCode == Sync.ERROR){
+					Log.v("updateProjectsListOnUiThread", "Error: " + response);
+				}
+			}
+		};
+		String userUid = mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR);
+		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
+        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+		Sync.updateMyProjects(userUid, accessToken, dm, updateProjectsListOnUiThread);
 	}
 
 	private void showProjects() {
