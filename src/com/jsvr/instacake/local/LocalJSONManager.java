@@ -34,9 +34,9 @@ public class LocalJSONManager {
 		saveProject(project);
 	}
 	
-	protected static void addVideoToProject(String videoPath, String projectUid) {
+	protected static void addVideoByThumbnailPath(String thumbnailPath, String projectUid) {
 		Project project = getProject(projectUid);
-		project.addVideo(videoPath);
+		project.addVideoByThumbnailPath(thumbnailPath);
 		saveProject(project);
 	}
 

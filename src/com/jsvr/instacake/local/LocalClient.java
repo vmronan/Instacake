@@ -39,8 +39,8 @@ public class LocalClient {
 		LocalJSONManager.addUserToProject(userUid, projectUid, username);
 	}
 	
-	public static void addVideoToProject(String videoPath, String projectUid) {
-		LocalJSONManager.addVideoToProject(videoPath, projectUid);
+	public static void addVideoByThumbnailPath(String thumbnailPath, String projectUid) {
+		LocalJSONManager.addVideoByThumbnailPath(thumbnailPath, projectUid);
 	}
 	
 	// Returns array of thumbnail paths

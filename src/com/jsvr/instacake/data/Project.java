@@ -2,8 +2,6 @@ package com.jsvr.instacake.data;
 
 import java.util.ArrayList;
 
-import android.util.Log;
-
 public class Project {
 	String mProjectUid;
 	String mTitle;
@@ -29,14 +27,12 @@ public class Project {
 		mUsernames.add(username);
 	}
 	
-	public void addVideo(String videoPath) {
-		//TODO: honestly what the fuck. this is breaking everything
+	public void addVideoByThumbnailPath(String thumbnailPath) {
 		if(mThumbnailPaths == null) {
 			mThumbnailPaths = new ArrayList<String>();
 		}
 		
-		mThumbnailPaths.add(videoPath);
-		Log.v("addVideo", "adding " + videoPath);
+		mThumbnailPaths.add(thumbnailPath);
 	}
 
 	

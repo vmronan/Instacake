@@ -235,9 +235,8 @@ public class GramClient {
 				if (statusCode == Sync.RESPONSE_OK){
 					Log.v("moveToNextVideo", "Successfully downloaded " + response);
 					if (!projectUid.equals("")){
-						//TODO: this should not happen... just hacking it together for now. 
-						//TODO: fix the damn localclient
-						LocalClient.addVideoToProject(Constants.getThumbnailPath(response, isMine), projectUid);
+						//TODO: this should not happen... just hacking it together for now.
+						LocalClient.addVideoByThumbnailPath(Constants.getThumbnailPath(response, isMine), projectUid);
 					}
 					 
 				}

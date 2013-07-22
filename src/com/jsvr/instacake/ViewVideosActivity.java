@@ -96,7 +96,7 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if(selectorOn) {
-					LocalClient.addVideoToProject(parent.getItemAtPosition(position).toString(), projectId);
+					LocalClient.addVideoByThumbnailPath(parent.getItemAtPosition(position).toString(), projectId);
 					Log.v("onItemClick", "added " + parent.getItemAtPosition(position) + " to project " + projectId);
 				}
 				else {
