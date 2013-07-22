@@ -18,7 +18,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jsvr.instacake.adapters.ThumbnailGridArrayAdapter;
+import com.jsvr.instacake.adapters.ImageAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.sync.Sync;
@@ -34,16 +34,15 @@ public class ViewProjectActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_project);
 		
-		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
-		this.setTitle(LocalClient.getProjectTitle(mProjectUid));
-	
+		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);	
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         
+        updateTitle();
         updateUsers();
         showThumbnails();
         
         // For updating and syncing project
-        SyncCallback refreshVideosOnUiThread = new SyncCallback(){
+        SyncCallback updateVideosOnUiThread = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, String response){
 				if (statusCode == Sync.RESPONSE_OK){
@@ -52,11 +51,35 @@ public class ViewProjectActivity extends Activity {
 				}
 			}
 		};
+		SyncCallback updateTitleOnUiThread = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				System.out.println("response is " + response);
+				//TODO: track and implement statusCode properly
+				if (statusCode == Sync.RESPONSE_OK){
+					updateTitle();
+				}
+			}
+		};
+		SyncCallback updateUsersOnUiThread = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				System.out.println("response is " + response);
+				//TODO: track and implement statusCode properly
+				if (statusCode == Sync.RESPONSE_OK){
+					updateUsers();
+				}
+			}
+		};
 		
 		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 		
-		Sync.syncProject(mProjectUid, accessToken, dm, refreshVideosOnUiThread);
+		Sync.syncProject(mProjectUid, accessToken, dm,
+				updateTitleOnUiThread,
+				updateUsersOnUiThread,
+				updateVideosOnUiThread);
+
 	}
 	
 	public void addUser(View v) {
@@ -95,12 +118,12 @@ public class ViewProjectActivity extends Activity {
 	private void showThumbnails() {
 		final String[] thumbnails = LocalClient.getThumbnailPaths(mProjectUid);
 		
-		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
-		GridView grid = (GridView) findViewById(R.id.gridview_videos);
-		grid.setAdapter(adapter);
-		
+//		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
 //		GridView grid = (GridView) findViewById(R.id.gridview_videos);
-//	    grid.setAdapter(new ImageAdapter(this, thumbnails));
+//		grid.setAdapter(adapter);
+		
+		GridView grid = (GridView) findViewById(R.id.gridview_videos);
+	    grid.setAdapter(new ImageAdapter(this, thumbnails));
 		
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -113,15 +136,23 @@ public class ViewProjectActivity extends Activity {
 		});
 	}
 	
+	private void updateTitle() {
+		this.setTitle(LocalClient.getProjectTitle(mProjectUid));
+	}
+	
 	// Updates TextView showing the list of users
 	private void updateUsers() {
+		Log.v("updateUsers", "starting");
 	    ArrayList<String> users = LocalClient.getProjectUsernames(mProjectUid);
 	    String usersStr = "";
 		if(users.size() > 0) {
+			int numUsers = users.size();
+			Log.v("updateUsers", "num users: " + numUsers);
 			usersStr = users.get(0);
-			users.remove(0);
-			for(String user : users) {
-				usersStr += ", " + user;
+			Log.v("updateUsers", "first user is " + users.get(0));
+			for(int i = 1; i < numUsers; i++) {
+				usersStr += ", " + users.get(i);
+				Log.v("updateUsers", "user: " + users.get(i));
 			}
 		}
 	    ((TextView)findViewById(R.id.users)).setText(usersStr);
