@@ -30,7 +30,7 @@ public class RailsClient {
 	}
 
 	// Create project and add first user
-	public static void createProject(String projectUid, String title, String userUid, String username) {
+	public static void createProject(String projectUid, String title, String userUid, String username, final SyncCallback createdProjectInRails) {
 		if (userUid.equals(Constants.ERROR)){
 			Log.v("createProject", "failed to find valid userUid");
 			return;
@@ -41,11 +41,27 @@ public class RailsClient {
 		RequestParams params = new RequestParams();
 		params.put("project[uid]", projectUid);
 		params.put("project[title]", title);		
-		RestClient.post(getAbsoluteUrl("projects/create"), params, createProjectHandler);
+//		RestClient.post(getAbsoluteUrl("projects/create"), params, createProjectHandler);
+
+		RestClient.post(getAbsoluteUrl("projects/create"), params, new AsyncHttpResponseHandler() {
+			String tag = "newProject";
+			@Override
+			public void onSuccess(String response) {
+				super.onSuccess(response);
+				Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
+				createdProjectInRails.callbackCall(Sync.RESPONSE_OK, response);
+			}
+			@Override
+			public void onFailure(Throwable e, String response) {
+				Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
+				e.printStackTrace();
+				super.onFailure(e, response);
+			}
+		});
 	}
 
 
-	
+	// TODO this isn't used anymore
 	// Handle project creation... if successful, adds first user to new project
 	public static AsyncHttpResponseHandler createProjectHandler = new AsyncHttpResponseHandler(){
 		String tag = "newProject";
@@ -53,7 +69,7 @@ public class RailsClient {
 		public void onSuccess(String response) {
 			super.onSuccess(response);
 			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
-			addUserToProject(mUserUid, RailsJSONManager.getProjectUidFromResponse(response), mUsername);
+//			addUserToProject(mUserUid, RailsJSONManager.getProjectUidFromResponse(response), mUsername);
 		}
 		@Override
 		public void onFailure(Throwable e, String response) {
@@ -64,7 +80,7 @@ public class RailsClient {
 	};
 	
 	// Adds user to project
-	public static void addUserToProject(String userUid, String projectUid, String newUsername) {
+	public static void addUserToProject(String userUid, String projectUid, String newUsername, final SyncCallback userAddedToNewProjectInRails) {
 		if (projectUid.equals(Constants.ERROR)){
 			Log.v("addUserToProject", "project uid is not valid");
 			return;
@@ -74,9 +90,25 @@ public class RailsClient {
 		params.put("user_uid", userUid);
 		params.put("username", newUsername);
 		params.put("project_uid", projectUid);
-		RestClient.post(getAbsoluteUrl("projects/add_user"), params, addUserHandler);
+		RestClient.post(getAbsoluteUrl("projects/add_user"), params, new AsyncHttpResponseHandler() {
+			String tag = "addUser";
+			@Override
+			public void onSuccess(String response) {
+				super.onSuccess(response);
+				Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
+				userAddedToNewProjectInRails.callbackCall(Sync.RESPONSE_OK, response);
+			}
+		
+			@Override
+			public void onFailure(Throwable e, String response) {
+				Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
+				e.printStackTrace();
+				super.onFailure(e, response);
+			}
+		});
 	}
 	
+	// TODO this isn't used anymore
 	// Handles response from rails
 	public static AsyncHttpResponseHandler addUserHandler = new AsyncHttpResponseHandler(){
 		String tag = "addUser";

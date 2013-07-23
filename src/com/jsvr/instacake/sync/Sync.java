@@ -185,13 +185,35 @@ public class Sync {
 		GramClient.getMyMovieList(accessToken, instaVideoListReturned);
 	}
 
-	public static String createProject(String title, String userUid, String username){
+	public static String createProject(String title, final String userUid, final String username, final SyncCallback projectHasBeenCreated){
 		// TODO: Verify uniqueness of uid's
-		String projectUid = Integer.toString(new Random().nextInt());
+		final String projectUid = Integer.toString(new Random().nextInt());
+		
+		// Set up listener for adding user to project
+		final SyncCallback userAddedToNewProjectInRails = new SyncCallback() {
+			@Override
+			public void callbackCall(int statusCode, String response) {
+				if(statusCode == RESPONSE_OK) {
+					System.out.println("Done adding user.");
+					projectHasBeenCreated.callbackCall(RESPONSE_OK, response);
+				}
+			}
+		};
+		
+		// Set up listener
+		SyncCallback createdProjectInRails = new SyncCallback() {
+			@Override
+			public void callbackCall(int statusCode, String response) {
+				if(statusCode == RESPONSE_OK) {
+					System.out.println("Done creating project.");
+					RailsClient.addUserToProject(userUid, projectUid, username, userAddedToNewProjectInRails);
+				}
+			}
+		};
 		
 		// Save data locally and in the cloud.
 		LocalClient.createProject(projectUid, title, userUid, username);
-		RailsClient.createProject(projectUid, title, userUid, username);
+		RailsClient.createProject(projectUid, title, userUid, username, createdProjectInRails);
 		
 		return projectUid;
 	}
@@ -214,7 +236,10 @@ public class Sync {
 			public void callbackCall(int statusCode, String response) {
 				if (statusCode == RESPONSE_OK){
 					// response contains userUid, so we save
-					RailsClient.addUserToProject(response, projectUid, newUsername);
+					RailsClient.addUserToProject(response, projectUid, newUsername, new SyncCallback() {
+						@Override
+						public void callbackCall(int statusCode, String response) {}
+					});
 					LocalClient.addUserToProject(response, projectUid, newUsername);
 					updateUsersOnUiThread.callbackCall(RESPONSE_OK, "User should now be added to the project.");
 				} else if (statusCode == ERROR){

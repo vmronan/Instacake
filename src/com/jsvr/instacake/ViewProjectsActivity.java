@@ -28,6 +28,7 @@ import com.jsvr.instacake.sync.Sync.SyncCallback;
 public class ViewProjectsActivity extends Activity {
 
 	ArrayList<String> projectUids;
+	String mProjectUid;
 	SharedPreferences mPrefs;
 	Context mContext;
 
@@ -93,12 +94,22 @@ public class ViewProjectsActivity extends Activity {
     	String username = mPrefs.getString(Constants.USERNAME_KEY, Constants.ERROR);
     	
     	// Use Sync to create project with LocalClient and RailsClient
-    	String projectUid = Sync.createProject(title, userUid, username);
+    	SyncCallback projectHasBeenCreated = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, String response){
+				if (statusCode == Sync.RESPONSE_OK){
+					showProject();
+				}
+			}
+		};
+    	mProjectUid = Sync.createProject(title, userUid, username, projectHasBeenCreated);
+    }
 
+    private void showProject() {
     	// Show the new project
-		Intent i = new Intent(this, ViewProjectActivity.class);
-		i.putExtra(Constants.PROJECT_UID_KEY, projectUid);
-		startActivity(i);
+    	Intent i = new Intent(this, ViewProjectActivity.class);
+    	i.putExtra(Constants.PROJECT_UID_KEY, mProjectUid);
+    	startActivity(i);
     }
     
     // Gets list of project UIDs
