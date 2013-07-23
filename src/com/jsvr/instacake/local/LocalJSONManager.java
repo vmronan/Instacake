@@ -78,25 +78,26 @@ public class LocalJSONManager {
 	// Get project object from JSON file with GSON
 	protected static Project getProject(String projectUid) {
 		File projectFile = new File(Constants.getProjectPath(projectUid));
-		String json = ""; 
-		if (!projectFile.exists()){
-			// This project does not exist... we must create it.
-			saveNewProject(new Project(projectUid, "temporary title", "temporary userUid", "temporary username"));
-			json = readFromFile(projectFile);
-			// Save new project filename to projects.txt
-			try {
-				File projectstxt = new File(Constants.getProjectsFilePath());
-				BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
-				buf.append(projectUid);
-				buf.newLine();
-				buf.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-		} else {
-			json = readFromFile(projectFile);
-		}
+		String json = readFromFile(projectFile); 
+		//TODO Fix getProject
+//		if (!projectFile.exists()){
+//			// This project does not exist... we must create it.
+//			saveNewProject(new Project(projectUid, "temporary title", "temporary userUid", "temporary username"));
+//			json = readFromFile(projectFile);
+//			// Save new project filename to projects.txt
+//			try {
+//				File projectstxt = new File(Constants.getProjectsFilePath());
+//				BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
+//				buf.append(projectUid);
+//				buf.newLine();
+//				buf.close();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			
+//		} else {
+//			json = readFromFile(projectFile);
+//		}
 		Type type = new TypeToken<Project>(){}.getType();
 		return new Gson().fromJson(json, type);
 	}

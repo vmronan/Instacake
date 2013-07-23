@@ -71,6 +71,7 @@ public class ViewProjectsActivity extends Activity {
 		System.out.println(numProjects + " projects found");
 		Project[] projects = new Project[numProjects];
 		for(int i = 0; i < numProjects; i++) {
+			System.out.println("projectUid issssss....liiiike " + projectUids.get(i).toString());
 			projects[i] = LocalClient.getProject(projectUids.get(i));
 		}
 		

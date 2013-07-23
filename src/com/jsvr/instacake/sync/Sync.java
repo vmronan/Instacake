@@ -41,6 +41,7 @@ public class Sync {
 				Project projectToSave = (Project) responseObject;
 				
 				if (statusCode == RESPONSE_OK){
+					Log.v("projectReadyForSaveAfterDownloads", "projectToSave: " + projectToSave.getTitle());
 					LocalClient.saveProject(projectToSave);
 					refreshProjectOnUiThread.callbackCall(RESPONSE_OK, 
 							"Project + " + projectToSave.getTitle() + " has been saved.");
@@ -79,10 +80,13 @@ public class Sync {
 		SyncCallback projectListReturnedFromRailsClient = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, Object responseObject) {
-				String response = (String) responseObject;
+				ArrayList<String> railsProjectsList = (ArrayList<String>) responseObject;
 				if (statusCode == RESPONSE_OK){
 					// response contains userUid, so we save
-					ArrayList<String> projectsToUpdate = getListOfNewProjects(response);
+					ArrayList<String> projectsToUpdate = getListOfNewProjects(railsProjectsList);
+					for (String projectUid:  projectsToUpdate){
+						Log.v("projectsListReturnedFromRailsClient", projectUid + " is the projectUid returned");
+					}
 					for (String projectUid : projectsToUpdate){
 						syncProject(projectUid, 
 								   	accessToken,
@@ -221,12 +225,12 @@ public class Sync {
 		RailsClient.addVideoToProject(projectUid, userUid, "created some time ago", videoUid);
 	}
 
-	protected static ArrayList<String> getListOfNewProjects(String response) {
-		ArrayList<String> railsProjectsList = RailsJSONManager.parseForProjectsList(response);
+	protected static ArrayList<String> getListOfNewProjects(ArrayList<String> railsProjectsList) {
 		ArrayList<String> localProjectsList = LocalClient.getProjectUids();
 		ArrayList<String> newProjects = new ArrayList<String>();
 		for (String railsProject : railsProjectsList){
 			if (!localProjectsList.contains(railsProject)){
+				Log.v("getListOfNewProjects", "adding " + railsProject);
 				newProjects.add(railsProject);
 			}
 		}

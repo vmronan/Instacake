@@ -94,11 +94,11 @@ public class RailsClient {
 		RequestParams params = new RequestParams();
 		params.put("user_uid", userUid);
 		
-		RestClient.post(getAbsoluteUrl("projects/get_projects_list"), params, new AsyncHttpResponseHandler(){
+		RestClient.get(getAbsoluteUrl("projects/get_all_projects"), params, new AsyncHttpResponseHandler(){
 			@Override
 			public void onSuccess(String response){
 				super.onSuccess(response);
-				projectListReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, response);
+				projectListReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, RailsJSONManager.parseForProjectsList(response));
 			}
 		});
 	}

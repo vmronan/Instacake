@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.util.Log;
+
 import com.jsvr.instacake.data.Project;
 
 public class RailsJSONManager {
@@ -22,7 +24,7 @@ public class RailsJSONManager {
 			int numProjects = projects.length();
 			for (int i=0; i<numProjects; i++){
 				String projectUid = projects.getJSONObject(i).getString("uid");
-				System.out.println("projectUid is " + projectUid);
+				Log.v("parseForProjectsList", "projectUid is " + projectUid);
 				myProjects.add(projectUid);
 			}
 		} catch (JSONException e) {

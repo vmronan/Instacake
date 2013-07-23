@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ public class ViewProjectActivity extends Activity {
 
 	String mProjectUid;
 	SharedPreferences mPrefs;
+	private GridView mGridView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +48,10 @@ public class ViewProjectActivity extends Activity {
 			public void callbackCall(int statusCode, Object responseObject) {
 				// TODO: track and handle status codes correctly
 				if(statusCode == Sync.RESPONSE_OK) {
+					Log.v("updateProjectOnUiThread", "about to update everything in the project");
 					updateTitle();
 					updateUsers();
-					showThumbnails();
+					updateThumbnails();
 				}
 			}
 		};
@@ -93,6 +96,11 @@ public class ViewProjectActivity extends Activity {
 		Toast.makeText(this, "Could not find user!", Toast.LENGTH_SHORT).show();
 	}
 	
+	private void updateThumbnails(){
+		mGridView = (GridView) findViewById(R.id.gridview_videos);
+		((BaseAdapter) ((ImageAdapter) mGridView.getAdapter()).setThumbs(LocalClient.getProjectThumbnailPaths(mProjectUid))).notifyDataSetChanged();
+	}
+	
 	private void showThumbnails() {
 		final String[] thumbnails = LocalClient.getProjectThumbnailPaths(mProjectUid);
 		
@@ -100,10 +108,10 @@ public class ViewProjectActivity extends Activity {
 //		GridView grid = (GridView) findViewById(R.id.gridview_videos);
 //		grid.setAdapter(adapter);
 		
-		GridView grid = (GridView) findViewById(R.id.gridview_videos);
-	    grid.setAdapter(new ImageAdapter(this, thumbnails));
+		mGridView = (GridView) findViewById(R.id.gridview_videos);
+		mGridView.setAdapter(new ImageAdapter(this, thumbnails));
 		
-		grid.setOnItemClickListener(new OnItemClickListener() {
+		mGridView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 				Intent intent = new Intent();

@@ -217,59 +217,6 @@ public class GramClient {
 		
 	}
 
-
-	//TODO: This does not truly wait for each download to finish.  Instead it waits for each download to start.
-	// We need to override some of DownloadManager's stuff to wait for each download to finish before starting the next.
-	public static void downloadVideosOneAtATime(final ArrayList<String> videoUidsToDownload,
-												final String accessToken,
-												final DownloadManager dm, 
-												final SyncCallback callback,
-												final boolean isMine,
-												final String projectUid,
-												final Object project) {
-		/*  For each video in videoUidsToDownload, we wait for a callback indicating we 
-		 *  have finished with on videoUid before moving on to the next.
-		 */
-		if (!projectUid.equals(Project.NOT_A_PROJECT)){
-			mProject = (Project) project;
-		}
-		
-		
-		SyncCallback moveToNextVideo = new SyncCallback(){
-			@Override
-			public void callbackCall(int statusCode, Object responseObject) {
-				String response = (String) responseObject;
-
-				// Remove downloaded video and move to next
-				videoUidsToDownload.remove(response);
-
-
-				if (videoUidsToDownload.size() > 0){
-					download(videoUidsToDownload.get(0), accessToken, this, dm, isMine);
-				} else {
-					if (projectUid.equals(Project.NOT_A_PROJECT)){
-						callback.callbackCall(Sync.RESPONSE_OK, "Downloading finished.");
-					} else {
-						//TODO: edit project as i go
-						callback.callbackCall(Sync.RESPONSE_OK, project);
-					}
-				}
-			}
-		};
-		
-		if (videoUidsToDownload.size() > 0 && !videoUidsToDownload.get(0).equals("")){
-			Log.v("downloadVideosOneAtATime", "Downloading " + videoUidsToDownload.get(0));
-			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
-		} else {
-			// Sometimes we are sent here to download an empty list of videoUids
-			if (projectUid.equals(Project.NOT_A_PROJECT)){
-				callback.callbackCall(Sync.RESPONSE_OK, "No new videos downloaded.");
-			} else {
-				callback.callbackCall(Sync.RESPONSE_OK, project);
-			}
-		}
-	}
-
 	// Download a video and its thumbnail
 	public static void download(final String videoUid, 
 							     String accessToken, 
@@ -345,7 +292,7 @@ public class GramClient {
 			final String accessToken, 
 			final DownloadManager dm,
 			final SyncCallback projectReadyForSaveAfterDownloads) {
-
+		mProject = project;
 		
 		SyncCallback moveToNextVideo = new SyncCallback(){
 			@Override
@@ -354,13 +301,14 @@ public class GramClient {
 				
 				// Check a video off the list
 				videoUidsToDownload.remove(uidOfDownloadedVideo);
-				project.addVideo(uidOfDownloadedVideo, isMine);
+				mProject.addVideo(uidOfDownloadedVideo, isMine);
+				Log.v("downloadmoviesoneatatime", "num of video uids: " + project.getVideoUids().size());
 				
 				// Continue if necessary
 				if (videoUidsToDownload.size() > 0){
 					download(videoUidsToDownload.get(0), accessToken, this, dm, isMine);
 				} else {
-					projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, project);
+					projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, mProject);
 				}
 			}
 		};
@@ -370,7 +318,7 @@ public class GramClient {
 			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
 		} else {
 			// Sometimes we are sent here to download an empty list of videoUids
-			projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, project);
+			projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, mProject);
 		}
 	}
 
