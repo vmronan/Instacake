@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Spinner;
@@ -31,17 +32,20 @@ public class VideoGridActivity extends Activity {
 	String projectUid;
 	ArrayList<String> projectUids;
 	SharedPreferences mPrefs;
+	GridView mGridview;
+	String[] mThumbs;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_video_grid);
+		mGridview = (GridView) findViewById(R.id.gridview);
 		
 		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
 		projectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
 		selectorOn = false;
 		
-		projectUids =  LocalClient.readProjectsFile();
+		projectUids =  LocalClient.getProjectUids();
 		setupSpinner();
 		buildGrid();
 		
@@ -51,8 +55,7 @@ public class VideoGridActivity extends Activity {
 				System.out.println("response is " + response);
 				//TODO: track and implement statusCode properly
 				if (statusCode == Sync.RESPONSE_OK){
-					System.out.println("response is " + response);
-					buildGrid();
+					updateGrid();
 				}
 			}
 		};
@@ -63,20 +66,27 @@ public class VideoGridActivity extends Activity {
 		Sync.updateMyMovies(accessToken, dm, refreshVideosOnUiThread);
 	}
 
+	protected void updateGrid() {
+		projectUids = LocalClient.getProjectUids();
+		((BaseAdapter) ((ImageAdapter) mGridview.getAdapter()).setThumbs(LocalClient.getMyThumbnailPaths())).notifyDataSetChanged();
+		Log.v("updateGrid", "notifyDataSetChanged");
+//		((BaseAdapter) mGridview.getAdapter()).notifyDataSetChanged();
+	}
+
 	private void setupSpinner() {
-		// Get list of projects
-		String[] projects = LocalClient.getProjectTitles();
+		// Get list of project titles
+		String[] projects = LocalClient.getProjectTitles(projectUids);
 		
 		// Set the adapter
-		Spinner spinner = (Spinner) findViewById(R.id.js_projects_spinner);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, projects);
+		Spinner spinner = (Spinner) findViewById(R.id.projects_spinner);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, 
+										android.R.layout.simple_spinner_item, projects);
 		spinner.setAdapter(adapter);
 		
 		// Set listener
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				projectUid = projectUids.get(position);
-				Log.v("onItemSelected", "project: " + projectUid + ", " + parent.getItemAtPosition(position).toString());
 			}
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
@@ -90,27 +100,27 @@ public class VideoGridActivity extends Activity {
 
 	private void buildGrid() {
 		// Get thumbnail paths
-		final String[] thumbs = LocalClient.getMyThumbnailPaths();
+		mThumbs = LocalClient.getMyThumbnailPaths();
+		final String[] fthumbs = mThumbs;
 		
 		// Set the adapter
-		GridView gridview = (GridView) findViewById(R.id.gridview);
-	    gridview.setAdapter(new ImageAdapter(this, thumbs));
+
+	    mGridview.setAdapter(new ImageAdapter(this, mThumbs));
 		
 	    // Set listener
-		gridview.setOnItemClickListener(new OnItemClickListener() {
+		mGridview.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
 				if(selectorOn) {
-					Sync.addVideoToProject(thumbs[pos], 
-										   Constants.getIdFromFilename(Uri.parse(thumbs[pos]).getLastPathSegment()),
+					Sync.addVideoToProject(fthumbs[pos], 
+										   Constants.getIdFromFilename(Uri.parse(fthumbs[pos]).getLastPathSegment()),
 										   projectUid,
 										   mPrefs.getString(Constants.USER_UID_KEY, Constants.ERROR));
-					Log.v("onItemClick", "added " + Constants.getVideoPathFromThumbnailPath(thumbs[pos]) + " to project " + projectUid);
 				}
 				else {
 					Intent intent = new Intent();
 					intent.setAction(Intent.ACTION_VIEW);
-					intent.setDataAndType(Uri.parse(Constants.getVideoPathFromThumbnailPath(thumbs[pos])), "video/mp4");
+					intent.setDataAndType(Uri.parse(Constants.getVideoPathFromThumbnailPath(fthumbs[pos])), "video/mp4");
 					startActivity(intent);	
 				}
 			}
@@ -121,10 +131,10 @@ public class VideoGridActivity extends Activity {
 	public void toggleSelector(View v) {
 		selectorOn = !selectorOn;
 		if(selectorOn) {
-			((Button)findViewById(R.id.js_select)).setTextColor(getResources().getColor(R.color.lime_green));	// green if selected
+			((Button)findViewById(R.id.select)).setTextColor(getResources().getColor(R.color.lime_green));	// green if selected
 		}
 		else {
-			((Button)findViewById(R.id.js_select)).setTextColor(getResources().getColor(R.color.black));		// black otherwise
+			((Button)findViewById(R.id.select)).setTextColor(getResources().getColor(R.color.black));		// black otherwise
 		}
 	}
 	

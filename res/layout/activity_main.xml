@@ -8,18 +8,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-<!--     <Button 
-        android:id="@+id/get_feed"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="getFeed" 
-        android:text="@string/get_feed" /> -->
 
     <Button
         android:id="@+id/view_videos"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:onClick="grid"
+        android:onClick="viewVideos"
         android:text="@string/my_videos" />
     
     <Button 
@@ -29,47 +23,5 @@
         android:layout_below="@id/view_videos"
         android:onClick="viewProjects" 
         android:text="@string/my_projects" />
-
-    
-<!--     <EditText 
-        android:id="@+id/new_project_title"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/get_projects"
-        android:hint="@string/new_project_hint"/>
-
-    <Button 
-        android:id="@+id/new_project"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/new_project_title"
-        android:onClick="newProject" 
-        android:text="@string/new_project" /> -->
-<!--     
-    <Button 
-        android:id="@+id/testRails"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/new_project"
-        android:onClick="testRails" 
-        android:text="test rails" />
-    
-    <Button 
-        android:id="@+id/testGram"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/testRails"
-        android:onClick="testGram" 
-        android:text="test gram" />
-    
-    <Button 
-        android:id="@+id/testSync"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/testGram"
-        android:onClick="testSync" 
-        android:text="test sync" /> -->
-    
-
 
 </RelativeLayout>
