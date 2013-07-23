@@ -123,19 +123,24 @@ public class LocalClient {
 		return LocalJSONManager.getUsernames(projectUid);
 	}
 	
-	public static String[] getThumbnailPaths(String projectUid) {
+	public static String[] getProjectThumbnailPaths(String projectUid) {
 		return listToArray(LocalJSONManager.getThumbnailPaths(projectUid));
 	}
 	
-	public static void setUserUidsList(String projectUid, ArrayList<String> userUids) {
+	public static void setProjectUserUidsList(String projectUid, ArrayList<String> userUids) {
 		LocalJSONManager.setUserUids(projectUid, userUids);
 	}
 	
-	public static void setUsernamesList(String projectUid, ArrayList<String> usernames) {
+	public static void setProjectUsernamesList(String projectUid, ArrayList<String> usernames) {
 		LocalJSONManager.setUsernames(projectUid, usernames);
 	}
 	
-	public static void setTitle(String projectUid, String title) {
+	public static void setProjectTitle(String projectUid, String title) {
 		LocalJSONManager.setTitle(projectUid, title);
+	}
+
+	public static void saveProject(Project project) {
+		// TODO Auto-generated method stub
+		
 	}
 }

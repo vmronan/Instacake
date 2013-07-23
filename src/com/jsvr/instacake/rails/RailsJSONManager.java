@@ -7,9 +7,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.jsvr.instacake.data.Project;
+
 public class RailsJSONManager {
 
-	public static ArrayList<String> getProjectListFromResponse(String response) {
+	public static ArrayList<String> parseForProjectsList(String response) {
 		// TODO Auto-generated method stub
 		ArrayList<String> myProjects = new ArrayList<String>();
 		JSONObject jsonObject = null;
@@ -22,7 +24,6 @@ public class RailsJSONManager {
 				String projectUid = projects.getJSONObject(i).getString("uid");
 				System.out.println("projectUid is " + projectUid);
 				myProjects.add(projectUid);
-				
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -31,11 +32,31 @@ public class RailsJSONManager {
 		return myProjects;
 	}
 	
-	public static String getProjectIdFromResponse(String response) {
+//	public static String getProjectIdFromResponse(String response) {
+//		try {
+//			JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+//			String projectId = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("id");
+//			return projectId;
+//			
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		}
+//		return "0";
+//	}
+
+	public static Project parseForProject(String response){
+		return new Project(getProjectUidFromResponse(response),
+						   getProjectTitleFromResponse(response),
+						   getUserUidsForProjectFromResponse(response), 
+						   getUsernamesForProjectFromResponse(response),
+						   getVideosForProjectFromResponse(response));
+	}
+
+	private static String getProjectUidFromResponse(String response) {
 		try {
 			JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
-			String projectId = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("id");
-			return projectId;
+			String projectUid = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("uid");
+			return projectUid;
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -43,24 +64,19 @@ public class RailsJSONManager {
 		return "0";
 	}
 
-	public static ArrayList<String> getVideosForProjectFromResponse(String response) {
-		ArrayList<String> videoIds = new ArrayList<String>();
-		JSONObject jsonObject = null;
+	private static String getProjectTitleFromResponse(String response) {
 		try {
-			jsonObject = (JSONObject) new JSONTokener(response).nextValue();
-			JSONArray videos = (JSONArray) new JSONTokener(jsonObject.getString("videos")).nextValue();
-			int numVideos = videos.length();
-			for (int i=0; i<numVideos; i++){
-				String videoUid = videos.getJSONObject(i).getString("uid");
-				videoIds.add(videoUid);
-			}
+			JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+			String title = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("title");
+			return title;
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return videoIds;
+		return "0";
 	}
-	
-	public static ArrayList<String> getUserUidsForProjectFromResponse(String response) {
+
+	private static ArrayList<String> getUserUidsForProjectFromResponse(String response) {
 		ArrayList<String> userUids = new ArrayList<String>();
 		JSONObject jsonObject = null;
 		try {
@@ -78,7 +94,7 @@ public class RailsJSONManager {
 		return userUids;
 	}
 	
-	public static ArrayList<String> getUsernamesForProjectFromResponse(String response) {
+	private static ArrayList<String> getUsernamesForProjectFromResponse(String response) {
 		ArrayList<String> usernames = new ArrayList<String>();
 		JSONObject jsonObject = null;
 		try {
@@ -96,28 +112,21 @@ public class RailsJSONManager {
 		return usernames;
 	}
 
-	public static String getProjectUidFromResponse(String response) {
+	private static ArrayList<String> getVideosForProjectFromResponse(String response) {
+		ArrayList<String> videoUids = new ArrayList<String>();
+		JSONObject jsonObject = null;
 		try {
-			JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
-			String projectUid = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("uid");
-			return projectUid;
-			
+			jsonObject = (JSONObject) new JSONTokener(response).nextValue();
+			JSONArray videos = (JSONArray) new JSONTokener(jsonObject.getString("videos")).nextValue();
+			int numVideos = videos.length();
+			for (int i=0; i<numVideos; i++){
+				String videoUid = videos.getJSONObject(i).getString("uid");
+				videoUids.add(videoUid);
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return "0";
-	}
-	
-	public static String getProjectTitleFromResponse(String response) {
-		try {
-			JSONObject jsonObject = (JSONObject) new JSONTokener(response).nextValue();
-			String title = ((JSONObject) new JSONTokener(jsonObject.getString("project")).nextValue()).getString("title");
-			return title;
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return "0";
+		return videoUids;
 	}
 
 }

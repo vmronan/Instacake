@@ -14,7 +14,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.jsvr.instacake.data.Constants;
-import com.jsvr.instacake.local.LocalClient;
+import com.jsvr.instacake.data.Project;
 import com.jsvr.instacake.sync.Sync;
 import com.jsvr.instacake.sync.Sync.SyncCallback;
 import com.jsvr.instacake.sync.VideoSync;
@@ -35,6 +35,7 @@ public class GramClient {
     }
     
     private static AsyncHttpClient client = new AsyncHttpClient();
+	private static Project mProject;
 		
 	public static void getThumbnail(String instaId, String accessToken, DownloadManager dm, Boolean isMine){
 		RequestParams params = new RequestParams();
@@ -222,38 +223,51 @@ public class GramClient {
 	public static void downloadVideosOneAtATime(final ArrayList<String> videoUidsToDownload,
 												final String accessToken,
 												final DownloadManager dm, 
-												final SyncCallback refreshVideosOnUiThread,
+												final SyncCallback callback,
 												final boolean isMine,
-												final String projectUid) {
+												final String projectUid,
+												final Object project) {
 		/*  For each video in videoUidsToDownload, we wait for a callback indicating we 
 		 *  have finished with on videoUid before moving on to the next.
 		 */
+		if (!projectUid.equals(Project.NOT_A_PROJECT)){
+			mProject = (Project) project;
+		}
+		
 		
 		SyncCallback moveToNextVideo = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response) {
-				if (statusCode == Sync.RESPONSE_OK){
-					Log.v("moveToNextVideo", "Successfully downloaded " + response);
-					if (!projectUid.equals("")){
-						//TODO: this should not happen... just hacking it together for now.
-						LocalClient.addVideoByThumbnailPath(Constants.getThumbnailPath(response, isMine), projectUid);
-					}
-					 
-				}
+			public void callbackCall(int statusCode, Object responseObject) {
+				String response = (String) responseObject;
+				
+				// Remove downloaded video and move to next
 				videoUidsToDownload.remove(response);
+				
+				
 				if (videoUidsToDownload.size() > 0){
 					download(videoUidsToDownload.get(0), accessToken, this, dm, isMine);
 				} else {
-					refreshVideosOnUiThread.callbackCall(Sync.RESPONSE_OK, "All new videos downloaded.");
+					if (projectUid.equals(Project.NOT_A_PROJECT)){
+						callback.callbackCall(Sync.RESPONSE_OK, "Downloading finished.");
+					} else {
+						//TODO: edit project as i go
+						callback.callbackCall(Sync.RESPONSE_OK, project);
+					}
 				}
 			}
 		};
+		
 		
 		if (videoUidsToDownload.size() > 0 && !videoUidsToDownload.get(0).equals("")){
 			Log.v("downloadVideosOneAtATime", "Downloading " + videoUidsToDownload.get(0));
 			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
 		} else {
-			refreshVideosOnUiThread.callbackCall(Sync.RESPONSE_OK, "No new videos downloaded.");
+			// Sometimes we are sent here to download an empty list of videoUids
+			if (projectUid.equals(Project.NOT_A_PROJECT)){
+				callback.callbackCall(Sync.RESPONSE_OK, "No new videos downloaded.");
+			} else {
+				callback.callbackCall(Sync.RESPONSE_OK, project);
+			}
 		}
 	}
 
