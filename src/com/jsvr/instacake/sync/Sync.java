@@ -22,14 +22,6 @@ public class Sync {
 		void callbackCall(int statusCode, Object response);
 	}
 	
-	public interface SyncProjectCallback {
-		void callbackCall(int statusCode, Project project);
-	}
-	
-	public interface SyncStringArrayListCallback {
-		void callbackCall(int statusCode, ArrayList<String> videoUids);
-	}
-	
 //	public static void syncProject(final String projectUid, 
 //								   final String accessToken, 
 //								   final DownloadManager dm,
@@ -63,7 +55,7 @@ public class Sync {
 								   	dm, 
 								    new SyncCallback(){
 										@Override
-										public void callbackCall(int statusCode, String response){};
+										public void callbackCall(int statusCode, Object response){};
 									});
 						Log.v("projectListReturnedFromRailsClient", "trying to sync project " + projectUid);
 					}
@@ -82,14 +74,12 @@ public class Sync {
 								   final String accessToken, 
 								   final DownloadManager dm,
 								   final SyncCallback refreshProjectOnUiThread) {
-		/* In order to update project:
-		 *  
-		 */
 		
 		final SyncCallback projectReadyForSaveAfterDownloads = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, Object responseObject){
 				Project projectToSave = (Project) responseObject;
+				
 				if (statusCode == RESPONSE_OK){
 					LocalClient.saveProject(projectToSave);
 					refreshProjectOnUiThread.callbackCall(RESPONSE_OK, 
@@ -104,12 +94,12 @@ public class Sync {
 				Project project = (Project) responseObject;
 				if(statusCode == RESPONSE_OK) {
 					ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(project.getVideoUids(), projectUid);
-					GramClient.downloadVideosOneAtATime(videoUidsToDownload, 
+					GramClient.downloadVideosOneAtATime(project,
+														videoUidsToDownload, 
+														false,
 														accessToken,
 														dm, 
-														videoUidsReturnedAfterDownloads,
-														false,
-														projectUid);
+														projectReadyForSaveAfterDownloads);
 				}
 			}
 		};
@@ -211,13 +201,28 @@ public class Sync {
 		 *  4. Update the UI thread with the given SyncCallback Object
 		 */
 		
+		final SyncCallback UiReadyForUpdateAfterDownloads = new SyncCallback(){
+			@Override 
+			public void callbackCall(int statusCode, Object responseObject){
+				String response = (String) responseObject;
+				if (statusCode == RESPONSE_OK){
+					refreshVideosOnUiThread.callbackCall(RESPONSE_OK, response);
+				}
+			}
+		};
+		
 		SyncCallback instaVideoListReturned = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response){
+			public void callbackCall(int statusCode, Object responseObject){
+				String response = (String) responseObject;
 				//TODO: track and implement statusCode properly
 				if (statusCode == RESPONSE_OK){
 					System.out.println("Going to download all of the videos here: " + response);
-//					GramClient.downloadVideosOneAtATime(getMyVideoUidsForDownloading(response), accessToken, dm, refreshVideosOnUiThread, true, "");
+					GramClient.downloadVideosOneAtATime(getMyVideoUidsForDownloading(response),
+														true,
+														accessToken, 
+														dm, 
+														UiReadyForUpdateAfterDownloads);
 				}
 			}
 		};
@@ -273,7 +278,8 @@ public class Sync {
 		// Set up listener
 		SyncCallback foundUserUid = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
+				String response = (String) responseObject;
 				if (statusCode == RESPONSE_OK){
 					// response contains userUid, so we save
 					RailsClient.addUserToProject(response, projectUid, newUsername, new SyncCallback() {

@@ -339,4 +339,73 @@ public class GramClient {
 		});
 		
 	}
+
+	public static void downloadVideosOneAtATime(final Project project,
+			final ArrayList<String> videoUidsToDownload, 
+			final boolean isMine,
+			final String accessToken, 
+			final DownloadManager dm,
+			final SyncCallback projectReadyForSaveAfterDownloads) {
+
+		
+		SyncCallback moveToNextVideo = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, Object responseObject) {
+				String uidOfDownloadedVideo = (String) responseObject;
+				
+				// Check a video off the list
+				videoUidsToDownload.remove(uidOfDownloadedVideo);
+				project.addVideo(uidOfDownloadedVideo, isMine);
+				
+				// Continue if necessary
+				if (videoUidsToDownload.size() > 0){
+					download(videoUidsToDownload.get(0), accessToken, this, dm, isMine);
+				} else {
+					projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, project);
+				}
+			}
+		};
+		
+		//TODO: Figure out why this is necessary
+		if (videoUidsToDownload.size() > 0 && !videoUidsToDownload.get(0).equals("")){
+			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
+		} else {
+			// Sometimes we are sent here to download an empty list of videoUids
+			projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, project);
+		}
+	}
+
+	public static void downloadVideosOneAtATime(
+			final ArrayList<String> videoUidsToDownload, 
+			final boolean isMine,
+			final String accessToken, 
+			final DownloadManager dm,
+			final SyncCallback uiReadyForUpdateAfterDownloads) {
+		
+		
+		SyncCallback moveToNextVideo = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, Object responseObject) {
+				String uidOfDownloadedVideo = (String) responseObject;
+				
+				// Check a video off the list
+				videoUidsToDownload.remove(uidOfDownloadedVideo);
+				
+				// Continue if necessary
+				if (videoUidsToDownload.size() > 0){
+					download(videoUidsToDownload.get(0), accessToken, this, dm, isMine);
+				} else {
+					uiReadyForUpdateAfterDownloads.callbackCall(Sync.RESPONSE_OK, "All videos downloaded.");
+				}
+			}
+		};
+		
+		//TODO: Figure out why this is necessary
+		if (videoUidsToDownload.size() > 0 && !videoUidsToDownload.get(0).equals("")){
+			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
+		} else {
+			// Sometimes we are sent here to download an empty list of videoUids
+			uiReadyForUpdateAfterDownloads.callbackCall(Sync.RESPONSE_OK, "No new videos to download.");
+		}
+	}
 }

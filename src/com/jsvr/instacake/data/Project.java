@@ -86,6 +86,11 @@ public class Project {
 		mUsernames = usernames;
 	}
 
+	public void addVideo(String videoUid, boolean isMine) {
+		mVideoUids.add(videoUid);
+		mThumbnailPaths.add(Constants.getThumbnailPath(videoUid, isMine));
+	}
+
 //	public ArrayList<String> getUsernames() {
 //		ArrayList<String> usernames = new ArrayList<String>();
 //		for (String user : mUsers){
