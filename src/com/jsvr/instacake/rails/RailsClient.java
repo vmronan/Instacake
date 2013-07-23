@@ -6,7 +6,6 @@ import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
 import com.jsvr.instacake.sync.Sync;
 import com.jsvr.instacake.sync.Sync.SyncCallback;
-import com.jsvr.instacake.sync.Sync.SyncProjectCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -151,7 +150,7 @@ public class RailsClient {
 	}
 	
 	// Get all info about project
-	public static void getProject(String projectUid, final SyncProjectCallback projectReturnedFromRailsClient) {
+	public static void getProject(String projectUid, final SyncCallback projectReturnedFromRailsClient) {
 		RequestParams params = new RequestParams();
 		params.put("project_uid", projectUid);
 		

@@ -43,7 +43,7 @@ public class ViewProjectActivity extends Activity {
 		
 		SyncCallback updateProjectOnUiThread = new SyncCallback() {
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
 				// TODO: track and handle status codes correctly
 				if(statusCode == Sync.RESPONSE_OK) {
 					updateTitle();
@@ -71,7 +71,8 @@ public class ViewProjectActivity extends Activity {
     	// Set up listener
 		SyncCallback updateUsersOnUiThread = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
+				String response = (String) responseObject;
 				if (statusCode == Sync.RESPONSE_OK){
 					// A user has been successfully added, so we update the ui.
 					updateUsers();

@@ -45,7 +45,8 @@ public class ViewProjectsActivity extends Activity {
 		
 		SyncCallback updateProjectsListOnUiThread = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
+				String response = (String) responseObject;
 				if (statusCode == Sync.RESPONSE_OK){
 					//TODO: We should not create a new adapter each time.  
 					//      We should instead tell the adapter that the underlying dataset has changed.
@@ -96,7 +97,7 @@ public class ViewProjectsActivity extends Activity {
     	// Use Sync to create project with LocalClient and RailsClient
     	SyncCallback projectHasBeenCreated = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response){
+			public void callbackCall(int statusCode, Object resposneObject){
 				if (statusCode == Sync.RESPONSE_OK){
 					showProject();
 				}

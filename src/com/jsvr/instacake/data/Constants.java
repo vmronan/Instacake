@@ -90,6 +90,7 @@ public class Constants {
 		return getProjectsDir().getPath() + File.separator + getProjectFilename(projectUid);
 	}
 	
+	// note: thumbnail ID = video ID
 	public static String getThumbnailPath(String thumbnailId, boolean isMine) {
 		if (isMine){
 			return getMyThumbsDir().getPath() + File.separator + "IMG_" + thumbnailId + ".jpg";

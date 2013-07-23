@@ -51,7 +51,8 @@ public class VideoGridActivity extends Activity {
 		
 		SyncCallback refreshVideosOnUiThread = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response){
+			public void callbackCall(int statusCode, Object responseObject){
+				String response = (String) responseObject;
 				System.out.println("response is " + response);
 				//TODO: track and implement statusCode properly
 				if (statusCode == Sync.RESPONSE_OK){

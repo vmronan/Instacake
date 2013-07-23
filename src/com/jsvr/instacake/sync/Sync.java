@@ -19,11 +19,7 @@ public class Sync {
 	public static final int ERROR = -1;
 	
 	public interface SyncCallback {
-		void callbackCall(int statusCode, String response);
-	}
-	
-	public interface SyncProjectCallback {
-		void callbackCall(int statusCode, Project project);
+		void callbackCall(int statusCode, Object response);
 	}
 	
 //	public static void syncProject(final String projectUid, 
@@ -48,17 +44,18 @@ public class Sync {
 		 */
 		SyncCallback projectListReturnedFromRailsClient = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
+				String response = (String) responseObject;
 				if (statusCode == RESPONSE_OK){
 					// response contains userUid, so we save
 					ArrayList<String> projectsToUpdate = getListOfNewProjects(response);
 					for (String projectUid : projectsToUpdate){
 						syncProject(projectUid, 
-								   	accessToken, 
-								   	dm, 
+								   	accessToken,
+								   	dm,
 								    new SyncCallback(){
 										@Override
-										public void callbackCall(int statusCode, String response){};
+										public void callbackCall(int statusCode, Object response){};
 									});
 						Log.v("projectListReturnedFromRailsClient", "trying to sync project " + projectUid);
 					}
@@ -78,9 +75,10 @@ public class Sync {
 			   final DownloadManager dm,
 			   final SyncCallback refreshProjectOnUiThread) {
 		
-		final SyncProjectCallback projectReturnedAfterDownloads = new SyncProjectCallback(){
+		final SyncCallback projectReturnedAfterDownloads = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, Project project){
+			public void callbackCall(int statusCode, Object responseObject){
+				Project project = (Project) responseObject;
 				if (statusCode == RESPONSE_OK){
 				LocalClient.saveProject(project);
 				refreshProjectOnUiThread.callbackCall(RESPONSE_OK, "Project + " + project.getProjectUid() + " has been saved.");
@@ -88,9 +86,10 @@ public class Sync {
 			}
 		};
 		
-		SyncProjectCallback projectReturnedFromRailsClient = new SyncProjectCallback() {
+		SyncCallback projectReturnedFromRailsClient = new SyncCallback() {
 			@Override
-			public void callbackCall(int statusCode, Project project) {
+			public void callbackCall(int statusCode, Object responseObject) {
+				Project project = (Project) responseObject;
 				if(statusCode == RESPONSE_OK) {
 					ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(project.getVideoUids(), projectUid);
 					for (String video : videoUidsToDownload){
@@ -201,7 +200,8 @@ public class Sync {
 		
 		SyncCallback instaVideoListReturned = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response){
+			public void callbackCall(int statusCode, Object responseObject){
+				String response = (String) responseObject;
 				//TODO: track and implement statusCode properly
 				if (statusCode == RESPONSE_OK){
 					System.out.println("Going to download all of the videos here: " + response);
@@ -220,7 +220,8 @@ public class Sync {
 		// Set up listener for adding user to project
 		final SyncCallback userAddedToNewProjectInRails = new SyncCallback() {
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
+				String response = (String) responseObject;
 				if(statusCode == RESPONSE_OK) {
 					System.out.println("Done adding user.");
 					projectHasBeenCreated.callbackCall(RESPONSE_OK, response);
@@ -231,7 +232,7 @@ public class Sync {
 		// Set up listener
 		SyncCallback createdProjectInRails = new SyncCallback() {
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
 				if(statusCode == RESPONSE_OK) {
 					System.out.println("Done creating project.");
 					RailsClient.addUserToProject(userUid, projectUid, username, userAddedToNewProjectInRails);
@@ -261,12 +262,13 @@ public class Sync {
 		// Set up listener
 		SyncCallback foundUserUid = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
+				String response = (String) responseObject;
 				if (statusCode == RESPONSE_OK){
 					// response contains userUid, so we save
 					RailsClient.addUserToProject(response, projectUid, newUsername, new SyncCallback() {
 						@Override
-						public void callbackCall(int statusCode, String response) {}
+						public void callbackCall(int statusCode, Object responseObject) {}
 					});
 					LocalClient.addUserToProject(response, projectUid, newUsername);
 					updateUsersOnUiThread.callbackCall(RESPONSE_OK, "User should now be added to the project.");

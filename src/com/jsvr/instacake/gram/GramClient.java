@@ -231,7 +231,8 @@ public class GramClient {
 		
 		SyncCallback moveToNextVideo = new SyncCallback(){
 			@Override
-			public void callbackCall(int statusCode, String response) {
+			public void callbackCall(int statusCode, Object responseObject) {
+				String response = (String) responseObject;
 				if (statusCode == Sync.RESPONSE_OK){
 					Log.v("moveToNextVideo", "Successfully downloaded " + response);
 					if (!projectUid.equals("")){

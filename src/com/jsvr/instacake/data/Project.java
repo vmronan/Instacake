@@ -41,6 +41,11 @@ public class Project {
 		mUsernames.add(username);
 	}
 	
+	public void addVideo(String videoUid, boolean isMine) {
+		mVideoUids.add(videoUid);
+		mThumbnailPaths.add(Constants.getThumbnailPath(videoUid, isMine));
+	}
+	
 	public void addVideoByThumbnailPath(String thumbnailPath) {
 		if(mThumbnailPaths == null) {
 			mThumbnailPaths = new ArrayList<String>();
