@@ -1,12 +1,12 @@
 package com.jsvr.instacake.rails;
 
-import java.util.ArrayList;
-
 import android.util.Log;
 
 import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.data.Project;
 import com.jsvr.instacake.sync.Sync;
 import com.jsvr.instacake.sync.Sync.SyncCallback;
+import com.jsvr.instacake.sync.Sync.SyncProjectCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -63,21 +63,21 @@ public class RailsClient {
 
 	// TODO this isn't used anymore
 	// Handle project creation... if successful, adds first user to new project
-	public static AsyncHttpResponseHandler createProjectHandler = new AsyncHttpResponseHandler(){
-		String tag = "newProject";
-		@Override
-		public void onSuccess(String response) {
-			super.onSuccess(response);
-			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
-//			addUserToProject(mUserUid, RailsJSONManager.getProjectUidFromResponse(response), mUsername);
-		}
-		@Override
-		public void onFailure(Throwable e, String response) {
-			Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
-			e.printStackTrace();
-			super.onFailure(e, response);
-		}
-	};
+//	public static AsyncHttpResponseHandler createProjectHandler = new AsyncHttpResponseHandler(){
+//		String tag = "newProject";
+//		@Override
+//		public void onSuccess(String response) {
+//			super.onSuccess(response);
+//			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
+////			addUserToProject(mUserUid, RailsJSONManager.getProjectUidFromResponse(response), mUsername);
+//		}
+//		@Override
+//		public void onFailure(Throwable e, String response) {
+//			Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
+//			e.printStackTrace();
+//			super.onFailure(e, response);
+//		}
+//	};
 	
 	// Adds user to project
 	public static void addUserToProject(String userUid, String projectUid, String newUsername, final SyncCallback userAddedToNewProjectInRails) {
@@ -110,21 +110,21 @@ public class RailsClient {
 	
 	// TODO this isn't used anymore
 	// Handles response from rails
-	public static AsyncHttpResponseHandler addUserHandler = new AsyncHttpResponseHandler(){
-		String tag = "addUser";
-		@Override
-		public void onSuccess(String response) {
-			super.onSuccess(response);
-			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
-		}
-	
-		@Override
-		public void onFailure(Throwable e, String response) {
-			Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
-			e.printStackTrace();
-			super.onFailure(e, response);
-		}
-	};
+//	public static AsyncHttpResponseHandler addUserHandler = new AsyncHttpResponseHandler(){
+//		String tag = "addUser";
+//		@Override
+//		public void onSuccess(String response) {
+//			super.onSuccess(response);
+//			Log.v(tag + " response handler", "onSuccess() has the response: \n" + response);
+//		}
+//	
+//		@Override
+//		public void onFailure(Throwable e, String response) {
+//			Log.v(tag + " response handler", "onFailure() has the response: \n" + response + "\n\n");
+//			e.printStackTrace();
+//			super.onFailure(e, response);
+//		}
+//	};
 	
 	
 	public static void addVideoToProject(String projectId, String userUid, String createdAt, String videoUid){
@@ -150,77 +150,92 @@ public class RailsClient {
 		});
 	}
 	
-	// Gets userUids
-	public static void getUserUidsForProject(String projectUid, final SyncCallback userUidsReturnedFromRailsClient) {
+	// Get all info about project
+	public static void getProject(String projectUid, final SyncProjectCallback projectReturnedFromRailsClient) {
 		RequestParams params = new RequestParams();
 		params.put("project_uid", projectUid);
 		
-		RestClient.post(getAbsoluteUrl("projects/get_users_for_project"), params, new AsyncHttpResponseHandler() {
+		RestClient.get(getAbsoluteUrl("projects/get_project"), params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(String response) {
 				super.onSuccess(response);
-				ArrayList<String> railsUserUids = RailsJSONManager.getUserUidsForProjectFromResponse(response);
-				String userUidsForProject = "";
-				for (String line : railsUserUids){
-					Log.v("getUsersForProject... railsclient", "adding line " + line);
-					userUidsForProject = userUidsForProject.concat(line + "\n");
-				}
-				userUidsReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, userUidsForProject);
+				Project project = RailsJSONManager.parseForProject(response);
+				projectReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, project);
 			}
 		});
 	}
 	
-	// Gets usernames
-		public static void getUsernamesForProject(String projectUid, final SyncCallback usernamesReturnedFromRailsClient) {
-			RequestParams params = new RequestParams();
-			params.put("project_uid", projectUid);
-			
-			RestClient.post(getAbsoluteUrl("projects/get_users_for_project"), params, new AsyncHttpResponseHandler() {
-				@Override
-				public void onSuccess(String response) {
-					super.onSuccess(response);
-					ArrayList<String> railsUserUids = RailsJSONManager.getUsernamesForProjectFromResponse(response);
-					String usernamesForProject = "";
-					for (String line : railsUserUids){
-						Log.v("getUsersForProject... railsclient", "adding line " + line);
-						usernamesForProject = usernamesForProject.concat(line + "\n");
-					}
-					usernamesReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, usernamesForProject);
-				}
-			});
-		}
-
-	public static void getVideosForProject(String projectUid, final SyncCallback videoUidsForProjectReturned) {
-		RequestParams params = new RequestParams();
-		params.put("project_uid", projectUid);
-		
-		RestClient.post(getAbsoluteUrl("projects/get_videos_for_project"), params, new AsyncHttpResponseHandler(){
-			@Override
-			public void onSuccess(String response){
-				super.onSuccess(response);
-				ArrayList<String> railsVideoUids = RailsJSONManager.getVideosForProjectFromResponse(response);
-				String videoUidsForProject = "";
-				for (String line : railsVideoUids){
-					videoUidsForProject = videoUidsForProject.concat(line + "\n");
-				}
-				videoUidsForProjectReturned.callbackCall(Sync.RESPONSE_OK, videoUidsForProject);
-			}
-		});
-	}
-	
-	public static void getTitleForProject(String projectUid, final SyncCallback titleForProjectReturned) {
-		RequestParams params = new RequestParams();
-		params.put("project_uid", projectUid);
-		
-		RestClient.post(getAbsoluteUrl("projects/get_users_for_project"), params, new AsyncHttpResponseHandler() {
-			@Override
-			public void onSuccess(String response) {
-				super.onSuccess(response);
-				String title = RailsJSONManager.getProjectTitleFromResponse(response);
-				titleForProjectReturned.callbackCall(Sync.RESPONSE_OK, title);
-			}
-		});
-	}
+//	// Gets userUids
+//	public static void getUserUidsForProject(String projectUid, final SyncCallback userUidsReturnedFromRailsClient) {
+//		RequestParams params = new RequestParams();
+//		params.put("project_uid", projectUid);
+//		
+//		RestClient.post(getAbsoluteUrl("projects/get_users_for_project"), params, new AsyncHttpResponseHandler() {
+//			@Override
+//			public void onSuccess(String response) {
+//				super.onSuccess(response);
+//				ArrayList<String> railsUserUids = RailsJSONManager.getUserUidsForProjectFromResponse(response);
+//				String userUidsForProject = "";
+//				for (String line : railsUserUids){
+//					Log.v("getUsersForProject... railsclient", "adding line " + line);
+//					userUidsForProject = userUidsForProject.concat(line + "\n");
+//				}
+//				userUidsReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, userUidsForProject);
+//			}
+//		});
+//	}
+//	
+//	// Gets usernames
+//	public static void getUsernamesForProject(String projectUid, final SyncCallback usernamesReturnedFromRailsClient) {
+//		RequestParams params = new RequestParams();
+//		params.put("project_uid", projectUid);
+//		
+//		RestClient.post(getAbsoluteUrl("projects/get_users_for_project"), params, new AsyncHttpResponseHandler() {
+//			@Override
+//			public void onSuccess(String response) {
+//				super.onSuccess(response);
+//				ArrayList<String> railsUserUids = RailsJSONManager.getUsernamesForProjectFromResponse(response);
+//				String usernamesForProject = "";
+//				for (String line : railsUserUids){
+//					Log.v("getUsersForProject... railsclient", "adding line " + line);
+//					usernamesForProject = usernamesForProject.concat(line + "\n");
+//				}
+//				usernamesReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, usernamesForProject);
+//			}
+//		});
+//	}
+//
+//	public static void getVideosForProject(String projectUid, final SyncCallback videoUidsForProjectReturned) {
+//		RequestParams params = new RequestParams();
+//		params.put("project_uid", projectUid);
+//		
+//		RestClient.post(getAbsoluteUrl("projects/get_videos_for_project"), params, new AsyncHttpResponseHandler(){
+//			@Override
+//			public void onSuccess(String response){
+//				super.onSuccess(response);
+//				ArrayList<String> railsVideoUids = RailsJSONManager.getVideosForProjectFromResponse(response);
+//				String videoUidsForProject = "";
+//				for (String line : railsVideoUids){
+//					videoUidsForProject = videoUidsForProject.concat(line + "\n");
+//				}
+//				videoUidsForProjectReturned.callbackCall(Sync.RESPONSE_OK, videoUidsForProject);
+//			}
+//		});
+//	}
+//	
+//	public static void getTitleForProject(String projectUid, final SyncCallback titleForProjectReturned) {
+//		RequestParams params = new RequestParams();
+//		params.put("project_uid", projectUid);
+//		
+//		RestClient.post(getAbsoluteUrl("projects/get_users_for_project"), params, new AsyncHttpResponseHandler() {
+//			@Override
+//			public void onSuccess(String response) {
+//				super.onSuccess(response);
+//				String title = RailsJSONManager.getProjectTitleFromResponse(response);
+//				titleForProjectReturned.callbackCall(Sync.RESPONSE_OK, title);
+//			}
+//		});
+//	}
 
 //	public static void syncAllProjects(String instaId, String accessToken, DownloadManager dm) {
 //		mAccessToken = accessToken;

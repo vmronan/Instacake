@@ -8,18 +8,32 @@ public class Project {
 	ArrayList<String> mUserUids;			// Instagram user id of each user in project
 	ArrayList<String> mUsernames;			// Instagram username of each user in project
 	ArrayList<String> mThumbnailPaths;		// local path of each video's thumbnail
-//	ArrayList<String> mVideoTimes;			// created_time of each video
+	ArrayList<String> mVideoUids;			// id of each video in project
 	
-	// Create new project with one user and no videos
+	// Constructor from when I create a new project in the app
 	public Project(String projectUid, String title, String userUid, String username) {
 		mProjectUid = projectUid;
 		mTitle = title;
 		mUserUids = new ArrayList<String>();
 		mUsernames = new ArrayList<String>();
 		mThumbnailPaths = new ArrayList<String>();
-//		mVideoTimes = new ArrayList<String>();
+		mVideoUids = new ArrayList<String>();
 		
 		addUser(userUid, username);
+	}
+	
+	// Constuctor for when we download a project from rails
+	public Project(String projectUid,
+			String title,
+			ArrayList<String> userUids,
+			ArrayList<String> usernames,
+			ArrayList<String> videoUids) {
+		mProjectUid = projectUid;
+		mTitle = title;
+		mUserUids = userUids;
+		mUsernames = usernames;
+		mThumbnailPaths = new ArrayList<String>();
+		mVideoUids = videoUids;
 	}
 	
 	public void addUser(String userUid, String username) {
@@ -60,6 +74,10 @@ public class Project {
 		return mThumbnailPaths;
 	}
 	
+	public ArrayList<String> getVideoUids() {
+		return mVideoUids;
+	}
+	
 	public void setUserUids(ArrayList<String> userUids) {
 		mUserUids = userUids;
 	}
@@ -67,11 +85,4 @@ public class Project {
 	public void setUsernames(ArrayList<String> usernames) {
 		mUsernames = usernames;
 	}
-
-//	public ArrayList<String> getUsernames() {
-//		ArrayList<String> usernames = new ArrayList<String>();
-//		for (String user : mUsers){
-//			usernames.add()
-//		}
-//	}
 }

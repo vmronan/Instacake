@@ -21,8 +21,15 @@ public class LocalJSONManager {
 	}
 
 	// Saves project object to JSON file
-	private static void saveProject(Project project) {
+	protected static void saveProject(Project project) {
 		File projFile = new File(Constants.getProjectPath(project.getProjectUid()));
+		if(!projFile.exists()) {
+			try {
+				projFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		String json = new Gson().toJson(project);
 		writeToFile(projFile, json);
 	}

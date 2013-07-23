@@ -40,34 +40,15 @@ public class ViewProjectActivity extends Activity {
         updateTitle();
         updateUsers();
         showThumbnails();
-        
-        // For updating and syncing project
-        SyncCallback updateVideosOnUiThread = new SyncCallback(){
+		
+		SyncCallback updateProjectOnUiThread = new SyncCallback() {
 			@Override
-			public void callbackCall(int statusCode, String response){
-				if (statusCode == Sync.RESPONSE_OK){
-					showThumbnails();
-					Log.v("refreshVideosOnUiThread", response);
-				}
-			}
-		};
-		SyncCallback updateTitleOnUiThread = new SyncCallback(){
-			@Override
-			public void callbackCall(int statusCode, String response){
-				System.out.println("response is " + response);
-				//TODO: track and implement statusCode properly
-				if (statusCode == Sync.RESPONSE_OK){
+			public void callbackCall(int statusCode, String response) {
+				// TODO: track and handle status codes correctly
+				if(statusCode == Sync.RESPONSE_OK) {
 					updateTitle();
-				}
-			}
-		};
-		SyncCallback updateUsersOnUiThread = new SyncCallback(){
-			@Override
-			public void callbackCall(int statusCode, String response){
-				System.out.println("response is " + response);
-				//TODO: track and implement statusCode properly
-				if (statusCode == Sync.RESPONSE_OK){
 					updateUsers();
+					showThumbnails();
 				}
 			}
 		};
@@ -75,10 +56,7 @@ public class ViewProjectActivity extends Activity {
 		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 		
-		Sync.syncProject(mProjectUid, accessToken, dm,
-				updateTitleOnUiThread,
-				updateUsersOnUiThread,
-				updateVideosOnUiThread);
+		Sync.syncProject(mProjectUid, accessToken, dm, updateProjectOnUiThread);
 
 	}
 	
@@ -106,8 +84,7 @@ public class ViewProjectActivity extends Activity {
 				}
 			}
 		};
-	
-    	
+
     	Sync.addUserToProject(newUsername, mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR), mProjectUid, updateUsersOnUiThread);
 	}
 	
@@ -116,7 +93,7 @@ public class ViewProjectActivity extends Activity {
 	}
 	
 	private void showThumbnails() {
-		final String[] thumbnails = LocalClient.getThumbnailPaths(mProjectUid);
+		final String[] thumbnails = LocalClient.getProjectThumbnailPaths(mProjectUid);
 		
 //		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
 //		GridView grid = (GridView) findViewById(R.id.gridview_videos);
