@@ -71,17 +71,19 @@ public class Sync {
 	}
 	
 	public static void syncProject(final String projectUid, 
-			   final String accessToken, 
-			   final DownloadManager dm,
-			   final SyncCallback refreshProjectOnUiThread) {
+								   final String accessToken, 
+								   final DownloadManager dm,
+								   final SyncCallback refreshProjectOnUiThread) {
 		
-		final SyncCallback projectReturnedAfterDownloads = new SyncCallback(){
+		final SyncCallback projectReadyForSaveAfterDownloads = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, Object responseObject){
-				Project project = (Project) responseObject;
+				Project projectToSave = (Project) responseObject;
+				
 				if (statusCode == RESPONSE_OK){
-				LocalClient.saveProject(project);
-				refreshProjectOnUiThread.callbackCall(RESPONSE_OK, "Project + " + project.getProjectUid() + " has been saved.");
+					LocalClient.saveProject(projectToSave);
+					refreshProjectOnUiThread.callbackCall(RESPONSE_OK, 
+							"Project + " + projectToSave.getTitle() + " has been saved.");
 				}
 			}
 		};
@@ -92,17 +94,18 @@ public class Sync {
 				Project project = (Project) responseObject;
 				if(statusCode == RESPONSE_OK) {
 					ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(project.getVideoUids(), projectUid);
-					for (String video : videoUidsToDownload){
-						Log.v("Sync.syncProject", "Wants to download " + video);
-					}
-//					GramClient.downloadVideosOneAtATime(videoUidsToDownload, accessToken,
-//														dm, projectReturnedAfterDownloads, false, projectUid);
+					GramClient.downloadVideosOneAtATime(project,
+														videoUidsToDownload, 
+														false,
+														accessToken,
+														dm, 
+														projectReadyForSaveAfterDownloads);
 				}
 			}
 		};
 		
 		RailsClient.getProject(projectUid, projectReturnedFromRailsClient);
-		}
+	}
 
 //	public static void updateProjectTitle(final String projectUid,
 //										  final SyncCallback refreshTitleOnUiThread) {
@@ -198,6 +201,16 @@ public class Sync {
 		 *  4. Update the UI thread with the given SyncCallback Object
 		 */
 		
+		final SyncCallback UiReadyForUpdateAfterDownloads = new SyncCallback(){
+			@Override 
+			public void callbackCall(int statusCode, Object responseObject){
+				String response = (String) responseObject;
+				if (statusCode == RESPONSE_OK){
+					refreshVideosOnUiThread.callbackCall(RESPONSE_OK, response);
+				}
+			}
+		};
+		
 		SyncCallback instaVideoListReturned = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, Object responseObject){
@@ -205,7 +218,11 @@ public class Sync {
 				//TODO: track and implement statusCode properly
 				if (statusCode == RESPONSE_OK){
 					System.out.println("Going to download all of the videos here: " + response);
-					GramClient.downloadVideosOneAtATime(getMyVideoUidsForDownloading(response), accessToken, dm, refreshVideosOnUiThread, true, "");
+					GramClient.downloadVideosOneAtATime(getMyVideoUidsForDownloading(response),
+														true,
+														accessToken, 
+														dm, 
+														UiReadyForUpdateAfterDownloads);
 				}
 			}
 		};

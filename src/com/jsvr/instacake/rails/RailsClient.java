@@ -11,8 +11,8 @@ import com.loopj.android.http.RequestParams;
 
 public class RailsClient {
 	
-	private static String mUserUid;
-	private static String mUsername;
+//	private static String mUserUid;
+//	private static String mUsername;
 //	private static DownloadManager mDM;
 //	private static String mAccessToken;
 	
@@ -35,8 +35,8 @@ public class RailsClient {
 			return;
 		}
 		
-		mUserUid = userUid;
-		mUsername = username;
+//		mUserUid = userUid;
+//		mUsername = username;
 		RequestParams params = new RequestParams();
 		params.put("project[uid]", projectUid);
 		params.put("project[title]", title);		

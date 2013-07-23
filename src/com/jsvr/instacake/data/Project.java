@@ -3,6 +3,7 @@ package com.jsvr.instacake.data;
 import java.util.ArrayList;
 
 public class Project {
+	public static final String NOT_A_PROJECT = "NOT A PROJECT";
 	String mProjectUid;
 	String mTitle;
 	ArrayList<String> mUserUids;			// Instagram user id of each user in project
@@ -21,7 +22,7 @@ public class Project {
 		
 		addUser(userUid, username);
 	}
-	
+
 	// Constuctor for when we download a project from rails
 	public Project(String projectUid,
 			String title,
@@ -35,7 +36,8 @@ public class Project {
 		mThumbnailPaths = new ArrayList<String>();
 		mVideoUids = videoUids;
 	}
-	
+
+
 	public void addUser(String userUid, String username) {
 		mUserUids.add(userUid);
 		mUsernames.add(username);
@@ -63,6 +65,7 @@ public class Project {
 	public String getTitle() {
 		return mTitle;
 	}
+	
 	public void setTitle(String mTitle) {
 		this.mTitle = mTitle;
 	}
