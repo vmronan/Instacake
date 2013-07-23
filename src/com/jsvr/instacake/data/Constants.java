@@ -14,6 +14,7 @@ public class Constants {
 	public static final String USER_UID_KEY = "yodawgi'mliketheinstagramidyouget";
 	public static final String USERNAME_KEY = "yodawgizlykugottahaveausernamenaaaahmsayin??";
 	public static final String ERROR = "Key or Value Error";
+	public static final boolean DEVELOPMENT_MODE = true;
 	
 	/* Instagram App Authorization */
 	public static final String CLIENT_ID = "2441a48392cf4ab6a7343038f858ae15";
@@ -57,6 +58,7 @@ public class Constants {
 	private static final File thumbsDir = new File(PICTURES_DIR, "Instacake");
 	private static final File myThumbsDir = new File(PICTURES_DIR, "Instacake/Me");
 	private static final File friendsThumbsDir = new File(PICTURES_DIR, "Instacake/Friends");
+	
 	
 	
 

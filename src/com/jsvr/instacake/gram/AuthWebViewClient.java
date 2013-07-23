@@ -12,6 +12,7 @@ import org.json.JSONTokener;
 
 import com.jsvr.instacake.MainActivity;
 import com.jsvr.instacake.data.Constants;
+import com.jsvr.instacake.rails.RailsClient;
 
 import android.content.Context;
 import android.content.Intent;
@@ -67,6 +68,9 @@ public class AuthWebViewClient extends WebViewClient {
 				String username = jsonObject.getJSONObject("user").getString("username");
 				String accessToken = jsonObject.getString("access_token");
 				saveUserInfo(userUid, username, accessToken);
+
+				// Ensure that the user exists in our database.
+		        RailsClient.createUser(userUid, username);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
