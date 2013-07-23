@@ -113,6 +113,7 @@ public class RailsClient {
 			public void onSuccess(String response) {
 				super.onSuccess(response);
 				Project project = RailsJSONManager.parseForProject(response);
+				Log.v("RailsClient.getProject", "just got project with title " + project.getTitle());
 				projectReturnedFromRailsClient.callbackCall(Sync.RESPONSE_OK, project);
 			}
 		});

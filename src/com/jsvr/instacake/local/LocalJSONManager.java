@@ -58,7 +58,8 @@ public class LocalJSONManager {
 		}
 	}
 
-	private static String readFromFile(File file) {
+	//TODO This should be private. public for testing purposes
+	public static String readFromFile(File file) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 		    StringBuilder sb = new StringBuilder();

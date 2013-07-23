@@ -2,6 +2,10 @@ package com.jsvr.instacake.data;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
+import com.jsvr.instacake.local.LocalClient;
+
 public class Project {
 	public static final String NOT_A_PROJECT = "NOT A PROJECT";
 	String mProjectUid;
@@ -33,7 +37,13 @@ public class Project {
 		mTitle = title;
 		mUserUids = userUids;
 		mUsernames = usernames;
-		mThumbnailPaths = new ArrayList<String>();
+		//TODO THIS IS HACKED AND BAD AND SHOULDN'T HAVE TO BE THIS WAY
+		// If there is an old project, use its old thumbnail list
+		if(LocalClient.getProject(projectUid).getThumbnailPaths() != null)
+			mThumbnailPaths = LocalClient.getProject(projectUid).getThumbnailPaths();
+		// Otherwise, create empty list of thumbnail paths
+		else
+			mThumbnailPaths = new ArrayList<String>();
 		mVideoUids = videoUids;
 	}
 

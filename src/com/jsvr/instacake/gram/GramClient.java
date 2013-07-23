@@ -287,27 +287,33 @@ public class GramClient {
 	}
 
 	public static void downloadVideosOneAtATime(final Project project,
-			final ArrayList<String> videoUidsToDownload, 
-			final boolean isMine,
-			final String accessToken, 
-			final DownloadManager dm,
-			final SyncCallback projectReadyForSaveAfterDownloads) {
+												final ArrayList<String> videoUidsToDownload, 
+												final boolean isMine,
+												final String accessToken, 
+												final DownloadManager dm,
+												final SyncCallback projectReadyForSaveAfterDownloads) {
 		mProject = project;
+		Log.v("GramClient.downloadVideosOneAtATime", "dealing with project " + mProject.getTitle());
 		
 		SyncCallback moveToNextVideo = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, Object responseObject) {
 				String uidOfDownloadedVideo = (String) responseObject;
+				Log.v("GramClient.downloadVideosOneAtATime", "uid of downloaded video: " + uidOfDownloadedVideo);
 				
 				// Check a video off the list
 				videoUidsToDownload.remove(uidOfDownloadedVideo);
 				mProject.addVideo(uidOfDownloadedVideo, isMine);
-				Log.v("downloadmoviesoneatatime", "num of video uids: " + project.getVideoUids().size());
+				Log.v("GramClient.downloadVideosOneAtATime", "num of video uids: " + mProject.getVideoUids().size());
 				
 				// Continue if necessary
 				if (videoUidsToDownload.size() > 0){
 					download(videoUidsToDownload.get(0), accessToken, this, dm, isMine);
 				} else {
+					Log.v("* GramClient.downloadVideosOneAtATime", "done downloading. about to call back to projectReadyForSaveAfterDownloads");
+					for(String s : mProject.getThumbnailPaths()) {
+						Log.v("* GramClient.downloadVideosOneAtATime", "thumbnail: " + s);
+					}
 					projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, mProject);
 				}
 			}
@@ -315,8 +321,10 @@ public class GramClient {
 		
 		//TODO: Figure out why this is necessary
 		if (videoUidsToDownload.size() > 0 && !videoUidsToDownload.get(0).equals("")){
+			Log.v("GramClient.downloadVideosOneAtATime", "about to download");
 			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
 		} else {
+			Log.v("~ GramClient.downloadVideosOneAtATime", "calling projectReadyForSaveAfterDownloads.callbackCall because there are no videos to download");
 			// Sometimes we are sent here to download an empty list of videoUids
 			projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, mProject);
 		}
@@ -328,7 +336,6 @@ public class GramClient {
 			final String accessToken, 
 			final DownloadManager dm,
 			final SyncCallback uiReadyForUpdateAfterDownloads) {
-		
 		
 		SyncCallback moveToNextVideo = new SyncCallback(){
 			@Override
