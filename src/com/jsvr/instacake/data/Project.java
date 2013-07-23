@@ -3,12 +3,13 @@ package com.jsvr.instacake.data;
 import java.util.ArrayList;
 
 public class Project {
+	public static final String NOT_A_PROJECT = "NOT A PROJECT";
 	String mProjectUid;
 	String mTitle;
 	ArrayList<String> mUserUids;			// Instagram user id of each user in project
 	ArrayList<String> mUsernames;			// Instagram username of each user in project
 	ArrayList<String> mThumbnailPaths;		// local path of each video's thumbnail
-//	ArrayList<String> mVideoTimes;			// created_time of each video
+	ArrayList<String> mVideoUids;			// video uids
 	
 	// Create new project with one user and no videos
 	public Project(String projectUid, String title, String userUid, String username) {
@@ -17,11 +18,23 @@ public class Project {
 		mUserUids = new ArrayList<String>();
 		mUsernames = new ArrayList<String>();
 		mThumbnailPaths = new ArrayList<String>();
-//		mVideoTimes = new ArrayList<String>();
 		
 		addUser(userUid, username);
 	}
 	
+	public Project(String projectUid,
+			String title,
+			ArrayList<String> userUids,
+			ArrayList<String> usernames,
+			ArrayList<String> videoUids) {
+		mProjectUid = projectUid;
+		mTitle = title;
+		mUserUids = userUids;
+		mUsernames = usernames;
+		mThumbnailPaths = new ArrayList<String>();
+		mVideoUids = videoUids;
+	}
+
 	public void addUser(String userUid, String username) {
 		mUserUids.add(userUid);
 		mUsernames.add(username);
@@ -44,6 +57,7 @@ public class Project {
 	public String getTitle() {
 		return mTitle;
 	}
+	
 	public void setTitle(String mTitle) {
 		this.mTitle = mTitle;
 	}
@@ -60,12 +74,21 @@ public class Project {
 		return mThumbnailPaths;
 	}
 	
+	public ArrayList<String> getVideoUids(){
+		return mVideoUids;
+	}
+	
 	public void setUserUids(ArrayList<String> userUids) {
 		mUserUids = userUids;
 	}
 	
 	public void setUsernames(ArrayList<String> usernames) {
 		mUsernames = usernames;
+	}
+
+	public void addVideo(String videoUid, boolean isMine) {
+		mVideoUids.add(videoUid);
+		mThumbnailPaths.add(Constants.getThumbnailPath(videoUid, isMine));
 	}
 
 //	public ArrayList<String> getUsernames() {
