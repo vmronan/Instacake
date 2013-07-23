@@ -21,18 +21,52 @@ public class Sync {
 	public interface SyncCallback {
 		void callbackCall(int statusCode, Object response);
 	}
-	
-//	public static void syncProject(final String projectUid, 
-//								   final String accessToken, 
-//								   final DownloadManager dm,
-//								   final SyncCallback updateTitleOnUiThread,
-//								   final SyncCallback updateUsersOnUiThread,
-//								   final SyncCallback updateVideosOnUiThread) {
-//		updateProjectTitle(projectUid, updateTitleOnUiThread);
-//		updateProjectUsers(projectUid, updateUsersOnUiThread);
-//		updateProjectVideos(projectUid, accessToken, dm, updateVideosOnUiThread);
-//	}
-	
+
+	public static void syncProject(final String projectUid, 
+								   final String accessToken, 
+								   final DownloadManager dm,
+								   final SyncCallback refreshProjectOnUiThread) {
+		/*
+		 * In order to sync a project:
+		 *  1. Get the project from rails
+		 *  2. Get the list of videos to download by comparing local and rails videos
+		 *  3. Download missing videos one at a time and add videos to project
+		 *  4. Save project locally
+		 *  5. Refresh UI thread
+		 */
+		
+		final SyncCallback projectReadyForSaveAfterDownloads = new SyncCallback(){
+			@Override
+			public void callbackCall(int statusCode, Object responseObject){
+				Project projectToSave = (Project) responseObject;
+				
+				if (statusCode == RESPONSE_OK){
+					LocalClient.saveProject(projectToSave);
+					refreshProjectOnUiThread.callbackCall(RESPONSE_OK, 
+							"Project + " + projectToSave.getTitle() + " has been saved.");
+				}
+			}
+		};
+		
+		SyncCallback projectReturnedFromRailsClient = new SyncCallback() {
+			@Override
+			public void callbackCall(int statusCode, Object responseObject) {
+				Project project = (Project) responseObject;
+				if(statusCode == RESPONSE_OK) {
+					ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(project.getVideoUids(), projectUid);
+					GramClient.downloadVideosOneAtATime(project,
+														videoUidsToDownload, 
+														false,
+														accessToken,
+														dm, 
+														projectReadyForSaveAfterDownloads);
+				}
+			}
+		};
+		
+		RailsClient.getProject(projectUid, projectReturnedFromRailsClient);
+	}
+
 	public static void updateMyProjects(final String userUid,
 										final String accessToken, 
 										final DownloadManager dm,
@@ -70,127 +104,7 @@ public class Sync {
 		RailsClient.getProjectsList(userUid, projectListReturnedFromRailsClient);	
 	}
 	
-	public static void syncProject(final String projectUid, 
-								   final String accessToken, 
-								   final DownloadManager dm,
-								   final SyncCallback refreshProjectOnUiThread) {
-		
-		final SyncCallback projectReadyForSaveAfterDownloads = new SyncCallback(){
-			@Override
-			public void callbackCall(int statusCode, Object responseObject){
-				Project projectToSave = (Project) responseObject;
-				
-				if (statusCode == RESPONSE_OK){
-					LocalClient.saveProject(projectToSave);
-					refreshProjectOnUiThread.callbackCall(RESPONSE_OK, 
-							"Project + " + projectToSave.getTitle() + " has been saved.");
-				}
-			}
-		};
-		
-		SyncCallback projectReturnedFromRailsClient = new SyncCallback() {
-			@Override
-			public void callbackCall(int statusCode, Object responseObject) {
-				Project project = (Project) responseObject;
-				if(statusCode == RESPONSE_OK) {
-					ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(project.getVideoUids(), projectUid);
-					GramClient.downloadVideosOneAtATime(project,
-														videoUidsToDownload, 
-														false,
-														accessToken,
-														dm, 
-														projectReadyForSaveAfterDownloads);
-				}
-			}
-		};
-		
-		RailsClient.getProject(projectUid, projectReturnedFromRailsClient);
-	}
-
-//	public static void updateProjectTitle(final String projectUid,
-//										  final SyncCallback refreshTitleOnUiThread) {
-//		/* In order to update title:
-//		*  1. Get title from the RailsClient
-//		*  2. Save title to local client
-//		*  3. Update the UI thread with the title
-//		*/
-//		
-//		SyncCallback titleReturned = new SyncCallback(){
-//			@Override
-//			public void callbackCall(int statusCode, String response){
-//			//TODO: track and implement statusCode properly
-//				if (statusCode == RESPONSE_OK){
-//					LocalClient.setTitle(projectUid, response);
-//					refreshTitleOnUiThread.callbackCall(Sync.RESPONSE_OK, "Done updating title.");
-//				}
-//			}
-//		};
-//		
-//		RailsClient.getTitleForProject(projectUid, titleReturned);
-//	}
-
-//	public static void updateProjectUsers(final String projectUid,
-//										  final SyncCallback refreshUsersOnUiThread) {
-//		/* In order to update my users:
-//		 *  1. Get the lists of userUids and usernames from the RailsClient
-//		 *  2. Save lists to local client
-//		 *  3. Update the UI thread with username list
-//		 */
-//		SyncCallback userUidsReturned = new SyncCallback(){
-//			@Override
-//			public void callbackCall(int statusCode, String response){
-//				//TODO: track and implement statusCode properly
-//				if (statusCode == RESPONSE_OK){
-//					// Update local list of users
-//					LocalClient.setUserUidsList(projectUid, getProjectUserList(response));
-//					// TODO need way to only update users if both this and usernamesReturn come back ok
-////					refreshUsersOnUiThread.callbackCall(Sync.RESPONSE_OK, "Done updating list of usersUids.");
-//				}
-//			}
-//		};
-//		SyncCallback usernamesReturned = new SyncCallback(){
-//			@Override
-//			public void callbackCall(int statusCode, String response){
-//				//TODO: track and implement statusCode properly
-//				if (statusCode == RESPONSE_OK){
-//					// Update local list of users
-//					LocalClient.setUsernamesList(projectUid, getProjectUserList(response));
-//					refreshUsersOnUiThread.callbackCall(Sync.RESPONSE_OK, "Done updating list of usernames.");
-//				}
-//			}
-//		};
-//		
-//		RailsClient.getUserUidsForProject(projectUid, userUidsReturned);
-//		RailsClient.getUsernamesForProject(projectUid, usernamesReturned);
-//	}
-	
-	
-//	public static void updateProjectVideos(final String projectUid, 
-//										   final String accessToken, 
-//										   final DownloadManager dm, 
-//										   final SyncCallback refreshVideosOnUiThread) {
-//		/* In order to sync videos for a project:
-//		 *  1. Get the list of videos in a project from the rails client, returned by a SyncCallback
-//		 *  2. From the listener, get the list of videos in a project from the LocalClient
-//		 *  3. Identify videos that need to be downloaded and download each with the GramClient
-//		 *  4. When the videos have been downloaded, send a callback to the UI thread to update the gridview
-//		 */
-//		SyncCallback videoUidsForProjectReturned = new SyncCallback(){
-//			@Override
-//			public void callbackCall(int statusCode, String response){
-//				//TODO: Track and check statusCode
-//				Log.v("videoUidsForProjectReturned", "response is " + response);
-//				ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(response, projectUid);
-//				for (String video : videoUidsToDownload){
-//					Log.v("syncProject", "Wants to download " + video);
-//				}
-//				GramClient.downloadVideosOneAtATime(videoUidsToDownload, accessToken, dm, refreshVideosOnUiThread, false, projectUid);
-//			}
-//		};
-//		
-//		RailsClient.getVideosForProject(projectUid, videoUidsForProjectReturned);
-//	}
-
+	// Downloads Instagram movies to Movies/Instacake/Me directory
 	public static void updateMyMovies(final String accessToken,
 									  final DownloadManager dm,
 									  final SyncCallback refreshVideosOnUiThread){
