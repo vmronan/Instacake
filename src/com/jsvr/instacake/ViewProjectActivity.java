@@ -1,5 +1,6 @@
 package com.jsvr.instacake;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.jsvr.instacake.adapters.ImageAdapter;
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.local.LocalClient;
+import com.jsvr.instacake.local.LocalJSONManager;
 import com.jsvr.instacake.sync.Sync;
 import com.jsvr.instacake.sync.Sync.SyncCallback;
 
@@ -39,8 +41,11 @@ public class ViewProjectActivity extends Activity {
 		mProjectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);	
         mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         
+        Log.v("onCreate", "PRJ_" + mProjectUid + ".json: " + LocalJSONManager.readFromFile(new File(Constants.getProjectPath(mProjectUid))));
+        
         updateTitle();
         updateUsers();
+        Log.v("onCreate", "showing thumbnails");
         showThumbnails();
 		
 		SyncCallback updateProjectOnUiThread = new SyncCallback() {
@@ -51,6 +56,7 @@ public class ViewProjectActivity extends Activity {
 					Log.v("updateProjectOnUiThread", "about to update everything in the project");
 					updateTitle();
 					updateUsers();
+					Log.v("onCreate", "updating thumbnails");
 					updateThumbnails();
 				}
 			}
@@ -59,6 +65,7 @@ public class ViewProjectActivity extends Activity {
 		String accessToken = mPrefs.getString(Constants.ACCESS_TOKEN_KEY, Constants.ERROR);
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 		
+        Log.v("onCreate", "about to sync project");
 		Sync.syncProject(mProjectUid, accessToken, dm, updateProjectOnUiThread);
 
 	}
@@ -96,13 +103,9 @@ public class ViewProjectActivity extends Activity {
 		Toast.makeText(this, "Could not find user!", Toast.LENGTH_SHORT).show();
 	}
 	
-	private void updateThumbnails(){
-		mGridView = (GridView) findViewById(R.id.gridview_videos);
-		((BaseAdapter) ((ImageAdapter) mGridView.getAdapter()).setThumbs(LocalClient.getProjectThumbnailPaths(mProjectUid))).notifyDataSetChanged();
-	}
-	
 	private void showThumbnails() {
 		final String[] thumbnails = LocalClient.getProjectThumbnailPaths(mProjectUid);
+		Log.v("showThumbnails", "number of thumbnails: " + thumbnails.length);
 		
 //		ThumbnailGridArrayAdapter adapter = new ThumbnailGridArrayAdapter(this, R.layout.thumbnail_tile, thumbnails);
 //		GridView grid = (GridView) findViewById(R.id.gridview_videos);
@@ -122,23 +125,27 @@ public class ViewProjectActivity extends Activity {
 		});
 	}
 	
+	private void updateThumbnails(){
+		Log.v("updateThumbnails", "number of thumbnails: " + LocalClient.getProjectThumbnailPaths(mProjectUid).length);
+
+		mGridView = (GridView) findViewById(R.id.gridview_videos);
+		((BaseAdapter) ((ImageAdapter) mGridView.getAdapter()).setThumbs(LocalClient.getProjectThumbnailPaths(mProjectUid))).notifyDataSetChanged();
+	}
+
 	private void updateTitle() {
 		this.setTitle(LocalClient.getProjectTitle(mProjectUid));
 	}
 	
 	// Updates TextView showing the list of users
 	private void updateUsers() {
-		Log.v("updateUsers", "starting");
 	    ArrayList<String> users = LocalClient.getProjectUsernames(mProjectUid);
 	    String usersStr = "";
 		if(users.size() > 0) {
 			int numUsers = users.size();
 			Log.v("updateUsers", "num users: " + numUsers);
 			usersStr = users.get(0);
-			Log.v("updateUsers", "first user is " + users.get(0));
 			for(int i = 1; i < numUsers; i++) {
 				usersStr += ", " + users.get(i);
-				Log.v("updateUsers", "user: " + users.get(i));
 			}
 		}
 	    ((TextView)findViewById(R.id.users)).setText(usersStr);

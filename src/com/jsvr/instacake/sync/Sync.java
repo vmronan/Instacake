@@ -1,5 +1,7 @@
 package com.jsvr.instacake.sync;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -7,11 +9,11 @@ import java.util.Random;
 import android.app.DownloadManager;
 import android.util.Log;
 
+import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
 import com.jsvr.instacake.gram.GramClient;
 import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.rails.RailsClient;
-import com.jsvr.instacake.rails.RailsJSONManager;
 
 public class Sync {
 	
@@ -39,9 +41,12 @@ public class Sync {
 			@Override
 			public void callbackCall(int statusCode, Object responseObject){
 				Project projectToSave = (Project) responseObject;
-				
+				Log.v("* Sync projectReadyForSaveAfterDownloads", "projectToSave: " + projectToSave.getTitle() + ". Thumbnails on next line:");
+				for(String s : projectToSave.getThumbnailPaths()) {
+					Log.v("* Sync projectReadyForSaveAfterDownloads", "thumbnail: " + s);
+				}
 				if (statusCode == RESPONSE_OK){
-					Log.v("projectReadyForSaveAfterDownloads", "projectToSave: " + projectToSave.getTitle());
+					Log.v("Sync projectReadyForSaveAfterDownloads", "done showing thumbnails. about to save");
 					LocalClient.saveProject(projectToSave);
 					refreshProjectOnUiThread.callbackCall(RESPONSE_OK, 
 							"Project + " + projectToSave.getTitle() + " has been saved.");
@@ -53,8 +58,15 @@ public class Sync {
 			@Override
 			public void callbackCall(int statusCode, Object responseObject) {
 				Project project = (Project) responseObject;
+				Log.v("Sync projectReturnedFromRailsClient", "got project with title " + project.getTitle());
 				if(statusCode == RESPONSE_OK) {
+					Log.v("Sync projectReturnedFromRailsClient", "about to get video uids for download");
 					ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(project.getVideoUids(), projectUid);
+					Log.v("Sync projectReturnedFromRailsClient", "number of videos to download: " + videoUidsToDownload.size());
+					for(String uid : videoUidsToDownload) { 
+						Log.v("Sync projectReturnedFromRailsClient", "need to download: " + uid);						
+					}
+					Log.v("Sync projectReturnedFromRailsClient", "about to download videos one at a time");
 					GramClient.downloadVideosOneAtATime(project,
 														videoUidsToDownload, 
 														false,
@@ -65,6 +77,7 @@ public class Sync {
 			}
 		};
 		
+		Log.v("Sync.syncProject", "about to get project from rails");
 		RailsClient.getProject(projectUid, projectReturnedFromRailsClient);
 	}
 
@@ -88,6 +101,7 @@ public class Sync {
 						Log.v("projectsListReturnedFromRailsClient", projectUid + " is the projectUid returned");
 					}
 					for (String projectUid : projectsToUpdate){
+						createProjectFileOrEnsureItExists(projectUid);
 						syncProject(projectUid, 
 								   	accessToken,
 								   	dm,
@@ -106,6 +120,18 @@ public class Sync {
 		};
 		
 		RailsClient.getProjectsList(userUid, projectListReturnedFromRailsClient);	
+	}
+	
+	private static void createProjectFileOrEnsureItExists(String projectUid) {
+		File projectFile = new File(Constants.getProjectPath(projectUid));
+		if(!projectFile.exists()) {
+			try {
+				projectFile.createNewFile();
+				Log.v("createProjectFileOrEnsureItExists", "created project file for project " + projectUid);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	// Downloads Instagram movies to Movies/Instacake/Me directory
@@ -258,15 +284,18 @@ public class Sync {
 	// Compare rails data against local data to find videos that need to be downloaded.
 	private static ArrayList<String> getVideoUidsForDownload(ArrayList<String> railsVideoUids, String projectUid) {
 		if (LocalClient.getProject(projectUid).getTitle().equals("temporary title")){
-			System.out.println("added project " + projectUid);
+			Log.v("Sync.getVideoUidsForDownload", "title was 'temporary title'");
 		}
 		ArrayList<String> localVideoUids = LocalClient.getVideoUidsForProject(projectUid);
-		
+		for(String s : localVideoUids) {
+			Log.v("Sync.getVideoUidsForDownload", "local video uid: " + s);
+		}
 		ArrayList<String> videoUidsForDownload = new ArrayList<String>();
 		for (String railsVid : railsVideoUids){
 			if (!localVideoUids.contains(railsVid)){
 				// Our Local Storage is not aware of this video, so we download it
 				videoUidsForDownload.add(railsVid);
+				Log.v("Sync.getVideoUidsForDownload", "rails video that isn't saved locally: " + railsVid);
 			}
 		}
 		return videoUidsForDownload;
