@@ -38,7 +38,7 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 		mPrefs = getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
 		projectId = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
 		selectorOn = false;
-		projectIds = LocalClient.readProjectsFile();
+		projectIds = LocalClient.getProjectUids();
 		setupSpinner();
 		if(projectId.equals("")) {
 			Log.v("onCreate", "showing all my videos");
@@ -54,7 +54,7 @@ public class ViewVideosActivity extends Activity implements OnItemSelectedListen
 	
 	private void setupSpinner() {
 		// Get list of projects
-		String[] projects = LocalClient.getProjectTitles();
+		String[] projects = LocalClient.getProjectTitles(projectIds);
 		Spinner spinner = (Spinner) findViewById(R.id.projects_spinner);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, projects);
 		spinner.setAdapter(adapter);

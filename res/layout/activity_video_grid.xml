@@ -10,18 +10,18 @@
 	
     
      <LinearLayout
-        android:id="@+id/js_spinner_row"
+        android:id="@+id/spinner_row"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:orientation="horizontal" >
         
 		<Spinner
-	        android:id="@+id/js_projects_spinner"
+	        android:id="@+id/projects_spinner"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" />
 			
 		<Button
-	        android:id="@+id/js_select"
+	        android:id="@+id/select"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
@@ -29,7 +29,7 @@
 	        android:onClick="toggleSelector" />
 	    
 	    <Button
-	        android:id="@+id/js_done"
+	        android:id="@+id/done"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
@@ -41,7 +41,7 @@
 	    android:id="@+id/gridview"
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"
-	    android:layout_below="@id/js_spinner_row"
+	    android:layout_below="@id/spinner_row"
 	    android:columnWidth="90dp"
 	    android:numColumns="auto_fit"
 	    android:verticalSpacing="10dp"

@@ -237,7 +237,7 @@ public class Sync {
 
 	protected static ArrayList<String> getListOfNewProjects(String response) {
 		ArrayList<String> railsProjectsList = RailsJSONManager.getProjectListFromResponse(response);
-		ArrayList<String> localProjectsList = LocalClient.readProjectsFile();
+		ArrayList<String> localProjectsList = LocalClient.getProjectUids();
 		ArrayList<String> newProjects = new ArrayList<String>();
 		for (String railsProject : railsProjectsList){
 			if (!localProjectsList.contains(railsProject)){
