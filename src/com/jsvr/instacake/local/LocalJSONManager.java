@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jsvr.instacake.data.Constants;
@@ -16,6 +18,10 @@ import com.jsvr.instacake.data.Project;
 
 public class LocalJSONManager {
 	
+	public static ArrayList<Project> parseProjectsList() {
+		File projectsList = Constants.getProjectsListFile();
+	}
+
 	protected static void saveNewProject(Project project) {
 		saveProject(project);
 	}
@@ -32,8 +38,24 @@ public class LocalJSONManager {
 		}
 		String json = new Gson().toJson(project);
 		writeToFile(projFile, json);
+		
+		if (!LocalClient.getProjectUids().contains(project.getProjectUid())){
+			addToProjectsFile(project.getProjectUid());
+		}
 	}
 	
+	public static void addToProjectsFile(String projectUid) {
+		try {
+			File projectstxt = new File(Constants.getProjectsFilePath());
+			BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
+			buf.append(projectUid);
+			buf.newLine();
+			buf.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	// Add user	to specific project
 	protected static void addUserToProject(String userUid, String projectUid, String username) {
 		Project project = getProject(projectUid);
@@ -79,6 +101,9 @@ public class LocalJSONManager {
 	// Get project object from JSON file with GSON
 	protected static Project getProject(String projectUid) {
 		File projectFile = new File(Constants.getProjectPath(projectUid));
+		if (!projectFile.exists()){
+			Log.v("getProject", "project file does not exist");
+		}
 		String json = readFromFile(projectFile); 
 		//TODO Fix getProject
 //		if (!projectFile.exists()){

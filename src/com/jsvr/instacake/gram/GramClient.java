@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.jsvr.instacake.data.Constants;
 import com.jsvr.instacake.data.Project;
+import com.jsvr.instacake.local.LocalClient;
 import com.jsvr.instacake.sync.Sync;
 import com.jsvr.instacake.sync.Sync.SyncCallback;
 import com.jsvr.instacake.sync.VideoSync;
@@ -35,7 +36,7 @@ public class GramClient {
     }
     
     private static AsyncHttpClient client = new AsyncHttpClient();
-	private static Project mProject;
+//	private static Project mProject;
 		
 	public static void getThumbnail(String instaId, String accessToken, DownloadManager dm, Boolean isMine){
 		RequestParams params = new RequestParams();
@@ -217,6 +218,58 @@ public class GramClient {
 		
 	}
 
+	protected static void downloadForProject(final Project project, 
+											final String videoUid, 
+											String accessToken,
+											final SyncCallback moveToNextVideo,
+											final DownloadManager dm, 
+											final boolean isMine) {
+		RequestParams params = new RequestParams();
+		params.put("access_token", accessToken);
+		client.get(getAbsoluteUrl("/media/" + videoUid), params, new AsyncHttpResponseHandler(){
+			@Override
+			public void onSuccess(String response) {
+				super.onSuccess(response);
+				
+				// Download the thumbnail
+				Request requestForThumb = new Request(GramJSONManager.getThumbUriFromJson(GramJSONManager.parseMediaResponse(response)));
+				requestForThumb.setTitle("Downloading Thumbnail " + videoUid);
+		        Constants.getThumbnailPath(videoUid, false); // To ensure that the directory exists.
+				if (isMine){
+					requestForThumb.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, "Instacake/Me/IMG_" + videoUid + ".jpg");
+				} else {
+					requestForThumb.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, "Instacake/Friends/IMG_" + videoUid + ".jpg");
+				}
+		        dm.enqueue(requestForThumb); 
+		        
+		        // Download the video
+				Request requestForVid = new Request(GramJSONManager.getVidUriFromJson(GramJSONManager.parseMediaResponse(response)));
+				requestForVid.setTitle("Downloading Video " + videoUid);
+				Constants.getMoviesPath(videoUid, false); // To ensure that the directory exists.
+				if (isMine){
+					requestForVid.setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES, "Instacake/Me/VID_" + videoUid + ".mp4");
+				} else {
+					requestForVid.setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES, "Instacake/Friends/VID_" + videoUid + ".mp4");
+				}
+				dm.enqueue(requestForVid); 
+				
+			}
+
+			@Override
+			public void onFailure(Throwable e, String response) {
+				super.onFailure(e, response);
+				e.printStackTrace();
+			}
+			
+			@Override
+			public void onFinish(){
+				super.onFinish();
+				moveToNextVideo.callbackCall(Sync.RESPONSE_OK, new Object[] {videoUid, project});
+			}
+		});
+		
+	}
+
 	// Download a video and its thumbnail
 	public static void download(final String videoUid, 
 							     String accessToken, 
@@ -292,41 +345,47 @@ public class GramClient {
 												final String accessToken, 
 												final DownloadManager dm,
 												final SyncCallback projectReadyForSaveAfterDownloads) {
-		mProject = project;
-		Log.v("GramClient.downloadVideosOneAtATime", "dealing with project " + mProject.getTitle());
+//		mProject = project;
+		Log.v("GramClient.downloadVideosOneAtATime", "dealing with project " + project.getTitle());
 		
 		SyncCallback moveToNextVideo = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, Object responseObject) {
-				String uidOfDownloadedVideo = (String) responseObject;
+				String uidOfDownloadedVideo = (String) ((Object[]) responseObject)[0];
+				Project project = (Project) ((Object[]) responseObject)[1];
 				Log.v("GramClient.downloadVideosOneAtATime", "uid of downloaded video: " + uidOfDownloadedVideo);
 				
 				// Check a video off the list
 				videoUidsToDownload.remove(uidOfDownloadedVideo);
-				mProject.addVideo(uidOfDownloadedVideo, isMine);
-				Log.v("GramClient.downloadVideosOneAtATime", "num of video uids: " + mProject.getVideoUids().size());
+				project.addVideo(uidOfDownloadedVideo, isMine);
+				Log.v("GramClient.downloadVideosOneAtATime", "num of video uids: " + project.getVideoUids().size());
 				
 				// Continue if necessary
 				if (videoUidsToDownload.size() > 0){
-					download(videoUidsToDownload.get(0), accessToken, this, dm, isMine);
+					downloadForProject(project, videoUidsToDownload.get(0), accessToken, this, dm, isMine);
 				} else {
 					Log.v("* GramClient.downloadVideosOneAtATime", "done downloading. about to call back to projectReadyForSaveAfterDownloads");
-					for(String s : mProject.getThumbnailPaths()) {
+					for(String s : project.getThumbnailPaths()) {
 						Log.v("* GramClient.downloadVideosOneAtATime", "thumbnail: " + s);
 					}
-					projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, mProject);
+					projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, project);
 				}
 			}
 		};
 		
+//		for (String uid : videoUidsToDownload){
+//			Log.v("GramClient.downloadVideosOneAtATime", "was given the uid : " + uid);
+//		}
+		
 		//TODO: Figure out why this is necessary
 		if (videoUidsToDownload.size() > 0 && !videoUidsToDownload.get(0).equals("")){
-			Log.v("GramClient.downloadVideosOneAtATime", "about to download");
-			download(videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
+			Log.v("GramClient.downloadVideosOneAtATime", "about to download video with uid: " + videoUidsToDownload.get(0));
+			downloadForProject(project, videoUidsToDownload.get(0), accessToken, moveToNextVideo, dm, isMine);
 		} else {
-			Log.v("~ GramClient.downloadVideosOneAtATime", "calling projectReadyForSaveAfterDownloads.callbackCall because there are no videos to download");
+			Log.v("~ GramClient.downloadVideosOneAtATime", "calling projectReadyForSaveAfterDownloads.callbackCall because " +
+															"there are no videos to download for project: " + project.getTitle());
 			// Sometimes we are sent here to download an empty list of videoUids
-			projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, mProject);
+			projectReadyForSaveAfterDownloads.callbackCall(Sync.RESPONSE_OK, project);
 		}
 	}
 

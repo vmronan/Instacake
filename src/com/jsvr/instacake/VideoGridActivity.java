@@ -30,7 +30,7 @@ public class VideoGridActivity extends Activity {
 	
 	boolean selectorOn;
 	String projectUid;
-	ArrayList<String> projectUids;
+//	ArrayList<String> projectUids;
 	SharedPreferences mPrefs;
 	GridView mGridview;
 	String[] mThumbs;
@@ -45,7 +45,7 @@ public class VideoGridActivity extends Activity {
 		projectUid = getIntent().getStringExtra(Constants.PROJECT_UID_KEY);
 		selectorOn = false;
 		
-		projectUids =  LocalClient.getProjectUids();
+//		projectUids =  LocalClient.getProjectUids();
 		setupSpinner();
 		buildGrid();
 		
@@ -68,15 +68,17 @@ public class VideoGridActivity extends Activity {
 	}
 
 	protected void updateGrid() {
-		projectUids = LocalClient.getProjectUids();
-		((BaseAdapter) ((ImageAdapter) mGridview.getAdapter()).setThumbs(LocalClient.getMyThumbnailPaths())).notifyDataSetChanged();
+//		projectUids = LocalClient.getProjectUids()
 		Log.v("updateGrid", "notifyDataSetChanged");
+		((BaseAdapter) ((ImageAdapter) mGridview.getAdapter()).setThumbs(LocalClient.getMyThumbnailPaths())).notifyDataSetChanged();
+		
 //		((BaseAdapter) mGridview.getAdapter()).notifyDataSetChanged();
 	}
 
 	private void setupSpinner() {
-		// Get list of project titles
-		String[] projects = LocalClient.getProjectTitles(projectUids);
+		// Get lists of project uids and titles
+		final ArrayList<String> projectUids = LocalClient.getProjectUids();
+		String[] projects = LocalClient.getProjectTitles();
 		
 		// Set the adapter
 		Spinner spinner = (Spinner) findViewById(R.id.projects_spinner);

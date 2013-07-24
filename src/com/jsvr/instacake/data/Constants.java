@@ -14,7 +14,7 @@ public class Constants {
 	public static final String USER_UID_KEY = "yodawgi'mliketheinstagramidyouget";
 	public static final String USERNAME_KEY = "yodawgizlykugottahaveausernamenaaaahmsayin??";
 	public static final String ERROR = "Key or Value Error";
-	public static final boolean DEVELOPMENT_MODE = false;
+	public static final boolean DEVELOPMENT_MODE = true;
 	
 	/* Instagram App Authorization */
 	public static final String CLIENT_ID = "2441a48392cf4ab6a7343038f858ae15";
@@ -48,6 +48,10 @@ public class Constants {
 		return "PRJ_" + projectUid + ".json";
 	}
 	
+	public static File getProjectsListFile() {
+		return new File(getProjectsListFilePath());
+	}
+
 	/* Critical Directories */
 	private static final File MOVIES_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 	private static final File PICTURES_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
@@ -107,10 +111,13 @@ public class Constants {
 		}
 	}
 	
-	public static String getProjectsFilePath(){
-		return getProjectsDir().getPath() + File.separator + "projects.txt";
-	}
+//	public static String getProjectsFilePath(){
+//		return getProjectsDir().getPath() + File.separator + "projects.txt";
+//	}
 
+	public static String getProjectsListFilePath(){
+		return getProjectsDir().getPath() + File.separator + "projectsList.json";
+	}
 	
 	/* Directory builders */
 	private static File buildOrEnsureDirectory(File mediaStorageDir){
@@ -144,6 +151,7 @@ public class Constants {
 		try {
 			File projectstxt = new File(Constants.getProjectsFilePath());
 			if (!projectstxt.exists())
+				Log.v("buildOrEnsureAllDirectories", "writing projectstxt");
 				projectstxt.createNewFile();
 		} catch (IOException e) {
 			e.printStackTrace();

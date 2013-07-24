@@ -41,7 +41,9 @@ public class Sync {
 			@Override
 			public void callbackCall(int statusCode, Object responseObject){
 				Project projectToSave = (Project) responseObject;
-				Log.v("* Sync projectReadyForSaveAfterDownloads", "projectToSave: " + projectToSave.getTitle() + ". Thumbnails on next line:");
+				Log.v("* Sync projectReadyForSaveAfterDownloads", "projectToSave: " + projectToSave.getTitle() + " with uid " + projectToSave.getProjectUid() + ". Thumbnails on next line:");
+				Log.v("* Sync projectReadyForSaveAfterDownloads", "number of videos is "  + projectToSave.getVideoUids().size());
+				Log.v("* Sync projectReadyForSaveAfterDownloads", "number of thumbnails is "  + projectToSave.getThumbnailPaths().size());
 				for(String s : projectToSave.getThumbnailPaths()) {
 					Log.v("* Sync projectReadyForSaveAfterDownloads", "thumbnail: " + s);
 				}
@@ -58,14 +60,16 @@ public class Sync {
 			@Override
 			public void callbackCall(int statusCode, Object responseObject) {
 				Project project = (Project) responseObject;
-				Log.v("Sync projectReturnedFromRailsClient", "got project with title " + project.getTitle());
+				Log.v("Sync projectReturnedFromRailsClient", "project with title " + project.getTitle() + 
+															 " and uid " + project.getProjectUid() + " returned from rails");
 				if(statusCode == RESPONSE_OK) {
-					Log.v("Sync projectReturnedFromRailsClient", "about to get video uids for download");
+					
 					ArrayList<String> videoUidsToDownload = getVideoUidsForDownload(project.getVideoUids(), projectUid);
 					Log.v("Sync projectReturnedFromRailsClient", "number of videos to download: " + videoUidsToDownload.size());
-					for(String uid : videoUidsToDownload) { 
-						Log.v("Sync projectReturnedFromRailsClient", "need to download: " + uid);						
+					for (String videoUid : videoUidsToDownload){
+						Log.v("Sync projectReturnedFromRailsClient", "videoUidToDownload: " + videoUid);
 					}
+
 					Log.v("Sync projectReturnedFromRailsClient", "about to download videos one at a time");
 					GramClient.downloadVideosOneAtATime(project,
 														videoUidsToDownload, 
@@ -93,13 +97,19 @@ public class Sync {
 		SyncCallback projectListReturnedFromRailsClient = new SyncCallback(){
 			@Override
 			public void callbackCall(int statusCode, Object responseObject) {
+				@SuppressWarnings("unchecked")
 				ArrayList<String> railsProjectsList = (ArrayList<String>) responseObject;
+				for (String railsProject : railsProjectsList){
+					Log.v("projectListReturnedFromRailsClient", "railsProject returned: " + railsProject);
+				}
+				
 				if (statusCode == RESPONSE_OK){
 					// response contains userUid, so we save
 					ArrayList<String> projectsToUpdate = getListOfNewProjects(railsProjectsList);
-					for (String projectUid:  projectsToUpdate){
-						Log.v("projectsListReturnedFromRailsClient", projectUid + " is the projectUid returned");
+					for (String projectToUpdate : projectsToUpdate){
+						Log.v("projectListReturnedFromRailsClient", "project to update: " + projectToUpdate);
 					}
+					
 					for (String projectUid : projectsToUpdate){
 						createProjectFileOrEnsureItExists(projectUid);
 						syncProject(projectUid, 
@@ -109,7 +119,7 @@ public class Sync {
 										@Override
 										public void callbackCall(int statusCode, Object response){};
 									});
-						Log.v("projectListReturnedFromRailsClient", "trying to sync project " + projectUid);
+//						Log.v("projectListReturnedFromRailsClient", "trying to sync project " + projectUid);
 					}
 					updateProjectsListOnUiThread.callbackCall(RESPONSE_OK, "Tried to update " + projectsToUpdate.size() + " projects.");
 				} else if (statusCode == ERROR){
@@ -127,6 +137,8 @@ public class Sync {
 		if(!projectFile.exists()) {
 			try {
 				projectFile.createNewFile();
+				Project project = new Project(projectUid);
+				LocalClient.saveProject(project);
 				Log.v("createProjectFileOrEnsureItExists", "created project file for project " + projectUid);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -283,9 +295,10 @@ public class Sync {
 
 	// Compare rails data against local data to find videos that need to be downloaded.
 	private static ArrayList<String> getVideoUidsForDownload(ArrayList<String> railsVideoUids, String projectUid) {
-		if (LocalClient.getProject(projectUid).getTitle().equals("temporary title")){
-			Log.v("Sync.getVideoUidsForDownload", "title was 'temporary title'");
-		}
+//		if (LocalClient.getProject(projectUid).getTitle().equals("temporary title")){
+//			Log.v("Sync.getVideoUidsForDownload", "title was 'temporary title'");
+//		}
+		LocalClient.ensureExistenceOfProject(projectUid);
 		ArrayList<String> localVideoUids = LocalClient.getVideoUidsForProject(projectUid);
 		for(String s : localVideoUids) {
 			Log.v("Sync.getVideoUidsForDownload", "local video uid: " + s);
@@ -295,7 +308,7 @@ public class Sync {
 			if (!localVideoUids.contains(railsVid)){
 				// Our Local Storage is not aware of this video, so we download it
 				videoUidsForDownload.add(railsVid);
-				Log.v("Sync.getVideoUidsForDownload", "rails video that isn't saved locally: " + railsVid);
+//				Log.v("Sync.getVideoUidsForDownload", "rails video that isn't saved locally: " + railsVid);
 			}
 		}
 		return videoUidsForDownload;

@@ -16,23 +16,41 @@ import com.jsvr.instacake.data.Project;
 
 public class LocalClient {
 
+	public static ArrayList<Project> getProjectsList() {
+		return LocalJSONManager.parseProjectsList();
+	}
+
 	public static void createProject(String projectUid, String title, String userUid, String username) {
 		// Create proj_123.json file for project
 		Project project = new Project(projectUid, title, userUid, username);
 		LocalJSONManager.saveNewProject(project);
 
-		// Save new project filename to projects.txt
-		try {
-			File projectstxt = new File(Constants.getProjectsFilePath());
-			BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
-			buf.append(projectUid);
-			buf.newLine();
-			buf.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		// Save new project uid to projects.txt
+		if (!getProjectUids().contains(projectUid)){
+			LocalJSONManager.addToProjectsFile(projectUid);
 		}
+		  
 	}
 	
+	public static void ensureExistenceOfProject(String projectUid) {
+		File projectFile = new File(Constants.getProjectPath(projectUid));
+		if (!projectFile.exists()){
+			Project project = new Project(projectUid);
+			LocalJSONManager.saveProject(project);
+			
+			// Add to projects.txt
+			try{
+				File projectstxt = new File(Constants.getProjectsFilePath());
+				BufferedWriter buf = new BufferedWriter(new FileWriter(projectstxt, true));		// "true" tells it to append to the existing file, not overwrite it
+				buf.append(projectUid);
+				buf.newLine();
+				buf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
+	}
+
 	public static void saveProject(Project project) {
 		LocalJSONManager.saveProject(project);
 	}
@@ -45,7 +63,8 @@ public class LocalClient {
 		LocalJSONManager.addVideoByThumbnailPath(thumbnailPath, projectUid);
 	}
 	
-	public static String[] getProjectTitles(ArrayList<String> projectUids) {
+	public static String[] getProjectTitles() {
+		ArrayList<String> projectUids = getProjectUids();
 		int numProjects = projectUids.size();
 		String[] titles = new String[numProjects];
 		for(int i = 0; i < numProjects; i++) {

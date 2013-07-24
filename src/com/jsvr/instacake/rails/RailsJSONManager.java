@@ -47,6 +47,7 @@ public class RailsJSONManager {
 //	}
 
 	public static Project parseForProject(String response){
+		Log.v("parseForProject", "response is " + response);
 		return new Project(getProjectUidFromResponse(response),
 						   getProjectTitleFromResponse(response),
 						   getUserUidsForProjectFromResponse(response), 
@@ -87,7 +88,6 @@ public class RailsJSONManager {
 			int numUsers = users.length();
 			for (int i = 0; i < numUsers; i++){
 				String userUid = users.getJSONObject(i).getString("uid");
-				System.out.println("userUid is " + userUid);
 				userUids.add(userUid);
 			}
 		} catch (JSONException e) {
@@ -105,7 +105,6 @@ public class RailsJSONManager {
 			int numUsers = users.length();
 			for (int i = 0; i < numUsers; i++){
 				String username = users.getJSONObject(i).getString("username");
-				System.out.println("username is " + username);
 				usernames.add(username);
 			}
 		} catch (JSONException e) {
